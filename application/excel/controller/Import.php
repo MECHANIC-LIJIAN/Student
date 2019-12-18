@@ -8,6 +8,7 @@ use think\Db;
 use Env;
 use PHPExcel_IOFactory;
 use think\Model;
+use Overtrue\Pinyin\Pinyin;
 
 class Import extends Controller
 {
@@ -16,12 +17,21 @@ class Import extends Controller
         return view();
     }
 
+    public function createtemplatefirst()
+    {
+        return view();
+    }
+
     public function upload()
     {
         header("content-type:text/html;charset=utf-8");
         //上传excel文件
-        $file = request()->file('excel');
+
+        // dump(request());
+        
+        $file = request()->file('tempalte');
         $fileInfo=$file->getInfo();
+
         // dump($fileInfo);
         //将文件保存到public/uploads目录下面
         $info = $file->validate(['size'=>1048576,'ext'=>'xls,xlsx'])->move('./uploads');
@@ -74,29 +84,51 @@ class Import extends Controller
         }
         unset($data[0]);
         // dump($data['B']);
+
+
+        $user='lijian';
+        $tname=input('post.tname');
+
+        $pinyin             = new Pinyin();
         $template           = new \app\excel\model\Templates;
         $template->tuser    = 'lijian';
-        $template->tname    = 'test';
+        $template->tname    = $tname;
         $template->tfile    = $fileInfo['name'];
-        $template->save();
+        $template->tabbr    = $pinyin->abbr($tname);
+        $res=$template->save();
         $tid=$template->id;
+
+        return $this->success("模板上传成功！");
+        // $tableField=array();
+        // foreach ($data as $key => $value) {
+        //     $abbr=$pinyin->abbr($value[1]);
+        //     array_push($tableField, $abbr);
+        //     $this->dataToTemplate($tid, $value, $abbr);
+        // }
+        // $this->createTable($tableField, "stu_tempaltes_".$pinyin->abbr($tname));
+
         
-        foreach ($data as $key => $value) {
-            // dump($value);
-            $this->dataToTemplate($tid, $value);
-        }
-        return  $this->fetch('template', ['data'=>$data]);
+
+        // $template=model("Templates")->with('getoption')->where(['id'=>$tid])->find()->toArray();
+        // $optionList=getOptionList($template['getoption'], $pid='opid', $id='id');
+        // return $this->fetch('createTemplateSecond', ['optionList'=>$optionList]);
     }
 
 
-    public function dataToTemplate($tid, $data)
+    public function dataToTemplate($tid, $data, $abbr)
     {
+        
+        // dump($data);
+        // dump($pinyin->abbr($data[1]));
         $dateLen=count($data);
         $option           = new \app\excel\model\TemplatesOption;
         $option->opid     = '0';
         $option->tid      = $tid;
-        $option->otype     = 'p';
+        $option->otype    = 'p';
         $option->ocontent = $data[1];
+        $option->idInTable=$abbr;
+
+        // dump($option);
         $res=$option->save();
         if ($dateLen>1) {
             // 获取自增ID
@@ -116,5 +148,26 @@ class Import extends Controller
         if ($res) {
             return 1;
         }
+    }
+
+
+    public function createTable($data, $title)
+    {
+        $temp=" ";
+        foreach ($data as $v) {
+            $temp=$temp.$v." varchar(255) NOT NULL,";
+        }
+        $temp=$temp." ";
+        
+        $sql ="CREATE TABLE IF NOT EXISTS ". $title."(`id` int(8) unsigned NOT NULL AUTO_INCREMENT,"
+        .$temp."PRIMARY KEY (`id`))
+        ENGINE=MyISAM
+        DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+        CHECKSUM=0
+        ROW_FORMAT=DYNAMIC
+        DELAY_KEY_WRITE=0
+        ;";
+        // dump($sql);
+        Db::execute($sql);
     }
 }

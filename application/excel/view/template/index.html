@@ -4,20 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-    <form id="input-excel" method="post" action="{:url('excel/Import/upload')}" enctype="multipart/form-data">
-        <div class="form-group">
-            <input type="hidden" name="table" value="tablename" />
-            <input type="file" name="excel" id="excel">
-            <input type="submit" value="导入" />
-            <p class="help-block"></p>
-        </div>
-    </form>
-    <a href="{:url('excel/excel/reset')}">重置</a>
-    <!-- aaa -->
+    <div style="width: 80%;height: auto;">
+        <form id="input-excel" method="post" action="{:url('excel/Import/upload')}" enctype="multipart/form-data">
+            <div class="form-horizontal row">
+                <!-- 输出input -->
+                {volist name="optionList" id='option'} {if $option.otype='p' AND count($option.child)==0}
+                <div class="form-inline">
+                    <label for="{$option.ocontent}" class="col-sm-2 control-label">{$option.ocontent}</label>
+                    <input type="text" class="form-control" id="{$option.idInTable}">
+                </div>
+                {/if} {/volist}
 
+                <!-- 输出select -->
+                {volist name="optionList" id='option'} {if $option.otype='p' AND count($option.child)>0}
+                <div class="form-inline">
+                    <label for="{$option.ocontent}" class="col-sm-2 control-label">{$option.ocontent}</label>
+                    <select class="form-control">
+                            {volist name="option.child" id="vo"}
+                            <option value ="{$option.idInTable}">{$vo.ocontent}</option>
+                            {/volist}
+                    </select>
+                </div>
+                {/if} {/volist}
+            </div>
+        </form>
+    </div>
 </body>
 
 </html>

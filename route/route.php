@@ -21,7 +21,9 @@
     Route::rule('getinfo', 'excel/GetInfo/index', 'GET|POST');
     
     
-    Route::rule('tableupload', 'excel/Import/upload', 'GET|POST');
 
     Route::rule('import', 'excel/Import/index', 'GET|POST');
+    Route::rule('createTemplateFirst', 'excel/Import/createTemplateFirst', 'GET|POST');
+    
+    Route::rule('tableupload', 'excel/Import/upload', 'POST');
     Route::rule('template/[:id]', 'excel/template/index', 'GET|POST');
