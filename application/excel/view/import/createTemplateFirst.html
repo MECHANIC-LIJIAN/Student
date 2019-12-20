@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <link rel="icon" href="__IMG__weixin.jpg">
 
-    <title>Bootstrap</title>
+    <title>导入模板文件</title>
 
     <!-- Bootstrap core CSS -->
     <link href="__CSS__/bootstrap.min.css" rel="stylesheet">
@@ -83,15 +83,23 @@
                     </li>
                 </ul>
                 <div class="project-first-step">
-                    <form id="input-excel" method="post" action="{:url('excel/Import/upload')}" enctype="multipart/form-data">
-                        <div class="form-inline">
-                            <label for="tname" class="col-sm-2 control-label">模板名字</label>
-                            <input type="text" class="form-control" id="tname">
-                            <div class="input-group">
-                                <input type="file" name="templateFile" id="templateFile">
-                            </div>
-                            <input type="submit" value="提交">
+                    <form class="edit-project-info">
+                        <div class="form-group">
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                <div class="form-inline">
+                                    <label for="tname" class="col-sm-2 control-label">模板名字</label>
+                                    <input type="text" class="form-control" id="tname"  >
+                                    <input type="text" class="form-control" name="fileBrowserInput" id="fileBrowserInput" readonly="readonly">
+                                    <input type="file" class="hidden" id="tempalteFile">
+                                    <div class="input-group">          
+                                        <input type="button" id="fileBrowser" value="选择文件">
+                                    </div>
+                                    <input type="button" value="提交" id="subFile">
+                                    <a href="{:url('excel/Import/createTemplateSecond')}" id="project-first-btn" style="float: right;" class="btn btn-info">下一步</a>
+                                </div>
+                            </form>
                         </div>
+                        
                     </form>
                 </div>
             </div>
@@ -119,9 +127,50 @@
 
     <script src="__JS__/bootstrap-datetimepicker.min.js"></script>
     <script src="__JS__/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="__LIB__/layer/layer.js"></script>
+    <script type="application/javascript">
+        $("#fileBrowser").click(function() {
+            // console.log("ss")
+            $("#tempalteFile").click();
+            $("#tempalteFile").change(function(){
+                // console.log($("#tempalteFile").val());
+                $("#fileBrowserInput").val($("#tempalteFile").val())
+            });
+        })
 
-    <script>
+        
+        $("#subFile").click(function(){
+            var fd=new FormData();
+            fd.append("tempalte",$("#tempalteFile").get(0).files[0]);
+            fd.append("tname",$("#tname").val())
+            $.ajax({
+                method:"post",
+                url:"{:url('excel/import/upload')}",
+                data:fd,
+                cache:false,
+                processData:false,
+                contentType:false,
+                success:function(data){
+                    if (data.code == 1) {
+                            layer.msg(
+                                data.msg, {
+                                    icon: 6,
+                                    time: 2000
+                                }
+                            );
+                        } else {
+                            layer.open({
+                                title: "更新失败！",
+                                content: data.msg,
+                                icon: 5,
+                                anim: 5
+                            });
+                        }
+                }
+            })
+        })
     </script>
+
     <!--<script src="__JS__/js/docs.min.js"></script>-->
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <!--<script src="__JS__/ie10-viewport-bug-workaround.js"></script>-->
