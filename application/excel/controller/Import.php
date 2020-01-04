@@ -3,11 +3,12 @@
 
 namespace app\excel\controller;
 
-use think\Controller;
-use think\Db;
 use Env;
-use PHPExcel_IOFactory;
+use think\Db;
 use think\Model;
+use think\Controller;
+use think\facade\Request;
+use PHPExcel_IOFactory;
 use Overtrue\Pinyin\Pinyin;
 
 class Import extends Controller
@@ -24,16 +25,16 @@ class Import extends Controller
 
     public function upload()
     {
-        $tname=input('post.tname');
-        $validate = new \app\excel\validate\Import;
-
-        if (!$validate->scene('upload')->check(['tname'=>$tname])) {
-            $this->error($validate->getError());
-        }
-
         header("content-type:text/html;charset=utf-8");
         //上传excel文件
         $file = request()->file('tempalte');
+        $tname=Request::param('tname');
+        $validate = new \app\excel\validate\Import;
+
+        if (!$validate->scene('upload')->check(['tname'=>$tname,'template'=>$file])) {
+            $this->error($validate->getError());
+        }
+
         //将文件保存到public/uploads目录下面
         $info = $file->validate(['size'=>1048576,'ext'=>'xls,xlsx'])->move('./uploads');
         
@@ -58,8 +59,9 @@ class Import extends Controller
         $pinyin             = new Pinyin();
         $template           = new \app\excel\model\Templates;
         $user='lijian';
-        
+        $sum=Db::name('templates_sum')->find();
         $tabbr=$pinyin->abbr($tname);
+        $template->tid      = 1000000000+$sum['count'];
         $template->tuser    = 'lijian';
         $template->tname    = $tname;
         $template->tfilename= $info->getInfo()['name'];
@@ -67,9 +69,9 @@ class Import extends Controller
         $template->tabbr    = $tabbr;
         $res=$template->save();
         $tid=$template->id;
-        dump($tid);
-        $data=(readExcel($filePath));
-        session('templateId', $tid);
+        // dump($tid);
+        $data=readExcel($filePath);
+        session('templateId', 1000000000+$sum['count']);
         session('templateData', $data);
         session('tabbr', $tabbr);
         return $this->success("模板文件上传成功！");
@@ -82,28 +84,28 @@ class Import extends Controller
     public function createTemplateSecond()
     {
         if (request()->isAjax()) {
-            $use=input('post.isUseXH');
-            $primaryKey=input('post.primaryKey');
-            $data=session("templateData");
-            $tid=session("templateId");
-            $tableField=session('templateField');
-            // dump(array_keys($tableField));
+            $data=session("optionList");
+            // dump($data[0]['tid']);
             $pinyin = new Pinyin();
-            
-            $res=$this->createTable(array_keys($tableField), "stu_tempaltes_".session('tabbr'), $primaryKey);
-            if ($res==1) {
-                foreach ($data as $key => $value) {
-                    $abbr=$pinyin->abbr($value[1]);
-                    $res2=$this->dataToTemplate($tid, $value, $abbr);
-                }
-                if ($res2) {
-                    $this->success("模板初始化成功", "excel/import/createtemplateFirst");
-                }else {
-                    $this->error($res);
-                    
-                }
+
+            $template=model('templates')
+            ->where('tid', session('templateId'))
+            ->find();
+            //    dump($template);
+            if ($template['status']=='1') {
+                $this->error("模板已经初始化，不可更改");
             } else {
-                $this->error($res);
+                $template->status = '1';
+                $template->primaryKey = input('post.primaryKey');
+                $template->ifUseXh = input('post.ifUseXH');
+                $template->save();
+            }
+            $res2=model("TemplatesOption")->isUpdate(false)->saveAll($data);
+            Db::name("templates_sum")->where('id', 1)->setInc('count');
+            if ($res2) {
+                $this->success("模板初始化成功", "excel/import/createtemplateThird");
+            } else {
+                $this->error("模板初始化失败");
             }
         }
 
@@ -119,136 +121,42 @@ class Import extends Controller
         $tableField=array();
         $pinyin = new Pinyin();
 
-        for ($i='A'; $i!=$finalKey;$i++) {
-            for ($j=1; $j <= count($data[$i]); $j++) {
+        for ($col='A'; $col!=$finalKey;$col++) {
+            $option='option_'.$col;
+            for ($row=1; $row <= count($data[$col]); $row++) {
                 $tmp=array();
-                if ($j==1) {
+                if ($row==1) {
+                    $tmp['tid']=session('templateId');
                     $tmp['pid']='0';
+                    $tmp['sid']=$option;
                     $tmp['type']='p';
-                    $tmp['id']=$i.'0';
-                    $tmp['ocontent']=$data[$i][$j];
-                    $tmp['idInTable']='10';
-                    $abbr=$pinyin->abbr($data[$i][1]);
-                    $tableField[$abbr]=$data[$i][1];
+                    $tmp['content']=$data[$col][$row];
+                    $abbr=$pinyin->abbr($data[$col][1]);
+                    $tableField[$option]=$data[$col][1];
                 } else {
-                    $tmp['pid']=$i.'0';
+                    $tmp['tid']=session('templateId');
+                    $tmp['pid']=$option;
+                    $tmp['sid']=$option."_".$row;
                     $tmp['type']='c';
-                    $tmp['id']=$j.$i;
-                    $tmp['ocontent']=$data[$i][$j];
-                    $tmp['idInTable']='10';
+                    $tmp['content']=$data[$col][$row];
                 }
                 $optionList[]=$tmp;
             }
         }
         // dump($tableField);
-        session('templateField', $tableField);
-        $optionList=getOptionList($optionList, $pid='pid', $id='id');
+        // dump($optionList);
+        session('optionList', $optionList);
+        $optionList=getOptionList($optionList, $pid='pid', $id='sid');
         // dump($optionList);
         return $this->fetch('createTemplateSecond', ['optionList'=>$optionList,'tname'=>session('tname'),'tableField'=>$tableField]);
     }
 
 
     
-    public function createTemplateThird()
+    public function createtemplatethird()
     {
-        if (request()->isAjax()) {
-            $use=input('post.isUseXH');
-            $primaryKey=input('post.primaryKey');
-            $data=session("templateData");
-            $tid=session("tempalteId");
-            $tableField=session('templateField');
-            // dump($tid);
-            $pinyin = new Pinyin();
-            foreach ($data as $key => $value) {
-                $abbr=$pinyin->abbr($value[1]);
-                $this->dataToTemplate($tid, $value, $abbr);
-            }
-            
-            
-            $res=$this->createTable($tableField, "stu_tempaltes_".session('tabbr'), $primaryKey);
-            if ($res==1) {
-                $this->success("模板初始化成功");
-            } else {
-                $this->error($res);
-            }
-        }
-    }
-
-    
-    /**
-     * 将模板存入数据库
-     *
-     * @param int $tid
-     * @param array $data
-     * @param string $abbr
-     * @return void
-     */
-    public function dataToTemplate($tid, $data, $abbr)
-    {
-        // dump($data);
-        // dump($pinyin->abbr($data[1]));
-        $dateLen=count($data);
-        $option           = new \app\excel\model\TemplatesOption;
-        $option->opid     = '0';
-        $option->tid      = $tid;
-        $option->otype    = 'p';
-        $option->ocontent = $data[1];
-        $option->idInTable=$abbr;
-
-        // dump($option);
-        $res=$option->save();
-        if ($dateLen>1) {
-            // 获取自增ID
-            $opid=$option->id;
-            $data2=array();
-            for ($i=2; $i <= $dateLen; $i++) {
-                $line=[
-                'tid'=>$tid,
-                'otype'=>'c',
-                'opid'=>$opid,
-                'ocontent'=>$data[$i],
-            ];
-                $data2[$i-1]=$line;
-            }
-            $res=model("TemplatesOption")->isUpdate(false)->saveAll($data2);
-        }
-        if ($res) {
-            return 1;
-        }
-    }
-
-    
-    /**
-     * 创建数据表
-     *
-     * @param array $field
-     * @param string $title
-     * @param string $primaryKey
-     * @return void
-     */
-    public function createTable($field, $title, $primaryKey)
-    {
-        $temp=" ";
-        foreach ($field as $v) {
-            $temp=$temp.$v." varchar(255) NOT NULL,";
-        }
-        $temp=$temp." ";
-        
-        $sql ="CREATE TABLE IF NOT EXISTS ".$title."(`id` int(8) unsigned NOT NULL AUTO_INCREMENT,"
-        .$temp."PRIMARY KEY (`id`,`".$primaryKey."`))
-        ENGINE=MyISAM
-        DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
-        CHECKSUM=0
-        ROW_FORMAT=DYNAMIC
-        DELAY_KEY_WRITE=0"
-        ;
-        // dump($sql);
-        $res=Db::execute($sql);
-        if ($res) {
-            return 1;
-        } else {
-            return $this->error("模板初始化失败");
-        }
+        $shareUrl=url('excel/import/fill',['id'=>session("templateId")]);
+        $this->assign("shareUrl",$shareUrl);
+        return view();
     }
 }
-

@@ -7,7 +7,8 @@ use think\Validate;
 class Import extends Validate
 {
     protected $rule =   [
-        'tname'  => 'require|max:25'
+        'tname'  => 'require|max:25',
+        'template'=>'fileExt:xls,xlsx'
     ];
     
     protected $message  =   [

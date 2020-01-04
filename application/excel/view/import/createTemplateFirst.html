@@ -1,79 +1,12 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+{extend name="public/base"}
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="__IMG__weixin.jpg">
+{block name="title"}导入模板文件{/block}
 
-    <title>导入模板文件</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="__CSS__/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap theme -->
-
-    <link href="__CSS__/bootstrap-theme.min.css" rel="stylesheet">
-    <link href="../static/font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet">
-    <link href="__CSS__/jquery.css" rel="stylesheet">
-    <link href="__CSS__/bootstrap-datetimepicker.min.css" rel="stylesheet">
-
-    <link href="__CSS__/mysite.css" rel="stylesheet">
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <!--<link href="__CSS__/ie10-viewport-bug-workaround.css" rel="stylesheet">-->
-
-    <!-- Custom styles for this template -->
-    <!--<link href="theme.css" rel="stylesheet">-->
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <!--<script src="__JS__/ie-emulation-modes-warning.js"></script>-->
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-</head>
-
-<body>
-
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-                <a class="navbar-brand" href="#">MySite</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="index.html">首页</a></li>
-                    <li><a href="project.html">项目</a></li>
-                    <li><a href="team.html">团队</a></li>
-                    <li><a href="blog.html">博客</a></li>
-                    <li><a href="answer.html">问答</a></li>
-                </ul>
-                <ul class="nav navbar-nav  navbar-right">
-                    <li><a href="login.html">登录</a></li>
-                    <li><a href="register.html">注册</a></li>
-                </ul>
-            </div>
-            <!--/.nav-collapse -->
-        </div>
-    </nav>
-    <div class="container project-team-container">
-        <div class="row">
-            <div class="col-lg-9">
+                {block name="page-main"}
                 <ul class="tablist">
                     <li id='first-step-li' role="tab" class="first current" aria-disabled="false" aria-selected="true">
-                        <a id="formWizard-t-0" aria-controls="formWizard-p-0"><span class="current-info audible">current step: </span><span class="number">1</span> 编写方式</a>
+                        <a id="formWizard-t-0" aria-controls="formWizard-p-0"><span class="current-info audible">current
+                                step: </span><span class="number">1</span> 编写方式</a>
                     </li>
                     <li id='second-step-li' role="tab" class="disabled" aria-disabled="true">
                         <a id="formWizard-t-1" aria-controls="formWizard-p-1"><span class="number">2</span>内容添加</a>
@@ -88,92 +21,83 @@
                             <form id="uploadForm" enctype="multipart/form-data">
                                 <div class="form-inline">
                                     <label for="tname" class="col-sm-2 control-label">模板名字</label>
-                                    <input type="text" class="form-control" id="tname"  >
-                                    <input type="text" class="form-control" name="fileBrowserInput" id="fileBrowserInput" readonly="readonly">
+                                    <input type="text" class="form-control" id="tname">
+                                    <input type="text" class="form-control" name="fileBrowserInput"
+                                        id="fileBrowserInput" readonly="readonly">
                                     <input type="file" class="hidden" id="tempalteFile">
-                                    <div class="input-group">          
+                                    <div class="input-group">
                                         <input type="button" id="fileBrowser" value="选择文件">
                                     </div>
                                     <input type="button" value="提交" id="subFile">
-                                    <a href="{:url('excel/Import/createTemplateSecond')}" id="project-first-btn" style="float: right;" class="btn btn-info">下一步</a>
+                                    <a href="{:url('excel/Import/createTemplateSecond')}" id="project-first-btn"
+                                        style="float: right;" class="btn btn-info">下一步</a>
                                 </div>
                             </form>
                         </div>
-                        
+
                     </form>
                 </div>
-            </div>
-        </div>
+{/block}
 
-    </div>
-
-    <!-- <footer class="footer project-footer">
-        <div class="container">
-
-        </div>
-    </footer> -->
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="__JS__/jquery.min.js"></script>
-
-
-    <script>
-        window.jQuery || document.write('<script src="__JS__/jquery.min.js"><\/script>')
-    </script>
-    <script src="__JS__/jquery.ui.js"></script>
-    <script src="__JS__/bootstrap.min.js"></script>
-
-    <script src="__JS__/bootstrap-datetimepicker.min.js"></script>
-    <script src="__JS__/bootstrap-datetimepicker.zh-CN.js"></script>
-    <script src="__LIB__/layer/layer.js"></script>
+{block name="page-js"}
     <script type="application/javascript">
-        $("#fileBrowser").click(function() {
-            // console.log("ss")
+
+        $("#fileBrowser").click(function () {
+            $("#tempalteFile").val("");
             $("#tempalteFile").click();
-            $("#tempalteFile").change(function(){
+            $("#tempalteFile").change(function () {
+                CheckFile(this)
                 // console.log($("#tempalteFile").val());
                 $("#fileBrowserInput").val($("#tempalteFile").val())
             });
         })
-
-        
-        $("#subFile").click(function(){
-            var fd=new FormData();
-            fd.append("tempalte",$("#tempalteFile").get(0).files[0]);
-            fd.append("tname",$("#tname").val())
-            $.ajax({
-                method:"post",
-                url:"{:url('excel/import/upload')}",
-                data:fd,
-                cache:false,
-                processData:false,
-                contentType:false,
-                success:function(data){
-                    if (data.code == 1) {
-                            layer.msg(
-                                data.msg, {
-                                    icon: 6,
-                                    time: 2000
-                                }
-                            );
-                        } else {
-                            layer.open({
-                                title: "更新失败！",
-                                content: data.msg,
-                                icon: 5,
-                                anim: 5
-                            });
-                        }
+        //文件上传验证.
+        function CheckFile(obj) {
+            var array = new Array('xls', 'xlsx'); //可以上传的文件类型 
+            if (obj.value == '') {
+                showMsg("选择要上传的文件!");
+                return false;
+            }
+            else {
+                var fileContentType = obj.value.match(/^(.*)(\.)(.{1,8})$/)[3];
+                var isExists = false;
+                for (var i in array) {
+                    if (fileContentType.toLowerCase() == array[i].toLowerCase()) {
+                        isExists = true;
+                        return true;
+                    }
                 }
-            })
+                if (isExists == false) {
+                    obj.value = null;
+                    showErrorMsg("上传文件类型不正确,必须为.xls或.xlsx!");
+                    return false;
+                }
+            }
+        }
+
+        $("#subFile").click(function () {
+            var file = document.getElementById("tempalteFile")
+            if (CheckFile(file) === true) {
+                var fd = new FormData();
+                fd.append("tempalte", $("#tempalteFile").get(0).files[0]);
+                fd.append("tname", $("#tname").val())
+                $.ajax({
+                    method: "post",
+                    url: "{:url('excel/import/upload')}",
+                    data: fd,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data.code == 1) {
+                            showMsg(data.msg);
+                        } else {
+                            showErrorMsg(data.msg)
+                        }
+                    }
+                })
+            }
+
         })
     </script>
-
-    <!--<script src="__JS__/js/docs.min.js"></script>-->
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <!--<script src="__JS__/ie10-viewport-bug-workaround.js"></script>-->
-</body>
-
-</html>
+{/block}

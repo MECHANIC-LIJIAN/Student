@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="__IMG__weixin.jpg">
+
+    <title>{block name="title"}网站标题{/block}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="__CSS__/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+
+    <link href="__CSS__/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../static/font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet">
+    <link href="__CSS__/jquery.css" rel="stylesheet">
+    <link href="__CSS__/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
+    <link href="__CSS__/mysite.css" rel="stylesheet">
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <!--<link href="__CSS__/ie10-viewport-bug-workaround.css" rel="stylesheet">-->
+
+    <!-- Custom styles for this template -->
+    <!--<link href="theme.css" rel="stylesheet">-->
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!--<script src="__JS__/ie-emulation-modes-warning.js"></script>-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    {block name="page-style"}
+
+    {/block}
+</head>
+
+<body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">MySite</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="project.html">项目</a></li>
+                    <li><a href="team.html">团队</a></li>
+                    <li><a href="blog.html">博客</a></li>
+                    <li><a href="answer.html">问答</a></li>
+                </ul>
+                <ul class="nav navbar-nav  navbar-right">
+                    <li><a href="login.html">登录</a></li>
+                    <li><a href="register.html">注册</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </nav>
+    <div class="container project-team-container">
+        <div class="row">
+            
+            <div class="col-lg-9">
+                {block name="page-main"}
+
+                {/block}
+            </div>
+
+            <div class="col-lg-3">
+                {block name="page-right"}
+
+                {/block}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- <footer class="footer project-footer">
+        <div class="container">
+
+        </div>
+    </footer> -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="__JS__/jquery.min.js"></script>
+
+    <script>
+        window.jQuery || document.write('<script src="__JS__/jquery.min.js"><\/script>')
+    </script>
+    <script src="__JS__/jquery.ui.js"></script>
+    <script src="__JS__/bootstrap.min.js"></script>
+
+    <script src="__JS__/bootstrap-datetimepicker.min.js"></script>
+    <script src="__JS__/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="__LIB__/layer/layer.js"></script>
+    <script type="application/javascript">
+        function showMsg(msg) {
+            layer.msg(
+                msg, {
+                icon: 6,
+                time: 2000
+            })
+        }
+        function showErrorMsg(msg) {
+            layer.open({
+                title: "错误！",
+                content: msg,
+                icon: 5,
+                anim: 5
+            });
+        }
+    </script>
+
+    <!--<script src="__JS__/js/docs.min.js"></script>-->
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <!--<script src="__JS__/ie10-viewport-bug-workaround.js"></script>-->
+    {block name="page-js"}
+
+    {/block}
+</body>
+
+</html>

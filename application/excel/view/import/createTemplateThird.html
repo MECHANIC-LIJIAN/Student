@@ -1,0 +1,43 @@
+{extend name="public/base"}
+
+{block name="title"}完善模板信息{/block}
+
+{block name="page-main"}
+
+<ul class="tablist">
+    <li role="tab" class="disabled first" aria-disabled="true">
+        <a id="formWizard-t-0" aria-controls="formWizard-p-0"><span class="number">1</span> 编写方式</a>
+    </li>
+    <li role="tab" class="disabled second" aria-disabled="true">
+        <a id="formWizard-t-1" aria-controls="formWizard-p-1">
+            <span class="number">2</span> 内容添加
+        </a>
+    </li>
+    <li role="tab" class="current last" aria-disabled="false" aria-selected="true">
+        <a id="formWizard-t-2" aria-controls="formWizard-p-2"><span class="current-info audible">current
+                step: </span><span class="number">3</span>完成发布</a>
+    </li>
+</ul>
+<div class="form-horizontal">
+    <div class="project-first-step">
+        <p>您的采集模板已经创建成功，分享给大家吧！</p>
+        <input type="text" class="form-control" style="width: 60%;" value="{$shareUrl}" readonly id="textAreas" />
+        <a href="javascript:;" id="copy">复制</a>
+    </div>
+</div>
+{/block}
+
+{block name="page-js"}
+
+
+<script>
+    $("#copy").click(function () {
+        txt = $("#textAreas").val()
+        var e = document.getElementById("textAreas");
+        e.select(); // 选择对象 
+        document.execCommand("Copy"); // 执行浏览器复制命令 
+        showMsg("复制成功")
+    })
+
+</script>
+{/block}

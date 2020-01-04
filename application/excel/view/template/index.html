@@ -19,20 +19,20 @@
         <form id="input-excel" method="post" action="{:url('excel/Import/upload')}" enctype="multipart/form-data">
             <div class="form-horizontal row">
                 <!-- 输出input -->
-                {volist name="optionList" id='option'} {if $option.otype='p' AND count($option.child)==0}
+                {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)==0}
                 <div class="form-inline">
-                    <label for="{$option.ocontent}" class="col-sm-2 control-label">{$option.ocontent}</label>
-                    <input type="text" class="form-control" id="{$option.idInTable}">
+                    <label for="{$option.content}" class="col-sm-2 control-label">{$option.content}</label>
+                    <input type="text" class="form-control" id="{$option.sid}">
                 </div>
                 {/if} {/volist}
 
                 <!-- 输出select -->
-                {volist name="optionList" id='option'} {if $option.otype='p' AND count($option.child)>0}
+                {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)>0}
                 <div class="form-inline">
-                    <label for="{$option.ocontent}" class="col-sm-2 control-label">{$option.ocontent}</label>
+                    <label for="{$option.content}" class="col-sm-2 control-label">{$option.content}</label>
                     <select class="form-control">
                             {volist name="option.child" id="vo"}
-                            <option value ="{$option.idInTable}">{$vo.ocontent}</option>
+                            <option value ="{$option.sid}">{$vo.content}</option>
                             {/volist}
                     </select>
                 </div>

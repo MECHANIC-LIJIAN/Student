@@ -7,13 +7,13 @@ use think\Controller;
 
 class Template extends Controller
 {
-    public function index($id)
+    public function readTemplate($id)
     {
         $startTime = time(); //返回当前时间的Unix 时间戳
-        $template=model("Templates")->with('getoption')->where(['id'=>$id])->find()->toArray();
+        $template=model("Templates")->with('getoption')->where(['tid'=>$id])->find()->toArray();
         // dump($template['getoption']);
-        $optionList=getOptionList($template['getoption'], $pid='opid', $id='id');
+        $optionList=getOptionList($template['getoption'], $pid='pid', $id='sid');
         // dump($optionList);
-        // return $this->fetch('index', ['optionList'=>$optionList,'tname'=>$template['tname']]);
+        return $this->fetch('index', ['optionList'=>$optionList,'tname'=>$template['tname']]);
     }
 }

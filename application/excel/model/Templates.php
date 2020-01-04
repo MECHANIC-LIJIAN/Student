@@ -12,6 +12,6 @@ class Templates extends Model
 
     public function getoption()
     {
-        return $this->hasMany('TemplatesOption', 'tid', 'id');
+        return $this->hasMany('TemplatesOption', 'tid', 'tid');
     }
 }
