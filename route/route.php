@@ -27,8 +27,5 @@
         Route::rule('Third', 'excel/Import/createTemplateThird', 'GET|POST');
     });
     Route::rule('import', 'excel/Import/index', 'GET|POST');
-    
-
-
 
     Route::rule('readtemplate/[:id]', 'excel/Template/readTemplate', 'GET|POST');
