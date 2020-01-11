@@ -18,7 +18,7 @@ class Import extends Controller
         return view();
     }
 
-    public function createtemplatefirst()
+    public function createTemplateFirst()
     {
         return view();
     }
