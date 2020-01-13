@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\excel\controller;
+namespace app\admin\controller;
 
 use function Complex\add;
 use think\Controller;
