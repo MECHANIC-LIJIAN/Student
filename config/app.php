@@ -95,7 +95,7 @@ return [
     // URL参数方式 0 按名称成对解析 1 按顺序解析
     'url_param_type'         => 0,
     // 是否开启路由延迟解析
-    'url_lazy_route'         => true,
+    'url_lazy_route'         => false,
     // 是否强制使用路由
     'url_route_must'         => true,
     // 合并路由规则
