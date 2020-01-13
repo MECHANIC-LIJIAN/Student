@@ -26,6 +26,7 @@
         Route::rule('Second', 'excel/Import/createTemplateSecond', 'GET|POST');
         Route::rule('Third', 'excel/Import/createTemplateThird', 'GET|POST');
     });
+    Route::rule('upload', 'excel/Import/upload', 'GET|POST')->ext('do');
     Route::rule('import', 'excel/Import/index', 'GET|POST');
 
     Route::rule('readtemplate/[:id]', 'excel/Template/readTemplate', 'GET|POST');

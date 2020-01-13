@@ -18,7 +18,6 @@
     "require": {
         "php": ">=5.6.0",
         "topthink/framework": "5.1.*",
-        "phpoffice/phpexcel": "^1.8",
         "phpoffice/phpspreadsheet": "^1.8",
         "overtrue/pinyin": "~3.0"
     },
