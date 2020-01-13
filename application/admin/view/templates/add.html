@@ -1,0 +1,179 @@
+{include file="public/_head" /}
+<!-- Main Container -->
+<div class="main-container container-fluid">
+    <!-- Page Container -->
+    <div class="page-container">
+
+        <!-- Page Sidebar -->
+        {include file="public/_left" /}
+        <!-- /Page Sidebar -->
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Breadcrumb -->
+            <div class="page-breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <i class="fa fa-home"></i>&nbsp;文章管理
+                    </li>
+                    <li>文章添加</li>
+                </ul>
+            </div>
+            <!-- /Page Breadcrumb -->
+            <!-- Page Body -->
+            <div class="page-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="widget radius-bordered">
+                            <div class="widget-header bordered-bottom bordered-themeprimary">
+                                <span class="widget-caption">文章添加</span>
+                            </div>
+                            <div class="widget-body">
+                                <form action="" class="form-horizontal">
+
+                                    <div class="form-group">
+                                        <label for="title" class="control-label col-sm-2 no-padding-right">文章标题</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="title" name="title" placeholder="文章标题" />
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label for="tags" class="control-label col-sm-2 no-padding-right">文章标签</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="tags" name="tags" placeholder="文章标签" />
+                                            <span class="help-block">标签以|分隔</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="checkbox col-sm-offset-2 col-sm-2">
+                                            <label>
+                                                <input type="checkbox" name="is_top" value="1">
+                                                <span class="text">是否推荐</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="author" value="{$Request.session.admin['username']}"></input>
+                                    <div class="form-group">
+                                        <label for="cateid" class="control-label col-sm-2">所属栏目</label>
+                                        <div class="col-sm-6">
+                                            <select id="cateid" name="cateid" class="form-control">
+                									<option value="">请选择</option>
+                									{volist name="cates" id="vo"}
+                                                    <option value="{$vo.id}">{$vo.catename}</option>
+                                                    {/volist}
+                								</select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="desc" class="control-label col-sm-2">文章概要</label>
+                                        <div class="col-sm-6">
+                                            <textarea type="text" class="form-control" id="desc" cols="20" rows="3" name="desc" class="form-control" /></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div style="display:none" class="col-sm-6">
+                                            <textarea name="content" id="content" cols="40" rows="10" class=""></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="content" class="control-label col-sm-2">文章内容</label>
+                                        <div id="editor" class="col-sm-6">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-6">
+                                            <button type="submit" id="articleAdd" class="btn btn-primary">添加</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Container -->
+    <!-- Main Container -->
+
+</div>
+
+{include file="public/_footer" /}
+
+</body>
+<!--  /Body -->
+
+</html>
+<!-- 
+
+<script src="__LIB__/ueditor/ueditor.config.js"></script>
+<script src="__LIB__/ueditor/ueditor.all.js"></script>
+
+ -->
+
+<script>
+    $(function() {
+
+        // UE.getEditor('content');
+
+        $('#articleAdd').click(function() {
+
+            $.ajax({
+                url: "{:url('admin/Article/add')}",
+                type: 'post',
+                data: $('form').serialize(),
+                dataType: 'json',
+                success: function(data) {
+                    if (data.code == 1) {
+                        layer.msg(data.msg, {
+                            icon: 6,
+                            time: 2000
+                        }, function() {
+                            location.href = data.url;
+                        });
+                    } else {
+                        layer.open({
+                            title: "文章添加失败",
+                            content: data.msg,
+                            icon: 5,
+                            anim: 5
+                        })
+                    }
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+
+<script type="text/javascript" src="__LIB__/wangEditor/wangEditor.min.js"></script>
+<script type="text/javascript" src="__LIB__/wangEditor/wangEditor-fullscreen-plugin.js"></script>
+<link rel="stylesheet" href="__LIB__/wangEditor/wangEditor-fullscreen-plugin.css">
+<script type="text/javascript">
+    var E = window.wangEditor;
+    var editor = new E('#editor');
+
+    var $text1 = $('#content');
+    editor.customConfig.onchange = function(html) {
+        // 监控变化，同步更新到 textarea
+        $text1.val(html)
+    };
+
+    //绿色部分是对图片的设置，本地上传
+    editor.customConfig.debug = true;
+    editor.customConfig.uploadFileName = 'image'; //上传的文件名
+    // 或者 var editor = new E( document.getElementById('editor') )
+    editor.customConfig.uploadImgServer = "{:url('admin/Article/upload')}"; // 上传图片到服务器
+    editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024; //图片的尺寸
+    editor.customConfig.uploadImgMaxLength = 5; //最多上传多少
+
+    editor.create();
+    E.fullscreen.init('#editor');
+    $text1.val(editor.txt.html())
+</script>

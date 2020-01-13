@@ -1,0 +1,121 @@
+<!--head-->
+{include file="public/_head"}
+<!--head-->
+
+<!-- Main Container -->
+<div class="main-container container-fluid">
+    <!-- Page Container -->
+    <div class="page-container">
+
+        {include file="public/_left"}
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Breadcrumb -->
+            <div class="page-breadcrumbs">
+                <ul class="breadcrumb">
+                    <li class="active">
+                        <i class="fa fa-home"></i>&nbsp;管理员管理
+                    </li>
+                    <li>
+                        管理员修改
+                    </li>
+                </ul>
+            </div>
+            <!-- /Page Breadcrumb -->
+            <!-- Page Body -->
+            <div class="page-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="widget radius-bordered">
+                            <div class="widget-header bordered-bottom bordered-themeprimary">
+                                <span class="widget-caption">管理员修改</span>
+                            </div>
+                            <div class="widget-body">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <input type="hidden" id="id" name="id" value="{$adminInfo.id}" />
+                                        <label for="username" class="col-sm-2 control-label no-padding-right">管理员账号</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="username" name="username" placeholder="管理员账号" value="{$adminInfo.username}" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email" class="col-sm-2 control-label no-padding-right">邮箱</label>
+                                        <div class="col-sm-6">
+                                            <input type="email" class="form-control" id="email" name="email" placeholder="邮箱" value="{$adminInfo.email}" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="create_time" class="col-sm-2 control-label no-padding-right">注册时间</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" disabled="disabled" class="form-control" id="create_time" name="create_time" value="{$adminInfo.create_time}" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password" class="col-sm-2 control-label no-padding-right">管理员密码</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="password" name="password" placeholder="管理员密码" value="{$adminInfo.password}" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-primary" name="adminEdit" id="adminEdit">保存修改</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Container -->
+    <!-- Main Container -->
+
+</div>
+<!-- footer -->
+{include file="public/_footer"}
+<!--  /footer -->
+</body>
+<!--  /Body -->
+
+</html>
+
+<script>
+    $(function() {
+
+        $("#adminEdit").click(function() {
+            $.ajax({
+                url: "{:url('admin/Admin/Edit')}",
+                type: 'post',
+                data: $("form").serialize(),
+                dataType: 'json',
+                success: function(data) {
+                    if (data.code == 1) {
+                        layer.msg(data.msg, {
+                            icon: 6,
+                            time: 2000
+                        }, function() {
+                            location.href = data.url;
+                        });
+                    } else {
+                        layer.open({
+                            title: '修改失败',
+                            content: data.msg,
+                            icon: 5,
+                            anim: 5
+                        })
+                    }
+                }
+            });
+
+            return false;
+        });
+
+    });
+</script>

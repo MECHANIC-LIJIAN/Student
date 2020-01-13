@@ -34,35 +34,83 @@
 </head>
 
 <body>
-
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                    aria-expanded="false" aria-controls="navbar">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">MySite</a>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="navbar-container">
+                <!-- Navbar Barnd -->
+                <div class="navbar-header pull-left">
+                    <a href="#" class="navbar-brand">
+                        <small style="line-height: 40px;">管理后台</small>
+                    </a>
+                </div>
+                <!-- /Navbar Barnd -->
+                <!-- Sidebar Collapse -->
+                <div class="sidebar-collapse" id="sidebar-collapse">
+                    <i class="collapse-icon fa fa-bars"></i>
+                </div>
+                <!-- /Sidebar Collapse -->
+                <!-- Account Area and Settings --->
+                <div class="navbar-header pull-right">
+                    <div class="navbar-account">
+                        <ul class="account-area">
+                            <li>
+                                <a class="login-area dropdown-toggle" data-toggle="dropdown">
+                                    <div class="avatar" title="View your public profile">
+                                        <img src="__IMG__/logo.jpg">
+                                    </div>
+                                    <section style="min-width:70px">
+                                        <h2><span class="profile"><span>{:session('admin.username')}</span></span>
+                                        </h2>
+                                    </section>
+                                </a>
+                                <!--Login Area Dropdown-->
+                                <ul class="pull-right dropdown-menu dropdown-arrow dropdown-login-area">
+                                    <li class="username"><a>LIJIAN</a></li>
+                                    <li class="email"><a>lijianwzx@163.com</a></li>
+                                    <!--Avatar Area-->
+                                    <li>
+                                        <div class="avatar-area">
+                                            <img src="__IMG__/logo.jpg" class="avatar">
+                                            <span class="caption">个人头像</span>
+                                        </div>
+                                    </li>
+                                    <!--Avatar Area-->
+                                    <li class="edit">
+                                        <a href="profile.html" class="pull-left">个人资料</a>
+                                        <a href="#" class="pull-right">个人设置</a>
+                                    </li>
+                                  
+                                    <li class="dropdown-footer">
+                                        <a href="#" id="loginout">退出</a>
+                                    </li>
+                                </ul>
+                                <!--/Login Area Dropdown-->
+                            </li>
+                        </ul>
+                        <div class="setting">
+                            <a id="btn-setting" title="Setting" href="#">
+                                <i class="icon glyphicon glyphicon-cog"></i>
+                            </a>
+                        </div>
+                        <div class="setting-container">
+                            <label>
+                                <input type="checkbox" id="checkbox_fixednavbar">
+                                <span class="text">头部固定</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" id="checkbox_fixedsidebar">
+                                <span class="text">菜单固定</span>
+                            </label>
+                        </div>
+                        <!-- Settings -->
+                    </div>
+                </div>
+                <!-- /Account Area and Settings -->
             </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="index.html">首页</a></li>
-                    <li><a href="project.html">项目</a></li>
-                    <li><a href="team.html">团队</a></li>
-                    <li><a href="blog.html">博客</a></li>
-                    <li><a href="answer.html">问答</a></li>
-                </ul>
-                <ul class="nav navbar-nav  navbar-right">
-                    <li><a href="login.html">登录</a></li>
-                    <li><a href="register.html">注册</a></li>
-                </ul>
-            </div>
-            <!--/.nav-collapse -->
         </div>
-    </nav>
+    </div>
+    <!-- /Navbar -->
     <div class="container project-team-container">
         <div class="row">
             

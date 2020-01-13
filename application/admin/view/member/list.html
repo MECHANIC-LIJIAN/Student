@@ -1,0 +1,249 @@
+{include file="public/_head" /}
+<!-- Main Container -->
+<div class="main-container container-fluid">
+    <!-- Page Container -->
+    <div class="page-container">
+
+        <!-- Page Sidebar -->
+        {include file="public/_left" /}
+        <!-- /Page Sidebar -->
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Breadcrumb -->
+            <div class="page-breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <i class="fa fa-home"></i>&nbsp;会员管理
+                    </li>
+                    <li>添加会员</li>
+                </ul>
+
+            </div>
+            <!-- /Page Breadcrumb -->
+            <!-- Page Body -->
+            <div class="page-body">
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="widget radius-bordered">
+                            <a href="memberadd.html" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;添加会员</a>
+                            <div id="table1">
+                                <table id="table" name="table" class="table table-striped table-hover table-bordered"></table>
+                                <input type="hidden" id="memberid" name="memberid">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Container -->
+    <!-- Main Container -->
+
+</div>
+{include file="public/_footer" }
+</body>
+<!--  /Body -->
+
+</html>
+<link rel="stylesheet" href="__LIB__/bootstrap-table/bootstrap-table.min.css">
+<script src="__LIB__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__LIB__/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+
+
+<script>
+    $(function() {
+        //1.初始化Table
+        var oTable = new TableInit();
+        oTable.Init();
+
+        //2.初始化Button的点击事件
+        // var oButtonInit = new ButtonInit();
+        // oButtonInit.Init();
+    });
+
+    var TableInit = function() {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function() {
+            $("#table").bootstrapTable('destroy'); //避免重复执行，需要销毁
+            $("#table").bootstrapTable({
+                url: "memberlist",
+                method: "post", //请求方式（*）
+                toolbar: "#toolbar", //工具按钮用哪个容器
+                striped: false, //是否显示行间隔色
+                cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true, //是否显示分页（*）
+                queryParams: oTableInit.queryParams, //传递参数（*）
+                sidePagination: "server", //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1, //初始化加载第一页，默认第一页
+                pageSize: 15, //每页的记录行数（*）
+                pageList: [15, 25, 35], //可供选择的每页的行数（*）
+                search: true, //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                showColumns: true, //是否显示所有的列
+                showRefresh: true, //是否显示刷新按钮
+                minimumCountColumns: 2, //最少允许的列数
+                clickToSelect: true, //是否启用点击选中行
+                height: 750, //如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID", //每一行的唯一标识，一般为主键列
+                detailView: false, //是否显示父子表
+                columns: [{
+                    title: "序号",
+                    field: "number",
+                    align: "center",
+                    colspan: 1,
+                    width: 10,
+                    formatter: function(value, row, index) {
+                        var pageSize = $("#table").bootstrapTable("getOptions").pageSize; //通过table的#id 得到每页多少条
+                        var pageNumber = $("#table").bootstrapTable("getOptions").pageNumber; //通过table的#id 得到当前第几页
+                        return pageSize * (pageNumber - 1) + index + 1; // 返回每条的序号： 每页条数 *（当前页 - 1 ）+ 序号
+                    }
+                }, {
+                    field: "id",
+                    title: "会员id",
+                    colspan: 1,
+                    width: 10
+                }, {
+                    field: "username",
+                    title: "用户名",
+                    colspan: 1,
+                    width: 50,
+                    searchable: true
+                }, {
+                    field: "email",
+                    title: "邮箱",
+                    colspan: 1,
+                    width: 80
+                }, {
+                    field: "status",
+                    title: "用户状态",
+                    colspan: 1,
+                    width: 50,
+                    formatter: statusFormatter
+                }, {
+                    field: "create_time",
+                    title: "注册时间",
+                    colspan: 1,
+                    width: 60
+
+                }, {
+                    field: "update_time",
+                    title: "修改时间",
+                    colspan: 1,
+                    width: 60
+
+                }, {
+                    field: "operate",
+                    title: "操作",
+                    colspan: 1,
+                    width: 200,
+                    events: operateEvents,
+                    formatter: actionFormatter
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function(params) {
+            var temp = {
+                //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                limit: params.limit, //页面大小
+                offset: params.offset
+            };
+            return temp;
+
+        };
+
+        return oTableInit;
+    };
+
+    // var ButtonInit = function() {
+    //     var oInit = new Object();
+    //     var postdata = {};
+
+    //     oInit.Init = function() {
+    //         //初始化页面上面的按钮事件
+    //     };
+
+    //     return oInit;
+    // };
+    //操作栏的格式化
+    function actionFormatter(row) {
+        var rows = $('#table').bootstrapTable('getData')
+        return [
+            '<a class="btn btn-sm btn-warning">修改</a>',
+            '<a class="btn btn-sm btn-danger">删除</a>',
+        ];
+
+    }
+
+    function statusFormatter(value, row, index) {
+        var status = value;
+        var result = "";
+        if (value == 1) {
+            result = "启用";
+        } else {
+            result = '<p style="color:red;">禁用</p>';
+        }
+
+        return result;
+    }
+    var index = parent.layer.getFrameIndex(window.name);
+    window.operateEvents = {
+        'click .btn-warning': function(e, value, row, index) {
+            var id = row.id;
+
+            layer.open({
+                type: 2,
+                title: '编辑用户信息',
+                area: ['800px', '500px'],
+                scrollbar: false, //禁止浏览器滚动
+                content: 'memberedit?id=' + id,
+                end: function() {
+                    $("#table").bootstrapTable('refresh');
+                }
+            });
+
+            // window.location.href = "memberedit?id=" + id;
+        },
+        'click .btn-danger': function(e, value, row, index) {
+            var id = row.id;
+            layer.confirm('确定删除吗？', {
+                title: '删除用户',
+                icon: 3
+            }, function(index) {
+                layer.close(index);
+                $.ajax({
+                    url: "memberdel",
+                    type: 'post',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.code == 1) {
+                            layer.msg(data.msg, {
+                                icon: 6,
+                                time: 2000
+                            }, function() {
+                                location.href = data.url;
+                            });
+                        } else {
+                            layer.open({
+                                title: '删除用户失败！',
+                                content: data.msg,
+                                icon: 5,
+                                anim: 5
+                            });
+                        }
+                    }
+                });
+            });
+
+        }
+    };
+</script>

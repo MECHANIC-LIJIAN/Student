@@ -9,24 +9,43 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+Route::rule('fill/:id', 'admin/Template/readTemplate', 'GET|POST');
+Route::group('createTemplate', function () {
+    Route::rule('First', 'admin/Import/createTemplateFirst', 'GET|POST');
+    Route::rule('Second', 'admin/Import/createTemplateSecond', 'GET|POST');
+    Route::rule('Third', 'admin/Import/createTemplateThird', 'GET|POST');
+});
+Route::rule('upload', 'admin/Import/upload', 'GET|POST')->ext('do');
+Route::rule('import', 'admin/Import/index', 'GET|POST');
 
-    Route::rule('/', 'index/index/index', 'GET|POST');
-    // 动态注册域名的路由规则
-    Route::rule('excel', 'excel/Excel/excel', 'GET|POST');
-    Route::rule('importExcel', 'excel/OutExcel/index', 'GET|POST');
-    Route::rule('importChaxun', 'excel/Excel/importChaxun', 'GET|POST');
-    Route::rule('reset', 'excel/Excel/reset', 'GET|POST');
-    Route::rule('unique', 'excel/Excel/unique', 'GET|POST');
+//后台路由
+Route::group(
+    'admin',
+    function () {
+        Route::rule('/', 'admin/Index/login', 'GET|POST');
+        Route::rule('register', 'admin/Index/register', 'GET|POST');
+        Route::rule('checkid/', 'admin/Index/checkid/', 'GET|POST');
+        Route::rule('forget', 'admin/Index/forget', 'GET|POST');
+        Route::rule('reset', 'admin/Index/reset', 'POST');
 
-    Route::rule('getinfo', 'excel/GetInfo/index', 'GET|POST');
-    
-    Route::rule('fill/:id', 'admin/Template/readTemplate', 'GET|POST');
-    Route::group('createTemplate', function () {
-        Route::rule('First', 'admin/Import/createTemplateFirst', 'GET|POST');
-        Route::rule('Second', 'admin/Import/createTemplateSecond', 'GET|POST');
-        Route::rule('Third', 'admin/Import/createTemplateThird', 'GET|POST');
-    });
-    Route::rule('upload', 'admin/Import/upload', 'GET|POST')->ext('do');
-    Route::rule('import', 'admin/Import/index', 'GET|POST');
+        Route::rule('home', 'admin/Home/index', 'GET|POST');
+        Route::rule('logout', 'admin/Home/logout', 'POST');
 
-    
+        Route::rule('templateList', 'admin/Templates/list', 'GET|POST');
+        Route::rule('templateDel/[:id]', 'admin/Templates/del', 'POST');
+
+        
+        #用户
+        Route::rule('memberList', 'admin/Member/list', 'GET|POST');
+        Route::rule('memberEdit', 'admin/Member/edit', 'GET|POST');
+        Route::rule('memberAdd', 'admin/Member/add', 'GET|POST');
+        Route::rule('memberDel', 'admin/Member/del', 'GET|POST');
+        #管理员
+        Route::rule('adminList', 'admin/Admin/list', 'GET');
+        Route::rule('adminAdd', 'admin/Admin/add', 'GET|POST');
+        Route::rule('adminStatus', 'admin/Admin/status', 'POST');
+        Route::rule('adminEdit/[:id]', 'admin/Admin/edit', 'GET|POST');
+        Route::rule('adminDel', 'admin/Admin/del', 'GET|POST');
+
+    }
+);

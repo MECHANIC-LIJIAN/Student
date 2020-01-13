@@ -1,0 +1,165 @@
+<!--head-->
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>{block name="title"}管理后台{/block}</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link href="__CSS__/bootstrap.min.css" rel="stylesheet" />
+    <link href="__CSS__/font-awesome.min.css" rel="stylesheet" />
+    <link href="__CSS__/weather-icons.min.css" rel="stylesheet" />
+    <link id="beyond-link" href="__CSS__/beyond.min.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="navbar-container">
+                <!-- Navbar Barnd -->
+                <div class="navbar-header pull-left">
+                    <a href="#" class="navbar-brand">
+                        <small style="line-height: 40px;">管理后台</small>
+                    </a>
+                </div>
+                <!-- /Navbar Barnd -->
+                <!-- Sidebar Collapse -->
+                <div class="sidebar-collapse" id="sidebar-collapse">
+                    <i class="collapse-icon fa fa-bars"></i>
+                </div>
+                <!-- /Sidebar Collapse -->
+                <!-- Account Area and Settings --->
+                <div class="navbar-header pull-right">
+                    <div class="navbar-account">
+                        <ul class="account-area">
+                            <li>
+                                <a class="login-area dropdown-toggle" data-toggle="dropdown">
+                                    <div class="avatar" title="View your public profile">
+                                        <img src="__IMG__/logo.jpg">
+                                    </div>
+                                    <section style="min-width:70px">
+                                        <h2><span class="profile"><span>{:session('admin.username')}</span></span>
+                                        </h2>
+                                    </section>
+                                </a>
+                                <!--Login Area Dropdown-->
+                                <ul class="pull-right dropdown-menu dropdown-arrow dropdown-login-area">
+                                    <li class="username"><a>LIJIAN</a></li>
+                                    <li class="email"><a>lijianwzx@163.com</a></li>
+                                    <!--Avatar Area-->
+                                    <li>
+                                        <div class="avatar-area">
+                                            <img src="__IMG__/logo.jpg" class="avatar">
+                                            <span class="caption">个人头像</span>
+                                        </div>
+                                    </li>
+                                    
+                                    <li class="dropdown-footer">
+                                        <a href="#" id="loginout">退出</a>
+                                    </li>
+                                </ul>
+                                <!--/Login Area Dropdown-->
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- /Account Area and Settings -->
+            </div>
+        </div>
+    </div>
+    <!-- /Navbar -->
+<!--head-->
+
+<!-- Main Container -->
+<div class="main-container container-fluid">
+    <!-- Page Container -->
+    <div class="page-container">
+        <!--left-->
+        {include file="public/_left"}
+        <!--left-->
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Breadcrumb -->
+            <div class="page-breadcrumbs">
+                <ul class="breadcrumb">
+                    <li class="active">
+                        <i class="fa fa-home"></i>&nbsp;{block name="page-breadcrumb"}控制面板{/block}
+                    </li>
+                </ul>
+            </div>
+            <!-- /Page Breadcrumb -->
+            <!-- Page Body -->
+            <div class="page-body">
+                {block name="page-main"}
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="well bordered-left bordered-themeprimary">
+                            <h1 style="font-weight: 900!important;font-style: italic;text-shadow: 5px 5px 5px #ff0000;font-family: '新宋体'">
+                                欢迎使用后台管理系统！
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        
+                        <div class="well with-header with-footer">
+                            <div class="header bg-themeprimary">
+                                服务器信息
+                            </div>
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">服务器信息</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>服务器域名</td>
+                                        <td>{$Request.domain}/</td>
+                                    </tr>
+                                    <tr>
+                                        <td>服务器IP地址</td>
+                                        <td>{$Request.ip}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>服务器端口</td>
+                                        <td>{$Request.port}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>联系邮箱</td>
+                                        <td>lijianwzx@163.com</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="footer"></div>
+                        </div>
+                       
+                    </div>
+                </div>
+                {/block}
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Container -->
+    <!-- Main Container -->
+
+</div>
+<!-- footer -->
+{include file="public/_footer"}
+
+{block name="page-js"}{/block}
+<!--  /footer -->
+</body>
+<!--  /Body -->
+
+
+</html>

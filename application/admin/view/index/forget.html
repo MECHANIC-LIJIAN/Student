@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>忘记密码</title>
+    <link rel="shortcut icon" href="__IMG__/logo.jpg" type="image/x-icon" />
+    <link href="__CSS__/bootstrap.min.css" rel="stylesheet" />
+    <link href="__CSS__/font-awesome.min.css" rel="stylesheet" />
+    <link href="__CSS__/weather-icons.min.css" rel="stylesheet" />
+    <link id="beyond-link" href="__CSS__/beyond.min.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="loginbox bg-white">
+            <form>
+                <div class="loginbox-title">忘记密码？</div>
+
+                <div class="loginbox-or">
+                    <div class="or-line"></div>
+                </div>
+                <div class="loginbox-textbox">
+                    <input type="email" class="form-control" name="email" placeholder="请输入注册邮箱" />
+                </div>
+                <div class="loginbox-textbox hidden">
+                    <input type="text" class="form-control" name="code" placeholder="验证码" />
+                </div>
+                <div class="loginbox-submit">
+                    <input id="sendCode" type="submit" class="btn btn-primary btn-block" value="发送验证码" />
+                </div>
+
+                <div class="loginbox-textbox hidden">
+                    <input type="password" class="form-control" name="password" placeholder="请输入新密码" />
+                </div>
+                <div class="loginbox-textbox hidden">
+                    <input type="password" class="form-control" name="conpass" placeholder="再次输入新密码" />
+                </div>
+                <div class="loginbox-submit hidden">
+                    <input name="reset" id="reset" type="submit" class="btn btn-primary btn-block" value="重置密码" />
+                </div>
+                <div class="loginbox-signup">
+                    <a href="{:url('admin/Index/login')}">返回登录</a>
+                </div>
+                {:token()}
+            </form>
+        </div>
+        <div class="logobox">
+            <p class="text-center" style="font-size: 18px;font-weight: bold;text-shadow: 3px 3px 3px #FF0000;font-style: italic;">
+                admin
+            </p>
+        </div>
+    </div>
+
+    <script src="__JS__/skins.js"></script>
+    <!--Basic Scripts-->
+    <script src="__JS__/jquery.min.js"></script>
+    <script src="__JS__/bootstrap.min.js"></script>
+    <script src="__JS__/slimscroll/jquery.slimscroll.min.js"></script>
+    <!-- layer -->
+    <script src="__LIB__/layer/layer.js"></script>
+    <!--Beyond Scripts-->
+    <script src="__JS__/beyond.js"></script>
+    <script>
+        $(window).bind("load", function() {
+            /*Sets Themed Colors Based on Themes*/
+            themeprimary = getThemeColorFromCss("themeprimary");
+            themesecondary = getThemeColorFromCss("themesecondary");
+            themethirdcolor = getThemeColorFromCss("themethirdcolor");
+            themefourthcolor = getThemeColorFromCss("themefourthcolor");
+            themefifthcolor = getThemeColorFromCss("themefifthcolor");
+        });
+
+        $(function() {
+            $("#sendCode").click(function() {
+                $.ajax({
+                    url: "{:url('admin/index/forget')}",
+                    type: 'post',
+                    data: $("form").serialize(),
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.code == 1) {
+                            layer.msg(data.msg, {
+                                icon: 6,
+                                time: 2000
+                            }, function() {
+                                $('[name=email]').parent().addClass('hidden');
+                                $('[name=code]').parent().removeClass('hidden');
+                                $('#sendCode').parent().addClass('hidden');
+                                $('#reset').parent().removeClass('hidden');
+                                $('[name=password]').parent().removeClass('hidden');
+                                $('[name=conpass]').parent().removeClass('hidden');
+
+                            });
+                        } else {
+                            layer.open({
+                                title: '验证码发送失败',
+                                content: data.msg,
+                                icon: 5,
+                            });
+                        }
+
+
+                    }
+                })
+                return false;
+            });
+        });
+
+        $(function() {
+            $("#reset").click(function() {
+                $.ajax({
+                    url: "{:url('admin/index/reset')}",
+                    type: 'post',
+                    data: $("form").serialize(),
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.code == 1) {
+                            layer.msg(data.msg, {
+                                icon: 6,
+                                time: 2000
+                            }, function() {
+                                location.href = data.url;
+                            });
+                        } else {
+                            layer.open({
+                                title: '密码重置失败',
+                                content: data.msg,
+                                icon: 5,
+                            });
+                        }
+                    }
+                })
+                return false;
+            });
+        });
+    </script>
+</body>
+<!--  /Body -->
+
+</html>

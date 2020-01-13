@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>管理后台</title>
+    <link rel="shortcut icon" href="__IMG__/logo.jpg" type="image/x-icon" />
+    <link href="__CSS__/bootstrap.min.css" rel="stylesheet" />
+    <link href="__CSS__/font-awesome.min.css" rel="stylesheet" />
+    
+    <link id="beyond-link" href="__CSS__/beyond.min.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="loginbox bg-white">
+            <form>
+                <div class="loginbox-title">登录</div>
+
+                <div class="loginbox-or">
+                    <div class="or-line"></div>
+                </div>
+                <div class="loginbox-textbox">
+                    <input type="text" class="form-control" name="username" placeholder="用户名" />
+                </div>
+                <div class="loginbox-textbox">
+                    <input type="password" class="form-control" name="password" placeholder="密码" />
+                </div>
+                <!-- <div class="loginbox-forgot">
+                    <a href="{:url('admin/Index/forget')}">忘记密码?</a>
+                </div> -->
+                <div class="loginbox-submit">
+                    <input id="login" type="button" class="btn btn-primary btn-block" value="登录" />
+                </div>
+                <!-- <div class="loginbox-signup">
+                    <a href="{:url('admin/Index/register')}">注册账户</a>
+                </div> -->
+            </form>
+        </div>
+        <div class="logobox">
+            <p class="text-center" style="font-size: 18px;font-weight: bold;text-shadow: 3px 3px 3px #FF0000;font-style: italic;">
+                admin
+            </p>
+        </div>
+    </div>
+
+
+    <!--Basic Scripts-->
+    <script src="__JS__/jquery.min.js"></script>
+    <script src="__JS__/bootstrap.min.js"></script>
+    
+    <!-- layer -->
+    <script src="__LIB__/layer/layer.js"></script>
+    <!--Beyond Scripts-->
+    <script src="__JS__/beyond.js"></script>
+    <script>
+
+        $(function() {
+
+            $("#login").click(function() {
+                $.ajax({
+                    url: "{:url('admin/index/login')}",
+                    type: 'post',
+                    data: $("form").serialize(),
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.code == 1) {
+                            layer.msg(data.msg, {
+                                icon: 6,
+                                time: 2000
+                            }, function() {
+                                location.href = data.url;
+                            });
+                        } else {
+                            layer.open({
+                                title: '登陆失败',
+                                content: data.msg,
+                                icon: 5,
+                                anim: 5
+                            })
+                        }
+                    }
+                })
+            });
+            return false;
+        });
+    </script>
+</body>
+<!--  /Body -->
+
+</html>

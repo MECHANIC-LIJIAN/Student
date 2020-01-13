@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="__CSS__/bootstrap.min.css" />
+
+<div class="container col-xs-offset-1">
+
+    <form class="form-horizontal">
+        <input type="hidden" id="id" name="id" value="{$memberInfo.id}" />
+        <div class="form-group row-sm-3">
+            <label for="username" class="col-sm-2 control-label no-padding-right">用户名</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="username" name="username" placeholder="用户名" value="{$memberInfo.username}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email" class="col-sm-2 control-label no-padding-right">邮箱</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="email" name="email" placeholder="邮箱" value="{$memberInfo.email}" disabled="true" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password" class="col-sm-2 control-label no-padding-right">密码</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="password" name="password" placeholder="密码" value="{$memberInfo.password}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="status" class="col-sm-2 control-label no-padding-right">是否禁用</label>
+            <div class="col-sm-6 ">
+                <input type="checkbox" id="status" name="status" {if $memberInfo.status==0}checked{/if} value="0" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-offset-4 col-xs-1 ">
+                <button class="btn btn-primary" id="memberEdit">保存</button>
+            </div>
+            <div class="col-xs-1 ">
+                <button class="btn btn-default" id="restore">还原</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script src="__JS__/jquery.min.js "></script>
+<script src="__JS__/bootstrap.min.js "></script>
+<script>
+    $("#save").click(function() {
+        $("#editUser").submit();
+        parent.location.reload();
+        //parent.layer.close(iframe);//如果执行这一步，会导致submit无法提交到服务器，这里用刷新页面使弹窗关闭
+    })
+
+    $("#memberEdit").click(function() {
+        $.ajax({
+            url: "memberedit ",
+            type: "post",
+            data: $("form").serialize(),
+            dataType: "json ",
+            success: function(data) {
+                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                if (data.code == 1) {
+                    parent.layer.msg("用户信息更新成功!", {
+                        icon: 1,
+                        time: 1000,
+                        offset: '12px',
+                        closeBtn: 1
+                    }, function() {
+                        parent.layer.close(index); // 关闭layer
+                    });
+                } else {
+                    layer.open({
+                        title: "用户编辑失败 ",
+                        content: data.msg,
+                        icon: 5,
+                    });
+                }
+            }
+        });
+
+        return false;
+    });
+
+    $("#restore ").click(function() {
+        window.location.reload();
+    });
+</script>
