@@ -115,23 +115,26 @@
             <h2>{$tname}</h2>
         </caption>
         <tbody>
-            {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)==0}
+            {volist name="optionList" id='option'} 
+            {if $option.type='p' AND count($option.child)==0}
             <tr>
-                <td><label for="{$option.content}" class="col-sm-10 control-label">{$option.content}</label></td>
+                <td><label for="{$option.title}" class="col-sm-10 control-label">{$option.title}</label></td>
                 <td><input type="text" class="form-control" name="{$option.sid}"></td>
-                {/if}
-            </tr>{/volist}
+                
+            </tr>
+            {/if}
+            {/volist}
             <!-- 输出select -->
             {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)>0}
             <tr>
-                <td><label for="{$option.content}" class="col-sm-10 control-label">{$option.content}</label></td>
+                <td><label for="{$option.title}" class="col-sm-10 control-label">{$option.title}</label></td>
                 <td><select class="form-control">
                         {volist name="option.child" id="vo"}
-                        <option name="{$option.sid}">{$vo.content}</option>
+                        <option name="{$option.sid}">{$vo.title}</option>
                         {/volist}
                     </select></td>
-                {/if}
-            </tr>{/volist}
+                
+            </tr>{/if}{/volist}
         </tbody>
     </table>
 </div>
@@ -148,17 +151,17 @@
         <div class="useXH hidden">
             <h4>是否使用学号对照</h4>
             <label>
-                <input type="radio" name="ifUseXH" id="ifUseXH" class="a-radio" value="yes" checked>
+                <input type="radio" name="ifUseXH" class="a-radio" value="yes" checked>
                 <span class="b-radio"></span>使用
             </label>
 
             <label>
-                <input type="radio" name="ifUseXH" id="ifUseXH" class="a-radio" value="no">
+                <input type="radio" name="ifUseXH" class="a-radio" value="no">
                 <span class="b-radio"></span>不使用
             </label>
         </div>
     </form>
-    <button class="btn project-btn init" type="button"><span class="fa fa-table"></span> 初始化模板</button>
+    <button class="btn project-btn initTemplate" type="button"><span class="fa fa-table"></span> 初始化模板</button>
     <a href="{:url('excel/Import/createTemplateThird')}"><button class="btn project-btn next" type="button">下一步</button></a>
 </div>
 
@@ -176,7 +179,7 @@
                 }
             })
 
-            $(".init").click(function () {
+            $(".initTemplate").click(function () {
                 $.ajax({
                     method: "post",
                     url: "{:url('excel/import/createtemplateSecond')}",

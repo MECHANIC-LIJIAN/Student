@@ -1,6 +1,6 @@
 <?php
 
-namespace app\excel\controller;
+namespace app\admin\controller;
 
 use Env;
 use Overtrue\Pinyin\Pinyin;
@@ -29,7 +29,7 @@ class Import extends Controller
         $tname = Request::param('tname');
         // $user=Request::param('user');
 
-        $validate = new \app\excel\validate\Import;
+        $validate = new \app\admin\validate\Import;
         if (!$validate->scene('upload')->check(['tname' => $tname, 'template' => $file])) {
             $this->error($validate->getError());
         }
@@ -63,70 +63,33 @@ class Import extends Controller
      */
     public function createTemplateSecond()
     {
-        $tInfo = session('tInfo');
-        $data = readExcel($tInfo['filePath']);
-        end($data);
-        $finalKey = key($data);
-        
-        $optionList = array();
-        $tableField = array();
-        $pinyin = new Pinyin();
-
-        for ($col = 'A'; $col != $finalKey; $col++) {
-            $option = 'option_' . $col;
-            for ($row = 1; $row <= count($data[$col]); $row++) {
-                $tmp = array();
-                if ($row == 1) {
-                    $tmp['tid'] = $tInfo['tId'];
-                    $tmp['pid'] = '0';
-                    $tmp['sid'] = $option;
-                    $tmp['type'] = 'p';
-                    $tmp['content'] = $data[$col][$row];
-                    $abbr = $pinyin->abbr($data[$col][1]);
-                    $tableField[$option] = $data[$col][1];
-                } else {
-                    $tmp['tid'] = $tInfo['tId'];
-                    $tmp['pid'] = $option;
-                    $tmp['sid'] = $option . "_" . $row;
-                    $tmp['type'] = 'c';
-                    $tmp['content'] = $data[$col][$row];
-                }
-                $optionList[] = $tmp;
-            }
-        }
-
-        session('optionList', $optionList);
-        $optionList = getOptionList($optionList, $pid = 'pid', $id = 'sid');
-        dump($optionList);
-        return $this->fetch('create_template_second', ['optionList' => $optionList, 'tname' => $tInfo['tName'], 'tableField' => $tableField]);
 
         if (request()->isAjax()) {
 
             $tInfo = session('tInfo');
             $data = session("optionList");
 
-            $pinyin = new Pinyin();
-
+            
             $template = model('templates')
                 ->where('tid', $tInfo['tId'])
                 ->find();
 
             if ($template['status'] == '1') {
                 $this->error("模板已经初始化，不可更改");
-            } else {
-                $pinyin = new Pinyin();
-                $template = new \app\excel\model\Templates;
-                $template->tid = $tInfo['tId'];
-                $template->tuser = $tInfo['user'];
-                $template->tname = $tInfo['tName'];
-                $template->tfilename = $tInfo['fileName'];
-                $template->tfilepath = $tInfo['filePath'];
-                $template->tabbr = $pinyin->abbr($tInfo['tName']);
-                $template->status = '1';
-                $template->primaryKey = input('post.primaryKey');
-                $template->ifUseXh = input('post.ifUseXH');
-                $template->save();
             }
+            $pinyin = new Pinyin();
+            $template = new \app\admin\model\Templates;
+            $template->tid = $tInfo['tId'];
+            $template->tuser = $tInfo['user'];
+            $template->tname = $tInfo['tName'];
+            $template->tfilename = $tInfo['fileName'];
+            $template->tfilepath = $tInfo['filePath'];
+            $template->tabbr = $pinyin->abbr($tInfo['tName']);
+            $template->status = '1';
+            $template->primaryKey = input('post.primaryKey');
+            $template->ifUseXh = input('post.ifUseXH');
+            $res = $template->save();
+
             $res2 = model("TemplatesOption")->isUpdate(false)->saveAll($data);
             Db::name("templates_sum")->where('id', 1)->setInc('count');
             if ($res2) {
@@ -136,11 +99,48 @@ class Import extends Controller
             }
         }
 
+        $tInfo = session('tInfo');
+        $data = readExcel($tInfo['filePath']);
+        end($data);
+        $finalKey = key($data);
+
+        $optionList = array();
+        $tableField = array();
+        $pinyin = new Pinyin();
+
+        for ($col = 'A'; $col <= $finalKey; $col++) {
+            $option = 'option_' . $col;
+            for ($row = 1; $row <= count($data[$col]); $row++) {
+                $tmp = array();
+                if ($row == 1) {
+                    $tmp['tid'] = $tInfo['tId'];
+                    $tmp['pid'] = '0';
+                    $tmp['sid'] = $option;
+                    $tmp['type'] = 'p';
+                    $tmp['title'] = $data[$col][$row];
+                    $abbr = $pinyin->abbr($data[$col][1]);
+                    $tableField[$option] = $data[$col][1];
+                } else {
+                    $tmp['tid'] = $tInfo['tId'];
+                    $tmp['pid'] = $option;
+                    $tmp['sid'] = $option . "_" . $row;
+                    $tmp['type'] = 'c';
+                    $tmp['title'] = $data[$col][$row];
+                }
+                $optionList[] = $tmp;
+            }
+        }
+
+        session('optionList', $optionList);
+        $optionList = getOptionList($optionList, $pid = 'pid', $id = 'sid');
+
+        return $this->fetch('create_template_second', ['optionList' => $optionList, 'tname' => $tInfo['tName'], 'tableField' => $tableField]);
+
     }
 
-    public function createtemplatethird()
+    public function createTemplateThird()
     {
-        $shareUrl = url('excel/import/fill', ['id' => session("templateId")]);
+        $shareUrl = url('excel/Template/readTemplate', ['id' => session('tInfo')['tId']],'',true);
         $this->assign("shareUrl", $shareUrl);
         return view();
     }

@@ -1,14 +1,15 @@
 <?php
 
 
-namespace app\excel\controller;
+namespace app\admin\controller;
 
 use think\Controller;
 
 class Template extends Controller
 {
-    public function readTemplate($id)
+    public function readTemplate()
     {
+        $id=input('id');
         $startTime = time(); //返回当前时间的Unix 时间戳
         $template=model("Templates")->with('getoption')->where(['tid'=>$id])->find()->toArray();
         // dump($template['getoption']);

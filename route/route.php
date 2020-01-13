@@ -20,13 +20,13 @@
 
     Route::rule('getinfo', 'excel/GetInfo/index', 'GET|POST');
     
-    
+    Route::rule('fill/:id', 'admin/Template/readTemplate', 'GET|POST');
     Route::group('createTemplate', function () {
-        Route::rule('First', 'excel/Import/createTemplateFirst', 'GET|POST');
-        Route::rule('Second', 'excel/Import/createTemplateSecond', 'GET|POST');
-        Route::rule('Third', 'excel/Import/createTemplateThird', 'GET|POST');
+        Route::rule('First', 'admin/Import/createTemplateFirst', 'GET|POST');
+        Route::rule('Second', 'admin/Import/createTemplateSecond', 'GET|POST');
+        Route::rule('Third', 'admin/Import/createTemplateThird', 'GET|POST');
     });
-    Route::rule('upload', 'excel/Import/upload', 'GET|POST')->ext('do');
-    Route::rule('import', 'excel/Import/index', 'GET|POST');
+    Route::rule('upload', 'admin/Import/upload', 'GET|POST')->ext('do');
+    Route::rule('import', 'admin/Import/index', 'GET|POST');
 
-    Route::rule('readtemplate/[:id]', 'excel/Template/readTemplate', 'GET|POST');
+    
