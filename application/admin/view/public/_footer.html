@@ -1,25 +1,24 @@
 <!--Basic Scripts-->
 <script src="__JS__/jquery.min.js"></script>
 <script src="__JS__/bootstrap.min.js"></script>
-
 <!--Beyond Scripts-->
-<script src="__JS__/beyond.js"></script>
+<script src="__JS__/beyond.min.js"></script>
 <script src="__LIB__/layer/layer.js"></script>
 <script>
-    $(function() {
-        $("#loginout").click(function() {
+    $(function () {
+        $("#loginout").click(function () {
             $.ajax({
                 url: "{:url('admin/Home/loginout')}",
                 type: "post",
                 dataType: "json",
-                success: function(data) {
+                success: function (data) {
                     if (data.code == 1) {
                         layer.msg(
                             data.msg, {
-                                icon: 6,
-                                time: 2000
-                            },
-                            function() {
+                            icon: 6,
+                            time: 2000
+                        },
+                            function () {
                                 location.href = data.url;
                             }
                         );
@@ -35,4 +34,34 @@
             return false;
         });
     });
+
+    function showMsg(msg) {
+        layer.msg(
+            msg, {
+            icon: 6,
+            time: 2000
+        })
+    }
+
+    function showMsgAndHref(data) {
+        layer.msg(
+            data.msg, {
+            icon: 6,
+            time: 2000
+        },
+            function () {
+                location.href = data.url;
+            }
+        );
+    }
+
+    function showErrorMsg(msg) {
+        layer.open({
+            title: "错误！",
+            content: msg,
+            icon: 5,
+            anim: 5
+        });
+    }
+
 </script>

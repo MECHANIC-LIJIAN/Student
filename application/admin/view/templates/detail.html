@@ -36,7 +36,7 @@
         oTableInit.Init = function() {
             $("#table").bootstrapTable('destroy'); //避免重复执行，需要销毁
             $("#table").bootstrapTable({
-                url: "{:url('admin/Template/dataList')}",
+                url: "{:url('admin/Templates/dataList')}",
                 method: "post", //请求方式（*）
                 toolbar: "#toolbar", //工具按钮用哪个容器
                 striped: false, //是否显示行间隔色

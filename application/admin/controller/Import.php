@@ -54,7 +54,7 @@ class Import extends Controller
             'fileName' => $info->getInfo()['name'],
         ];
         session('tInfo', $tInfo);
-        return $this->success("模板文件上传成功！");
+        return $this->success("模板文件上传成功！",url('admin/Import/createTemplateSecond'));
     }
 
     /**
@@ -93,7 +93,7 @@ class Import extends Controller
             $res2 = model("TemplatesOption")->isUpdate(false)->saveAll($data);
             Db::name("templates_sum")->where('id', 1)->setInc('count');
             if ($res2) {
-                $this->success("模板初始化成功", "excel/import/createtemplateThird");
+                $this->success("模板初始化成功", "admin/import/createtemplateThird");
             } else {
                 $this->error("模板初始化失败");
             }
@@ -140,7 +140,7 @@ class Import extends Controller
 
     public function createTemplateThird()
     {
-        $shareUrl = url('excel/Template/readTemplate', ['id' => session('tInfo')['tId']],'',true);
+        $shareUrl = url('admin/Template/readTemplate', ['id' => session('tInfo')['tId']],'',true);
         $this->assign("shareUrl", $shareUrl);
         return view();
     }

@@ -10,13 +10,13 @@
 // +----------------------------------------------------------------------
 
 Route::rule('fill/:id', 'admin/Template/readTemplate', 'GET|POST');
-
+Route::rule('/', 'index/index/index', 'GET|POST');
 
 //后台路由
 Route::group(
     'admin',
     function () {
-        Route::rule('/', 'admin/Index/login', 'GET|POST');
+        Route::rule('/', 'admin/Home/index', 'GET|POST');
         Route::rule('register', 'admin/Index/register', 'GET|POST');
         Route::rule('checkid/', 'admin/Index/checkid/', 'GET|POST');
         Route::rule('forget', 'admin/Index/forget', 'GET|POST');
@@ -26,18 +26,21 @@ Route::group(
         Route::rule('logout', 'admin/Home/logout', 'POST');
 
         Route::rule('templateList', 'admin/Templates/list', 'GET|POST');
-        Route::rule('templateDel/[:id]', 'admin/Templates/del', 'POST');
+        Route::rule('templateControl', 'admin/Templates/control', 'GET|POST');
+        Route::rule('templateAdd', 'admin/Templates/add', 'GET|POST');
+        Route::rule('templateDel', 'admin/Templates/del', 'POST');
 
-        Route::rule('templateData/[:id]', 'admin/Template/detail', 'GET')->ext();
-        Route::rule('templateDataList', 'admin/Template/dataList', 'POST')->ext('do');
+        Route::rule('templateData/[:id]', 'admin/Templates/detail', 'GET')->ext();
+        Route::rule('templateDataList', 'admin/Templates/dataList', 'POST')->ext('do');
 
+        #创建模板
         Route::group('createTemplate', function () {
             Route::rule('First', 'admin/Import/createTemplateFirst', 'GET|POST');
             Route::rule('Second', 'admin/Import/createTemplateSecond', 'GET|POST');
             Route::rule('Third', 'admin/Import/createTemplateThird', 'GET|POST');
+            Route::rule('upload', 'admin/Import/upload', 'GET|POST')->ext('do');
         });
-        Route::rule('upload', 'admin/Import/upload', 'GET|POST')->ext('do');
-        
+                
         
         #用户
         Route::rule('memberList', 'admin/Member/list', 'GET|POST');

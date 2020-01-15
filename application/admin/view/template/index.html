@@ -7,7 +7,7 @@
                 <!-- 输出input -->
                 {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)==0}
                 <div class="form-inline">
-                    <label for="{$option.content}" class="col-sm-2 control-label">{$option.content}</label>
+                    <label for="{$option.title}" class="col-sm-2 control-label">{$option.title}</label>
                     <input type="text" class="form-control" id="{$option.sid}">
                 </div>
                 {/if} {/volist}
@@ -15,10 +15,10 @@
                 <!-- 输出select -->
                 {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)>0}
                 <div class="form-inline">
-                    <label for="{$option.content}" class="col-sm-2 control-label">{$option.content}</label>
+                    <label for="{$option.title}" class="col-sm-2 control-label">{$option.title}</label>
                     <select class="form-control">
                             {volist name="option.child" id="vo"}
-                            <option value ="{$option.sid}">{$vo.content}</option>
+                            <option value ="{$option.sid}">{$vo.title}</option>
                             {/volist}
                     </select>
                 </div>

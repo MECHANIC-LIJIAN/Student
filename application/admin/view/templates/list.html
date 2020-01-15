@@ -6,7 +6,7 @@
         <div class="widget radius-bordered">
             <div class="widget">
                 <div class="widget-header">
-                    <span class="widget-caption">管理员列表</span>
+                    <span class="widget-caption">任务列表</span>
                     <div class="widget-buttons">
 
                     </div>
@@ -17,31 +17,44 @@
                             <tr>
                                 <th>任务名</th>
                                 <th>用户名</th>
-                                <th>状态</th>
-                                <th>操作</th>
                                 <th>创建时间</th>
+                                <th>状态</th>
+                                <th colspan="3">操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             {volist name="templates" id="vo"}
                             <tr>
-                                <td><a href="{:url('admin/Template/detail',['id'=>$vo.tid])}">{$vo.tname}</a> </td>
+                                <td><a href="{:url('admin/Templates/detail',['id'=>$vo.tid])}">{$vo.tname}</a> </td>
                                 <td>{$vo.tuser}</td>
-                                <td>
-                                    {if $vo.status==1}
-                                    <a href="#" class="tempalte-status btn btn-success btn-xs"
-                                        status="{$vo.status}">任务进行中</a> {else /}
-                                    <a href="#" class="tempalte-status btn btn-danger btn-xs" 
-                                        status="{$vo.status}">任务已暂停</a> {/if}
-                                </td>
-                                <td>{if $vo.status==1}
-                                    <a href="#" class="tempalte-status btn btn-darkorange btn-xs stop-tempalte" dataid="{$vo.id}"
-                                        status="{$vo.status}">暂停</a> {else /}
-                                    <a href="#" class="tempalte-status btn btn-success btn-xs start-tempalte" dataid="{$vo.id}"
-                                        status="{$vo.status}">开始</a> {/if}</td>
                                 <td>{$vo.create_time|date='Y年m月d日 H:i'}</td>
-                                    <td><a href="#" class="tempalte-status btn btn-darkorange btn-xs del-tempalte" dataid="{$vo.id}"
-                                        status="{$vo.status}">删除</a> </td>
+                                {if $vo.status==1}
+                                <td>
+                                    <a href="#" class="tempalte-status btn btn-success btn-xs"
+                                        status="{$vo.status}">任务进行中</a>
+                                </td>
+                                <td>
+                                    <a href="#" class="tempalte-status btn btn-warning btn-xs control-tempalte"
+                                        dataid="{$vo.id}" status="{$vo.status}">暂停</a>
+                                </td>
+                                <td><a href="#" class="tempalte-status btn btn-darkorange btn-xs del-tempalte disabled"
+                                        dataid="{$vo.id}" status="{$vo.status}">删除</a> </td>
+
+                                {else /}
+                                <td>
+                                    <a href="#" class="tempalte-status btn btn-danger btn-xs"
+                                        status="{$vo.status}">任务已暂停</a>
+                                </td>
+                                <td>
+                                    <a href="#" class="tempalte-status btn btn-success btn-xs control-tempalte"
+                                        dataid="{$vo.id}" status="{$vo.status}">开始</a> </td>
+                                <td><a href="#" class="tempalte-status btn btn-darkorange btn-xs del-tempalte"
+                                        dataid="{$vo.id}" status="{$vo.status}">删除</a> </td>
+                                {/if}
+                                <td>
+                                    <input type="text" class="btn btn-xs" value="{$vo.shareUrl}" name="{$vo.tid}"id="{$vo.tid}">
+                                    <a href="javascript:;" class="copy btn btn-xs btn-info" dataid="{$vo.tid}"><span class="glyphicon glyphicon-share-alt"></span>分享</a>
+                                </td>
                             </tr>
                             {/volist}
 
@@ -57,43 +70,73 @@
 
 {block name="page-js"}
 <script>
-    
-        $(".del-tempalte").click(function() {
-            var id = $(this).attr('dataid');
-            layer.confirm('确定删除吗？', {
-                title: '删除文章',
-                icon: 3
-            }, function (index) {
-                layer.close(index);
-                $.ajax({
-                    url: "{:url('admin/Templates/del')}",
-                    type: 'post',
-                    data: {
-                        id: id
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data.code == 1) {
-                            layer.msg(data.msg, {
-                                icon: 6,
-                                time: 2000
-                            }, function () {
-                                $("#table").bootstrapTable('refresh');
-                            });
-                        } else {
-                            layer.open({
-                                title: '删除文章失败！',
-                                content: data.msg,
-                                icon: 5,
-                                anim: 5
-                            });
-                        }
+
+    $(".del-tempalte").click(function () {
+        var id = $(this).attr('dataid');
+        layer.confirm('确定删除吗？', {
+            title: '删除任务',
+            icon: 3
+        }, function (index) {
+            layer.close(index);
+            $.ajax({
+                url: "{:url('admin/Templates/del')}",
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == 1) {
+                        showMsgAndHref(data)
+                    } else {
+                        showErrorMsg(data.msg)
                     }
-                });
+                }
             });
-        })
+        });
+    })
 
+    $(".control-tempalte").click(function () {
+        var id = $(this).attr('dataid');
+        var status = $(this).attr('status');
+        if (status === "1") {
+            msg = "确定暂停吗？"
+            opt = "stop"
+        } else {
+            msg = "确定开始吗？"
+            opt = "start"
+        }
+        layer.confirm(msg, {
+            title: '任务管理确认',
+            icon: 3
+        }, function (index) {
+            layer.close(index);
+            $.ajax({
+                url: "{:url('admin/Templates/control')}",
+                type: 'post',
+                data: {
+                    id: id,
+                    opt: opt
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == 1) {
+                        showMsgAndHref(data)
+                    } else {
+                        showErrorMsg(data.msg)
+                    }
+                }
+            });
+        });
+    })
 
+    $(".copy").click(function () {
+        var dataid = $(this).attr('dataid')
+        var e = document.getElementById(dataid);
+        e.select(); // 选择对象 
+        document.execCommand("Copy"); // 执行浏览器复制命令 
+        showMsg("复制成功")
+    })
 </script>
 
 {/block}

@@ -2,22 +2,22 @@
 <div class="page-sidebar" id="sidebar">
     <ul class="nav sidebar-menu">
         <li class="active">
-            <a href="index.html">
+            <a href="{:url('admin/Home/index')}">
                 <i class="menu-icon glyphicon glyphicon-home"></i>
                 <span class="menu-text">后台首页</span>
             </a>
         </li>
         <li>
             <a href="{:url('admin/Templates/list')}" class="menu-dropdown">
-                <i class="menu-icon glyphicon glyphicon glyphicon-th"></i>
-                <span class="menu-text">文章栏目管理</span>
+                <i class="menu-icon glyphicon glyphicon glyphicon-list-alt"></i>
+                <span class="menu-text">任务管理</span>
                 <i class="menu-expand"></i>
             </a>
         </li>
         <li>
-            <a href="#" class="menu-dropdown">
-                <i class="menu-icon glyphicon glyphicon glyphicon-send"></i>
-                <span class="menu-text">管理员管理</span>
+            <a href="{:url('admin/Templates/add')}" class="menu-dropdown">
+                <i class="menu-icon glyphicon glyphicon-plus"></i>
+                <span class="menu-text">添加任务</span>
                 <i class="menu-expand"></i>
             </a>
             <ul class="submenu">
