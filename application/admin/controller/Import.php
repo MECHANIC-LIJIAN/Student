@@ -4,18 +4,12 @@ namespace app\admin\controller;
 
 use Env;
 use Overtrue\Pinyin\Pinyin;
-use think\Controller;
 use think\Db;
 use think\facade\Request;
 use think\Model;
 
-class Import extends Controller
+class Import extends Base
 {
-    public function index()
-    {
-        return view();
-    }
-
     public function createTemplateFirst()
     {
         return view();
@@ -45,7 +39,7 @@ class Import extends Controller
         } else {
             $this->error('文件过大或格式不正确导致上传失败-_-!');
         }
-
+        
         $tInfo = [
             'tId' => uuid(),
             'user' => 'lijian',
@@ -53,6 +47,12 @@ class Import extends Controller
             'filePath' => str_replace("\\", "/", $info->getPathName()),
             'fileName' => $info->getInfo()['name'],
         ];
+
+        $data = readExcel($tInfo['filePath']);
+        if ($data=="nullError") {
+            $this->error('不能有空字段,请重新选择文件');
+        }
+
         session('tInfo', $tInfo);
         
         return $this->success("模板文件上传成功！",url('admin/Import/createTemplateSecond'));
@@ -64,6 +64,9 @@ class Import extends Controller
      */
     public function createTemplateSecond()
     {
+        if (!session('?tInfo')) {
+            $this->redirect('admin/Import/createTemplateFirst');
+        }
 
         if (request()->isAjax()) {
 
@@ -103,7 +106,6 @@ class Import extends Controller
         $data = readExcel($tInfo['filePath']);
         end($data);
         $finalKey = key($data);
-
         $optionList = array();
         $tableField = array();
         $pinyin = new Pinyin();
@@ -141,6 +143,12 @@ class Import extends Controller
 
     public function createTemplateThird()
     {
+        if (!session('?tInfo')) {
+            $this->redirect('admin/Import/createTemplateFirst');
+        }
+
+        session('tInfo',null);
+        session('optionList',null);
         $shareUrl = url('index/Template/readTemplate', ['id' => session('tInfo')['tId']],'',true);
         $this->assign("shareUrl", $shareUrl);
         return view();

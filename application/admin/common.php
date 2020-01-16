@@ -29,6 +29,9 @@ function readExcel($filePath)
 
     $data = array(array());
     for ($colIndex = 'A'; $colIndex <= $col_num; $colIndex++) {
+        if($sheet->getCell($colIndex . 1)->getValue()==""){
+            return "nullError";
+        }
         for ($rowIndex = 1; $rowIndex <= $row_num; $rowIndex++) {
             $rowCell = $sheet->getCell($colIndex . $rowIndex)->getValue();
             if ($rowCell != null) {

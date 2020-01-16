@@ -10,8 +10,6 @@
 // +----------------------------------------------------------------------
 
 Route::rule('fill/:id', 'index/Template/readTemplate', 'GET|POST');
-
-
 Route::rule('/', 'index/index/index', 'GET|POST');
 Route::rule('collect', 'index/Template/collect', 'GET|POST');
 
@@ -26,13 +24,13 @@ Route::group(
     'admin',
     function () {
         Route::rule('/', 'admin/Home/index', 'GET|POST');
+        Route::rule('index', 'admin/Home/index', 'GET|POST');
+        Route::rule('login', 'admin/Index/login', 'GET|POST');
+        Route::rule('logout', 'admin/Index/logout', 'POST');
         Route::rule('register', 'admin/Index/register', 'GET|POST');
         Route::rule('checkid/', 'admin/Index/checkid/', 'GET|POST');
         Route::rule('forget', 'admin/Index/forget', 'GET|POST');
         Route::rule('reset', 'admin/Index/reset', 'POST');
-
-        Route::rule('index', 'admin/Home/index', 'GET|POST');
-        Route::rule('logout', 'admin/Home/logout', 'POST');
 
         Route::rule('templateList', 'admin/Templates/list', 'GET|POST');
         Route::rule('templateControl', 'admin/Templates/control', 'GET|POST');

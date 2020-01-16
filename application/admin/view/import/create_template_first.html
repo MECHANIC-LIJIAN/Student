@@ -51,7 +51,6 @@
         $("#tempalteFile").click();
         $("#tempalteFile").change(function () {
             CheckFile(this)
-            // console.log($("#tempalteFile").val());
             $("#fileBrowserInput").val($("#tempalteFile").val())
         });
     })
@@ -97,6 +96,8 @@
                         showMsgAndHref(data);
                     } else {
                         showErrorMsg(data.msg)
+                        $("#tempalteFile").val("");
+                        $("#fileBrowserInput").val("");
                     }
                 }
             })

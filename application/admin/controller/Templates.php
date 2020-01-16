@@ -2,8 +2,6 @@
 
 namespace app\admin\controller;
 
-use think\Controller;
-
 class Templates extends Base
 {
 
@@ -14,7 +12,7 @@ class Templates extends Base
      */
     function list() {
         $templates = model('Templates')
-            ->order(['status' => 'asc'])
+            ->order(['status' => 'asc','update_time'=>'desc'])
             ->select();
         foreach ($templates as $value) {
             $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
