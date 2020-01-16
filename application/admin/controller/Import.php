@@ -54,6 +54,7 @@ class Import extends Controller
             'fileName' => $info->getInfo()['name'],
         ];
         session('tInfo', $tInfo);
+        
         return $this->success("模板文件上传成功！",url('admin/Import/createTemplateSecond'));
     }
 
@@ -69,7 +70,6 @@ class Import extends Controller
             $tInfo = session('tInfo');
             $data = session("optionList");
 
-            
             $template = model('templates')
                 ->where('tid', $tInfo['tId'])
                 ->find();
@@ -132,6 +132,7 @@ class Import extends Controller
         }
 
         session('optionList', $optionList);
+
         $optionList = getOptionList($optionList, $pid = 'pid', $id = 'sid');
 
         return $this->fetch('create_template_second', ['optionList' => $optionList, 'tname' => $tInfo['tName'], 'tableField' => $tableField]);
@@ -140,7 +141,7 @@ class Import extends Controller
 
     public function createTemplateThird()
     {
-        $shareUrl = url('admin/Template/readTemplate', ['id' => session('tInfo')['tId']],'',true);
+        $shareUrl = url('index/Template/readTemplate', ['id' => session('tInfo')['tId']],'',true);
         $this->assign("shareUrl", $shareUrl);
         return view();
     }

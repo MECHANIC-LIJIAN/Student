@@ -14,10 +14,10 @@ class Templates extends Base
      */
     function list() {
         $templates = model('Templates')
-        ->order(['status' => 'asc'])
-        ->select();
+            ->order(['status' => 'asc'])
+            ->select();
         foreach ($templates as $value) {
-            $value['shareUrl']=url('admin/Template/readTemplate', ['id' => $value['tid']],'',true);
+            $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
         }
         $this->assign('templates', $templates);
         return view();
@@ -40,8 +40,8 @@ class Templates extends Base
     public function del()
     {
         if (request()->isAjax()) {
-            $articleInfo = model('Templates')->with('options,datas')->find(input('post.id'));
-            $result = $articleInfo->together('options,datas')->delete();
+            $tInfo = model('Templates')->with('options,datas')->find(input('post.id'));
+            $result = $tInfo->together('options,datas')->delete();
             if ($result == 1) {
                 $this->success('任务删除成功', 'admin/Templates/list');
             } else {
@@ -56,16 +56,22 @@ class Templates extends Base
         session('tId', $tId);
         $template = model('Templates')
             ->where(['tid' => $tId])
+            ->field('tname')
             ->find();
-        $templateField = model('TemplatesOption')
+
+        $fields = model('TemplatesOption')
             ->where(['tid' => $tId, 'type' => 'p'])
             ->field('sid,title')
             ->select();
 
-        foreach ($templateField as $key => $value) {
+        $templateField = [];
+        foreach ($fields as $key => $value) {
             $value['field'] = $value['sid'];
+            array_push($templateField, $value['sid']);
         }
-        $this->assign(['template' => $template, 'fields' => $templateField]);
+        session('options', $templateField);
+        
+        $this->assign(['template' => $template, 'fields' => $fields]);
         return view();
     }
 
@@ -80,6 +86,7 @@ class Templates extends Base
             $list = model('TemplatesData')
                 ->where(['tid' => session('tId')])
                 ->order(['update_time' => 'desc'])
+                ->field(session('options'))
                 ->page($page, $limit)
                 ->select();
             # 查询相关数据

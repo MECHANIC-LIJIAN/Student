@@ -9,9 +9,18 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-Route::rule('fill/:id', 'admin/Template/readTemplate', 'GET|POST');
-Route::rule('/', 'index/index/index', 'GET|POST');
+Route::rule('fill/:id', 'index/Template/readTemplate', 'GET|POST');
 
+
+Route::rule('/', 'index/index/index', 'GET|POST');
+Route::rule('collect', 'index/Template/collect', 'GET|POST');
+
+Route::group(
+    'checker',
+    function () {
+        Route::rule('checkSno', 'index/Checker/checkSno', 'POST')->ext('do');
+    }
+);
 //后台路由
 Route::group(
     'admin',
@@ -40,8 +49,7 @@ Route::group(
             Route::rule('Third', 'admin/Import/createTemplateThird', 'GET|POST');
             Route::rule('upload', 'admin/Import/upload', 'GET|POST')->ext('do');
         });
-                
-        
+
         #用户
         Route::rule('memberList', 'admin/Member/list', 'GET|POST');
         Route::rule('memberEdit', 'admin/Member/edit', 'GET|POST');

@@ -10,10 +10,6 @@ class Templates extends Model
 {
     use SoftDelete;
 
-    public function getoption()
-    {
-        return $this->hasMany('TemplatesOption', 'tid', 'tid');
-    }
     public function options()
     {
         return $this->hasMany('TemplatesOption', 'tid', 'tid');
