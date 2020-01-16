@@ -40,12 +40,17 @@ Route::group(
         Route::rule('templateData/[:id]', 'admin/Templates/detail', 'GET')->ext();
         Route::rule('templateDataList', 'admin/Templates/dataList', 'POST')->ext('do');
 
-        #创建模板
-        Route::group('createTemplate', function () {
+        #文件创建模板
+        Route::group('createByFile', function () {
             Route::rule('First', 'admin/Import/createTemplateFirst', 'GET|POST');
             Route::rule('Second', 'admin/Import/createTemplateSecond', 'GET|POST');
             Route::rule('Third', 'admin/Import/createTemplateThird', 'GET|POST');
             Route::rule('upload', 'admin/Import/upload', 'GET|POST')->ext('do');
+        });
+        #手动创建模板
+        Route::group('createByHand', function () {
+            Route::rule('index', 'admin/Hand/index', 'GET|POST');
+            Route::rule('upload', 'admin/Hand/upload', 'GET|POST')->ext('do');
         });
 
         #用户

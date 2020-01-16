@@ -1,0 +1,207 @@
+{extend name="public/admin_base"}
+
+{block name="title"}创建模板{/block}
+{block name="page-style"}
+<link href="__CSS__/mysite.css" rel="stylesheet">
+<style>
+    .form-inline {
+        margin-top: 10px;
+    }
+
+    .select {
+        display: inline-block;
+        width: auto;
+        height: 40px;
+        position: relative;
+        vertical-align: middle;
+        padding: 0;
+        overflow: hidden;
+        background-color: #fff;
+        color: #555;
+        border: 1px solid #aaa;
+        text-shadow: none;
+        border-radius: 4px;
+        transition: box-shadow 0.25s ease;
+        z-index: 2;
+    }
+
+    .select:hover {
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .select:before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border: 10px solid transparent;
+        border-top-color: #ccc;
+        top: 14px;
+        right: 10px;
+        cursor: pointer;
+        z-index: -2;
+    }
+
+    .select select {
+        cursor: pointer;
+        padding: 10px;
+        width: 100%;
+        border: none;
+        background: transparent;
+        background-image: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    .select select:focus {
+        outline: none;
+    }
+
+    label {
+        margin: 10px;
+    }
+
+    .a-radio {
+        display: none;
+    }
+
+    .b-radio {
+        display: inline-block;
+        border: 1px solid #ccc;
+        width: 16px;
+        height: 16px;
+        border-radius: 2px;
+        vertical-align: middle;
+        margin-right: 5px;
+        position: relative;
+    }
+
+    .b-radio:before {
+        content: '';
+        font-size: 0;
+        width: 10px;
+        height: 10px;
+        background: rgb(143, 188, 238);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -5px;
+        margin-top: -5px;
+        border-radius: 2px;
+        display: none;
+    }
+
+    .a-radio:checked~.b-radio:before {
+        display: block;
+    }
+</style>
+{/block}
+{block name="page-main"}
+<div class="container project-team-container">
+    <div class="row">
+        <div class="col-lg-9">
+            <ul class="tablist">
+                <li role="tab" class="disabled first" aria-disabled="true">
+                    <a id="formWizard-t-0" aria-controls="formWizard-p-0"><span class="number">1</span> 编写方式</a>
+                </li>
+                <li role="tab" class="second current" aria-disabled="false" aria-selected="true">
+                    <a id="formWizard-t-1" aria-controls="formWizard-p-1"><span class="current-info audible">current
+                            step: </span><span class="number">2</span> 编写方式</a>
+                </li>
+                <li role="tab" class="disabled last" aria-disabled="true">
+                    <a id="formWizard-t-2" aria-controls="formWizard-p-2"><span class="number">3</span>完成发布</a>
+                </li>
+            </ul>
+            <div class="form-horizontal">
+                <table class="table">
+                    <caption>
+                        <h2>{$tname}</h2>
+                    </caption>
+                    <tbody>
+                        {volist name="optionList" id='option'}
+                        {if $option.type='p' AND count($option.child)==0}
+                        <tr>
+                            <td><label for="{$option.title}" class="col-sm-10 control-label">{$option.title}</label>
+                            </td>
+                            <td><input type="text" class="form-control" name="{$option.sid}"></td>
+
+                        </tr>
+                        {/if}
+                        {/volist}
+                        <!-- 输出select -->
+                        {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)>0}
+                        <tr>
+                            <td><label for="{$option.title}" class="col-sm-10 control-label">{$option.title}</label>
+                            </td>
+                            <td><select class="form-control">
+                                    {volist name="option.child" id="vo"}
+                                    <option name="{$option.sid}">{$vo.title}</option>
+                                    {/volist}
+                                </select></td>
+
+                        </tr>{/if}{/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="project-right-sider" style="margin-top: 160px;">
+                <form class="form-box">
+                    <h4>请选择唯一标识字段</h4>
+                    <select class="select" name="primaryKey" id="primaryKey">
+                        {volist name="tableField" id="vo"}
+                        <option value="{$key}">{$vo}</option>
+                        {/volist}
+                    </select>
+                    <div class="useXH hidden">
+                        <h4>是否使用学号对照</h4>
+                        <label>
+                            <input type="radio" name="ifUseXH" class="a-radio" value="yes" checked>
+                            <span class="b-radio"></span>使用
+                        </label>
+
+                        <label>
+                            <input type="radio" name="ifUseXH" class="a-radio" value="no">
+                            <span class="b-radio"></span>不使用
+                        </label>
+                    </div>
+                </form>
+                <button class="btn project-btn initTemplate" type="button"><span class="fa fa-table"></span>
+                    初始化模板</button>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="page-js"}
+<script>
+
+    $(function () {
+        $("#primaryKey").change(function () {
+            var key = $(this).children('option:selected').text()
+            if (key == "学号") {
+                $(".useXH").removeClass("hidden").addClass("show")
+            } else {
+                $(".useXH").removeClass("show").addClass("hidden")
+            }
+        })
+
+        $(".initTemplate").click(function () {
+            $.ajax({
+                method: "post",
+                url: "{:url('admin/import/createtemplateSecond')}",
+                data: $("form").serialize(),
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == 1) {
+                        showMsgAndHref(data)
+                    } else {
+                        showErrorMsg(data.msg)
+                    }
+                }
+            })
+        })
+    });
+</script>
+{/block}
