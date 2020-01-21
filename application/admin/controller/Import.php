@@ -42,7 +42,7 @@ class Import extends Base
         
         $tInfo = [
             'tId' => uuid(),
-            'user' => 'lijian',
+            'user' => session('admin.id'),
             'tName' => $tname,
             'filePath' => str_replace("\\", "/", $info->getPathName()),
             'fileName' => $info->getInfo()['name'],
@@ -147,10 +147,11 @@ class Import extends Base
             $this->redirect('admin/Import/createTemplateFirst');
         }
 
-        session('tInfo',null);
-        session('optionList',null);
+        
         $shareUrl = url('index/Template/readTemplate', ['id' => session('tInfo')['tId']],'',true);
         $this->assign("shareUrl", $shareUrl);
+        session('tInfo',null);
+        session('optionList',null);
         return view();
     }
 }

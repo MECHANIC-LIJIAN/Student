@@ -8,7 +8,7 @@
     $(function () {
         $("#loginout").click(function () {
             $.ajax({
-                url: "{:url('admin/Home/loginout')}",
+                url: "{:url('admin/Home/logout')}",
                 type: "post",
                 dataType: "json",
                 success: function (data) {

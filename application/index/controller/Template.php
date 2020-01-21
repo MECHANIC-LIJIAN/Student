@@ -37,6 +37,7 @@ class Template extends Controller
             }
             $data['tid']=cookie('tId');
             $res=model('TemplatesData')->allowField(true)->save($data);
+            model("Templates")->where('tid', $data['tid'])->setInc('count');
             if ($res) {
                 $this->success('提交成功！',url('index/index/index'));
             }else {

@@ -12,6 +12,7 @@ class Templates extends Base
      */
     function list() {
         $templates = model('Templates')
+            ->where(['tuser'=>session('admin.id')])
             ->order(['status' => 'asc','update_time'=>'desc'])
             ->select();
         foreach ($templates as $value) {

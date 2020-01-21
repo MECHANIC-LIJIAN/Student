@@ -58,7 +58,7 @@
     function CheckFile(obj) {
         var array = new Array('xls', 'xlsx'); //可以上传的文件类型 
         if (obj.value == '') {
-            showMsg("选择要上传的文件!");
+            showErrorMsg("选择要上传的文件!");
             return false;
         }
         else {
