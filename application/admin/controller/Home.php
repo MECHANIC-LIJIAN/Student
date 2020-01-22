@@ -2,14 +2,19 @@
 
 namespace app\admin\controller;
 
+use think\Request;
+use think\Session;
+
 class Home extends Base
 {
     public function index()
     {
+        
+        
         return view();
     }
 
-     /**
+    /**
      * 退出操作
      *
      * @return void
@@ -25,5 +30,4 @@ class Home extends Base
             }
         }
     }
-
 }

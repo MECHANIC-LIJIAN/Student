@@ -64,5 +64,15 @@ Route::group(
         Route::rule('adminEdit/[:id]', 'admin/Admin/edit', 'GET|POST');
         Route::rule('adminDel', 'admin/Admin/del', 'GET|POST');
 
+        #权限
+        Route::group('ManageAuth', function () {
+            Route::rule('/', 'admin/Manage/auth', 'GET');
+            Route::rule('add', 'admin/Manage/addAuth', 'GET|POST');
+            Route::rule('editAuth', 'admin/Manage/editAuth', 'POST');
+            Route::rule('deleteAuth', 'admin/Manage/deleteAuth', 'GET|POST');
+        });
+
+        Route::rule('system', 'admin/System/index', 'GET|POST');
+
     }
 );

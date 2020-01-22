@@ -27,5 +27,25 @@ class Base extends Controller
         if (!session('?admin.id')) {
             $this->redirect('admin/Index/login');
         }
+
+        $auth = new Auth();
+        $userRow = session('admin');
+        //验证权限
+        if ($userRow['is_super'] =="1") {
+            return view();
+        }
+        
+        $rule_name = request()->module() . '/' . request()->controller() . '/' . request()->action();
+        $this->uid = $userRow['id'];
+        // $this->role_id = $userRow['role_id'];
+
+        if ($rule_name == 'admin/login/index' || $rule_name == 'admin/index/index') {
+            $result = true;
+        } else {
+            $result = $auth->check($rule_name, $this->uid);
+        }
+        if (!$result) {
+            $this->error('您没有权限访问');
+        }
     }
 }
