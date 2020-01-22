@@ -6,8 +6,9 @@ use think\Session;
 use think\Request;
 use think\Loader;
 use think\Db;
- 
-class Manage extends Admin
+use think\auth\Auth;
+
+class Manage extends Base
 {
     
  
@@ -30,9 +31,9 @@ class Manage extends Admin
         $data=input('post.');
 //        var_dump($data);
         unset($data['id']);
-        $result=Db::name('auth')->insert($data);
+        $result=Db::name('auth_rule')->insert($data);
         if ($result) {
-            $this->success('添加成功', 'Admin/Auth/auth');
+            $this->success('添加成功', 'admin/Manage/auth');
         } else {
             $this->error('添加失败');
         }
@@ -45,10 +46,10 @@ class Manage extends Admin
     {
         $data=input('post.');
         $info=['title'=>$data['title'],'name'=>$data['name']];
-        $result=Db::name('auth')->where(["id"=>$data['id']])->update($info);
+        $result=Db::name('auth_rule')->where(["id"=>$data['id']])->update($info);
         
         if ($result) {
-            $this->success('修改成功!', 'Admin/Auth/auth');
+            $this->success('修改成功!', 'admin/Manage/auth');
         } else {
             $this->error('您没有做任何修改!');
         }
@@ -62,9 +63,9 @@ class Manage extends Admin
         $map=array(
             'id'=>$id
         );
-        $result=Db::name('auth')->delete($map);
+        $result=Db::name('auth_rule')->delete($map);
         if ($result) {
-            $this->success('删除成功', 'Admin/Auth/auth');
+            $this->success('删除成功', 'admin/Manage/auth');
         } else {
             $this->error('请先删除子权限');
         }
