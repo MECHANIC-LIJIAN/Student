@@ -5,38 +5,36 @@
 <link href="__CSS__/mysite.css" rel="stylesheet">{/block}
 {block name="page-main"}
 <div class="container project-team-container">
-    <div class="row">
-        <div class="col-lg-9">
-            <ul class="tablist">
-                <li id='first-step-li' role="tab" class="first current" aria-disabled="false" aria-selected="true">
-                    <a id="formWizard-t-0" aria-controls="formWizard-p-0"><span class="current-info audible">current
-                            step: </span><span class="number">1</span> 编写方式</a>
-                </li>
-                <li id='second-step-li' role="tab" class="disabled" aria-disabled="true">
-                    <a id="formWizard-t-1" aria-controls="formWizard-p-1"><span class="number">2</span>内容添加</a>
-                </li>
-                <li id='third-step-li' role="tab" class="disabled last" aria-disabled="true">
-                    <a id="formWizard-t-2" aria-controls="formWizard-p-2"><span class="number">3</span>完成发布</a>
-                </li>
-            </ul>
-            <div class="project-first-step">
-                <form class="edit-project-info">
-                    <div class="form-group">
-                        <form id="uploadForm" enctype="multipart/form-data">
-                            <div class="form-inline">
-                                <label for="tname" class="col-sm-2 control-label">模板名字</label>
-                                <input type="text" class="form-control" id="tname">
-                                <input type="text" class="form-control" name="fileBrowserInput" id="fileBrowserInput"
-                                    readonly="readonly">
-                                <input type="file" class="hidden" id="tempalteFile">
-                                <div class="input-group">
-                                    <input type="button" id="fileBrowser" class="btn btn-default" value="选择文件">
-                                </div>
-                                <input type="button" class="btn btn-info" value="提交" id="subFile">
+    <div class="widget-body">
+        <div class="row">
+            <div class="col-lg-9">
+                <ul class="tablist">
+                    <li id='first-step-li' role="tab" class="first current" aria-disabled="false" aria-selected="true">
+                        <a id="formWizard-t-0" aria-controls="formWizard-p-0"><span class="current-info audible">current
+                                step: </span><span class="number">1</span> 编写方式</a>
+                    </li>
+                    <li id='second-step-li' role="tab" class="disabled" aria-disabled="true">
+                        <a id="formWizard-t-1" aria-controls="formWizard-p-1"><span class="number">2</span>内容添加</a>
+                    </li>
+                    <li id='third-step-li' role="tab" class="disabled last" aria-disabled="true">
+                        <a id="formWizard-t-2" aria-controls="formWizard-p-2"><span class="number">3</span>完成发布</a>
+                    </li>
+                </ul>
+                <div class="project-first-step">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="form-inline">
+                            <label for="tname" class="col-sm-2 control-label">模板名字</label>
+                            <input type="text" class="form-control" id="tname">
+                            <input type="text" class="form-control" name="fileBrowserInput" id="fileBrowserInput"
+                                readonly="readonly">
+                            <input type="file" class="hidden" id="tempalteFile">
+                            <div class="input-group">
+                                <input type="button" id="fileBrowser" class="btn btn-default" value="选择文件">
                             </div>
-                        </form>
-                    </div>
-                </form>
+                            <input type="button" class="btn btn-info" value="提交" id="subFile">
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -51,7 +49,6 @@
         $("#tempalteFile").click();
         $("#tempalteFile").change(function () {
             CheckFile(this)
-            $("#fileBrowserInput").val($("#tempalteFile").val())
         });
     })
     //文件上传验证.
