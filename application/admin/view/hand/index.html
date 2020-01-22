@@ -10,37 +10,42 @@
 </style>
 {/block}
 {block name="page-main"}
-<div class="container project-team-container">
-    <div class="row" style="background-color:rgba(45, 195, 232,0.25); padding: 20px;">
-        <div class="col-lg-9">
-            <ul class="tablist">
-                <li role="tab" class="second current" aria-disabled="false" aria-selected="true">
-                    <a id="formWizard-t-1" aria-controls="formWizard-p-1"><span class="current-info audible">current
-                            step: </span><span class="number"></span> 编辑模板</a>
-                </li>
-            </ul>
-            <div class="form-horizontal">
-                <form autocomplete="off" id="subForm">
-                    <table class="table" id="tableD">
-                        <caption>
-                            <h4>模板名<input type="text" required="true" name="templateName" class=""></h4>
-                        </caption>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </form>
-                <button id="addInput" class="btn btn-info">添加一个文本框</button>
-                <button id="addSelect" class="btn btn-info">添加一个下拉菜单</button>
-            </div>
-        </div>
+<div class="row">
+    <div class="col-xs-8">
+        <div class="widget radius-bordered">
+            <div class="widget">
+                <div class="bg-themeprimary widget-header">
+                    <span class="widget-caption">手动创建表单</span>
+                    <div class="widget-buttons">
 
-        <div class="col-lg-3">
-            <div class="project-right-sider" style="margin-top: 160px;">
-                <form class="form-box">
-                    <h4>请选择唯一标识字段</h4>
-                    <select class="select" name="primaryKey" id="primaryKey">
-                    </select>
-                    <!-- <div class="useXH hidden">
+                    </div>
+                </div>
+                <div class="widget-body">
+                    <!-- style="background-color:rgba(45, 195, 232,0.25); padding: 20px;" -->
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="form-horizontal">
+                                <form autocomplete="off" id="subForm">
+                                    <table class="table" id="tableD">
+                                        <caption>
+                                            <h4>模板名<input type="text" required="true" name="templateName" class=""></h4>
+                                        </caption>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </form>
+                                <button id="addInput" class="btn btn-info">添加一个文本框</button>
+                                <button id="addSelect" class="btn btn-info">添加一个下拉菜单</button>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="project-right-sider" style="margin-top: 160px;">
+                                <form class="form-box">
+                                    <h4>请选择唯一标识字段</h4>
+                                    <select class="select" name="primaryKey" id="primaryKey">
+                                    </select>
+                                    <!-- <div class="useXH hidden">
                         <h4>是否使用学号对照</h4>
                         <label>
                             <input type="radio" name="ifUseXH" class="a-radio" value="yes" checked>
@@ -52,9 +57,14 @@
                             <span class="b-radio"></span>不使用
                         </label>
                     </div> -->
-                </form>
-                <button class="btn project-btn initTemplate" type="button"><span class="fa fa-table"></span>
-                    初始化模板</button>
+                                </form>
+                                <button class="btn project-btn initTemplate" type="button"><span
+                                        class="fa fa-table"></span>
+                                    初始化模板</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
