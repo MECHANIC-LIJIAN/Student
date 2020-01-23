@@ -30,3 +30,43 @@ function getOptionList($data, $pid, $id, $p_id = '0')
     }
     return $tmp;
 }
+
+
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
+ini_set("error_reporting","E_ALL & ~E_NOTICE");
+// 应用公共文件
+/**
+ * 发送邮件
+ *
+ * @param 邮箱 $email
+ * @param 内容 $content
+ * @return void
+ */
+function mailto($email, $content)
+{
+    $mail = new PHPMailer(true);
+
+    try {
+        //Server settings
+        $mail->SMTPDebug = 0;
+        $mail->CharSet = 'utf-8'; // Enable verbose debug output
+        $mail->isSMTP(); // Set mailer to use SMTP
+        $mail->Host = 'smtp.163.com'; // Specify main and backup SMTP servers
+        $mail->SMTPAuth = true; // Enable SMTP authentication
+        $mail->Username = 'lijianwzx@163.com'; // SMTP username
+        $mail->Password = 'Lj18846135429'; // SMTP password
+        $mail->SMTPSecure = 'ssl'; // Enable TLS encryption, `ssl` also accepted
+        $mail->Port = 465; // TCP port to connect to
+        //Recipients
+        $mail->setFrom('lijianwzx@163.com', '快表');
+        $mail->addAddress($email); // Add a recipient
+        $mail->Subject = "快表系统通知";
+        $mail->Body = $content;
+        $mail->isHTML(true); // Set email format to HTML
+
+        return $mail->send();
+    } catch (Exception $e) {
+        exception($mail->ErrorInfo, 1001);
+    }
+}

@@ -6,7 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>{block name="title"}管理后台{/block}</title>
+    <title>{block name="title"}快表管理后台{/block}</title>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link href="__CSS__/bootstrap.min.css" rel="stylesheet" />
     <link href="__CSS__/font-awesome.min.css" rel="stylesheet" />
@@ -26,7 +26,7 @@
                 <!-- Navbar Barnd -->
                 <div class="navbar-header pull-left">
                     <a href="#" class="navbar-brand">
-                        <small style="line-height: 40px;">管理后台</small>
+                        <small style="line-height: 40px;">快表管理后台</small>
                     </a>
                 </div>
                 <!-- /Navbar Barnd -->
@@ -36,9 +36,9 @@
                         <ul class="account-area">
                             <li>
                                 <a class="login-area dropdown-toggle" data-toggle="dropdown">
-                                    <div class="avatar" title="View your public profile">
+                                    <!-- <div class="avatar" title="View your public profile">
                                         <img src="__IMG__/logo.jpg">
-                                    </div>
+                                    </div> -->
                                     <section style="min-width:70px">
                                         <h2><span class="profile"><span>{:session('admin.username')}</span></span>
                                         </h2>
@@ -46,15 +46,15 @@
                                 </a>
                                 <!--Login Area Dropdown-->
                                 <ul class="pull-right dropdown-menu dropdown-arrow dropdown-login-area">
-                                    <li class="username"><a>LIJIAN</a></li>
-                                    <li class="email"><a>lijianwzx@163.com</a></li>
+                                    <li class="username"><a>{:session('admin.username')}</a></li>
+                                    <!-- <li class="email"><a>lijianwzx@163.com</a></li> -->
                                     <!--Avatar Area-->
-                                    <li>
+                                    <!-- <li>
                                         <div class="avatar-area">
                                             <img src="__IMG__/logo.jpg" class="avatar">
                                             <span class="caption">个人头像</span>
                                         </div>
-                                    </li>
+                                    </li> -->
                                     
                                     <li class="dropdown-footer">
                                         <a href="#" id="loginout">退出</a>

@@ -19,7 +19,8 @@
         "php": ">=5.6.0",
         "topthink/framework": "5.1.*",
         "phpoffice/phpspreadsheet": "^1.8",
-        "overtrue/pinyin": "~3.0"
+        "overtrue/pinyin": "~3.0",
+        "phpmailer/phpmailer": "^6.1"
     },
     "autoload": {
         "psr-4": {

@@ -58,7 +58,7 @@ class Admin extends Model
      */
     public function add($data)
     {
-        $validate = new \app\common\validate\Admin();
+        $validate = new \app\admin\validate\Admin();
         if (!$validate->scene('add')->check($data)) {
             return $validate->getError();
         }
@@ -80,7 +80,7 @@ class Admin extends Model
     public function edit($data)
     {
         // dump($data);
-        $validate = new \app\common\validate\Admin();
+        $validate = new \app\admin\validate\Admin();
         if (!$validate->scene('edit')->check($data)) {
             return $validate->getError();
         }
@@ -100,7 +100,7 @@ class Admin extends Model
     //注册账户
     public function register($data)
     {
-        $validate = new \app\common\validate\Admin();
+        $validate = new \app\admin\validate\Admin();
         if (!$validate->scene('register')->check($data)) {
             return $validate->getError();
         }
@@ -115,7 +115,7 @@ class Admin extends Model
             $content = '<html><head></head><body><div style="font-family:黑体;min-height:300px; background:#57bfaa;min-width:300px;max-width: 1000px;border: 0px solid #ccc; margin: auto;">';
             $content .= '<div style="width: 100%;font-size:20px;text-align: center;background: #4484c5; height: 50px;color: #FFF;line-height: 50px">邮件提醒</div>';
             $content .= '<div style="padding: 20px;color: #fff">';
-            $content .= '<h3>尊敬的【' . $data['username'] . '】你好：</h3>';
+            $content .= '<h3>尊敬的&nbsp' . $data['username'] . '&nbsp你好：</h3>';
             $content .= '<p style="line-height: 30px">欢迎您在本网站注册</p>';
             $content .= "注册成功，你在本站注册的邮箱需要验证！请点击<a href='http://localhost/admin/checkid/?emailkey=" . $data['emailkey'] . "&email=" . $data['email'] . "'>http://localhost/admin/checkid/?emailkey=" . $data['emailkey'] . "&email=" . $data['email'] . "</a>(或者复制到浏览器打开)，完成验证！";
             $content .= '<p style="line-height: 30px">此邮件为系统自动发送，请勿直接回复！</p>';
@@ -163,7 +163,7 @@ class Admin extends Model
     //重置密码
     public function reset($data)
     {
-        $validate = new \app\common\validate\Admin();
+        $validate = new \app\admin\validate\Admin();
         if (!$validate->scene('reset')->check($data)) {
             return $validate->getError();
         } else {

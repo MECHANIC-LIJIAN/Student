@@ -17,6 +17,7 @@ class Templates extends Base
             ->select();
         foreach ($templates as $value) {
             $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
+            $value['tuser']=session('admin.username');
         }
         $this->assign('templates', $templates);
         return view();
