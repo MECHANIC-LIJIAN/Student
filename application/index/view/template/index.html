@@ -71,8 +71,8 @@
                         <!-- 输出input -->
                         {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)==0}
                         <div class="form-group">
-                            <label for="{$option.title}" class="col-sm-2 control-label">{$option.title}</label>
-                            <div class="col-sm-4">
+                            <label for="{$option.title}" class="col-sm-10">{$option.title}</label>
+                            <div class="col-sm-8">
                                 <input type="text" class="form-control required {$option.rule}" id="{$option.sid}" name="{$option.sid}">
                             </div>
                         </div>
@@ -81,8 +81,8 @@
                         <!-- 输出select -->
                         {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)>0}
                         <div class="form-group">
-                            <label for="{$option.title}" class="col-sm-2 control-label">{$option.title}</label>
-                            <div class="col-sm-10">
+                            <label for="{$option.title}" class="col-sm-10">{$option.title}</label>
+                            <div class="col-sm-4">
                                 <select class="form-control" required="true" name="{$option.sid}">
                                     <option value="">--请选择--</option>
                                     {volist name="option.child" id="vo"}
@@ -101,30 +101,7 @@
             </div>
         </div>
     </div>
-    <!-- <footer class="footer project-footer">
-        <div class="container">
-            <div class="project-footer-wx">
-                <img src="__IMG__/weixin.jpg">
-                <span>我的微信</span>
-            </div>
-            <div class="row">
-                <div class="col-xs-6 col-md-6 project-footer-info">
-                    <p><b>MySite</b></p>
-                    <p>哈尔滨医科大学生物信息科学与技术学院<b>软件工程教研室</b></p>
-                    <p><span class="fa fa-envelope"> </span> Email: xindd_2014@163.com</p>
-                    <p>Copyright © ......... 备案号：123456789</p>
-                </div>
-                <div class="col-xs-3 col-md-3 project-footer-info">
-                    <p><b>联系方式</b></p>
-                    <p><span class="fa fa-phone"> </span> 电话：18846124409</p>
-                    <p><span class="fa fa-qq"> </span> QQ: 1184935343</p>
-                    <p><b>友情链接</b></p>
-                    <p><a href="#">xxx网</a> <a href="#">xxx网</a> <a href="#">xxx网</a></p>
-                </div>
-            </div>
-
-        </div>
-    </footer> -->
+    
     <script src="__JS__/jquery.min.js"></script>
     <script src="__JS__/bootstrap.min.js"></script>
     <script src="__LIB__/layer/layer.js"></script>
