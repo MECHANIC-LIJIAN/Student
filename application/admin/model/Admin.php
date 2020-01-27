@@ -37,9 +37,12 @@ class Admin extends Model
                 $sessionData = [
                     'id' => $result['id'],
                     'username' => $result['username'],
-                    'is_super' => $result['is_super']
+                    'is_super' => $result['is_super'],
+                    'last_time'=>$result['last_time'],
                 ];
                 session('admin', $sessionData);
+                $result->last_time=time();
+                $result->save();
                 return 1;
             } else {
                 return "用户名或者密码错误!";
