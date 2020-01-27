@@ -49,6 +49,7 @@
         $("#tempalteFile").click();
         $("#tempalteFile").change(function () {
             CheckFile(this)
+            $("#fileBrowserInput").val($("#tempalteFile").val())
         });
     })
     //文件上传验证.
