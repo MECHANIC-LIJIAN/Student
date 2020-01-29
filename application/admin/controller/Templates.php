@@ -70,8 +70,12 @@ class Templates extends Base
             array_push($templateField, $value['sid']);
         }
         session('options', $templateField);
-        
-        $this->assign(['template' => $template, 'fields' => $fields]);
+        $shareUrl=url('index/Template/readTemplate', ['id' => $tId], '', true);
+        $this->assign([
+            'template' => $template, 
+            'fields' => $fields,
+            'shareUrl'=>$shareUrl
+            ]);
         return view();
     }
 
