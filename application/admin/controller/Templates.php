@@ -12,12 +12,12 @@ class Templates extends Base
      */
     function list() {
         $templates = model('Templates')
-            ->where(['tuser'=>session('admin.id')])
-            ->order(['status' => 'asc','update_time'=>'desc'])
+            ->where(['tuser' => session('admin.id')])
+            ->order(['status' => 'asc', 'update_time' => 'desc'])
             ->select();
         foreach ($templates as $value) {
             $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
-            $value['tuser']=session('admin.username');
+            $value['tuser'] = session('admin.username');
         }
         $this->assign('templates', $templates);
         return view();
@@ -67,15 +67,18 @@ class Templates extends Base
         $templateField = [];
         foreach ($fields as $key => $value) {
             $value['field'] = $value['sid'];
+            $value['formatter']='';
             array_push($templateField, $value['sid']);
+            // $value['fomater']='';
         }
+        
         session('options', $templateField);
-        $shareUrl=url('index/Template/readTemplate', ['id' => $tId], '', true);
+        $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
         $this->assign([
-            'template' => $template, 
+            'template' => $template,
             'fields' => $fields,
-            'shareUrl'=>$shareUrl
-            ]);
+            'shareUrl' => $shareUrl,
+        ]);
         return view();
     }
 
@@ -94,7 +97,9 @@ class Templates extends Base
                 ->page($page, $limit)
                 ->select();
             # 查询相关数据
-            $count = count($list);
+            $count = model('TemplatesData')
+                ->where(['tid' => session('tId')])
+                ->count();
             # 查询数据条数
 
             $res = [
