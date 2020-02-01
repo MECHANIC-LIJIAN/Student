@@ -67,11 +67,11 @@ class Templates extends Base
         $templateField = [];
         foreach ($fields as $key => $value) {
             $value['field'] = $value['sid'];
-            $value['formatter']='';
+            $value['sortable']=true;
             array_push($templateField, $value['sid']);
             // $value['fomater']='';
         }
-        
+        array_push($fields, 'date');
         session('options', $templateField);
         $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
         $this->assign([
@@ -85,23 +85,39 @@ class Templates extends Base
     public function dataList()
     {
         if (request()->isAjax()) {
+            $tId=session('tId');
+            $fields=session('options');
+            #排序字段和规则
+            $order = input('post.order');
+            $ordername = input('post.ordername');
+            if ($ordername) {
+                $order=[$ordername=>$order,'update_time' => 'desc'];
+            }else {
+                $order=['update_time' => 'desc'];
+            }
+            # 获取并且计算 页号 分页大小
             $offset = input('post.offset');
             $limit = input('post.limit');
             $page = floor($offset / $limit) + 1;
-
-            # 获取并且计算 页号 分页大小
+        
+            #模糊搜索
+            $search=input('post.search');
+            if ($search) {
+                $map = [
+                    [implode("|",$fields), 'like', "%$search%"],
+                ];
+            }
             $list = model('TemplatesData')
-                ->where(['tid' => session('tId')])
-                ->order(['update_time' => 'desc'])
-                ->field(session('options'))
+                ->where(['tid' => $tId])
+                ->where($map)
+                ->order($order)
+                ->field($fields)
                 ->page($page, $limit)
                 ->select();
-            # 查询相关数据
             $count = model('TemplatesData')
-                ->where(['tid' => session('tId')])
+                ->where(['tid' => $tId])
+                ->where($map)
                 ->count();
-            # 查询数据条数
-
             $res = [
                 'total' => $count,
                 'rows' => $list,
