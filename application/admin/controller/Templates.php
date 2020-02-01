@@ -71,12 +71,12 @@ class Templates extends Base
             array_push($templateField, $value['sid']);
             // $value['fomater']='';
         }
-        array_push($fields, 'date');
+        
         session('options', $templateField);
         $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
         $this->assign([
             'template' => $template,
-            'fields' => $fields,
+            'fields' => json_encode($fields,JSON_UNESCAPED_UNICODE),
             'shareUrl' => $shareUrl,
         ]);
         return view();
