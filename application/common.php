@@ -23,7 +23,6 @@ function getOptionList($data, $pid, $id, $p_id = '0')
     $tmp = array();
     foreach ($data as $key => $value) {
         if ($value[$pid] == $p_id) {
-            // dump($value);
             $value['child'] = getOptionList($data, $pid, $id, $value[$id]);
             $tmp[] = $value;
         }

@@ -18,4 +18,8 @@ class Templates extends Model
     {
         return $this->hasMany('TemplatesData', 'tid', 'tid');
     }
+    public function getUser()
+    {
+        return $this->belongsTo('Admin', 'tuser', 'id');
+    }
 }

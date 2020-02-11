@@ -17,7 +17,7 @@
                         <thead>
                             <tr>
                                 <th>任务名</th>
-                                <th>用户名</th>
+                                {if session('admin.is_super')==1} <th>用户名</th>{/if}
                                 <th>创建时间</th>
                                 <th>状态</th>
                                 <th colspan="3">操作</th>
@@ -27,7 +27,7 @@
                             {volist name="templates" id="vo"}
                             <tr>
                                 <td><a href="{:url('admin/Templates/detail',['id'=>$vo.tid])}">{$vo.tname}</a> </td>
-                                <td>{$vo.tuser}</td>
+                                {if session('admin.is_super')==1}<td>{$vo.tuser}</td>{/if}
                                 <td>{$vo.create_time|date='Y年m月d日 H:i'}</td>
                                 {if $vo.status==1}
                                 <td>
@@ -55,6 +55,7 @@
                                 <td>
                                     <input type="text" class="btn btn-xs" value="{$vo.shareUrl}" name="{$vo.tid}"id="{$vo.tid}">
                                     <a href="javascript:;" class="copy btn btn-xs btn-info" dataid="{$vo.tid}"><span class="glyphicon glyphicon-share-alt"></span>分享</a>
+                                    <a href="{$vo.shareUrl}" target="blank"  class="copy btn btn-xs btn-success"><span class="glyphicon glyphicon-eye-open"></span>查看</a>
                                 </td>
                             </tr>
                             {/volist}

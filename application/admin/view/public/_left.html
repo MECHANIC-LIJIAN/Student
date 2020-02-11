@@ -21,6 +21,7 @@
                 <i class="menu-expand"></i>
             </a>
         </li>
+        {if session('admin.is_super')==1}
         <li>
             <a href="#" class="menu-dropdown">
                 <i class="menu-icon glyphicon glyphicon glyphicon-user"></i>
@@ -40,6 +41,7 @@
                 </li>
             </ul>
         </li>
+        {/if}
     </ul>
 </div>
 <!-- /Page Sidebar -->

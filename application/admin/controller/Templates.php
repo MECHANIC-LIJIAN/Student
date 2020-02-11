@@ -11,13 +11,23 @@ class Templates extends Base
      * @return \think\Response
      */
     function list() {
-        $templates = model('Templates')
-            ->where(['tuser' => session('admin.id')])
+        
+        if (session('admin.is_super')==1) {
+            $templates = model('Templates')
+            ->with('getUser')
             ->order(['status' => 'asc', 'update_time' => 'desc'])
             ->select();
+        }else {
+            $templates = model('Templates')
+            ->where(['tuser' => session('admin.id')])
+            ->with('getUser')
+            ->order(['status' => 'asc', 'update_time' => 'desc'])
+            ->select();
+        }
+        
         foreach ($templates as $value) {
             $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
-            $value['tuser'] = session('admin.username');
+            $value['tuser'] = $value['getUser']['username'];
         }
         $this->assign('templates', $templates);
         return view();

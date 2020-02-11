@@ -73,7 +73,8 @@
                         <div class="form-group">
                             <label for="{$option.title}" class="col-sm-10">{$option.title}</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control required {$option.rule}" id="{$option.sid}" name="{$option.sid}">
+                                <input type="text" class="form-control required {$option.rule}" id="{$option.sid}"
+                                    name="{$option.sid}">
                             </div>
                         </div>
                         {/if} {/volist}
@@ -101,7 +102,7 @@
             </div>
         </div>
     </div>
-    
+
     <script src="__JS__/jquery.min.js"></script>
     <script src="__JS__/bootstrap.min.js"></script>
     <script src="__LIB__/layer/layer.js"></script>
@@ -133,6 +134,37 @@
                                             location.href = data.url;
                                         }
                                     );
+                                } else if (data.code == 101) {
+                                    layer.confirm(data.msg, {
+                                        title: '数据覆盖确认',
+                                        icon: 3
+                                    }, function (index) {
+                                        layer.close(index);
+                                        $.ajax({
+                                            url: "{:url('index/Template/collect')}",
+                                            type: 'post',
+                                            data: $('form').serialize(),
+                                            success: function (data) {
+                                                if (data.code == 1) {
+                                                    layer.msg(
+                                                        data.msg, {
+                                                        icon: 6,
+                                                        time: 2000
+                                                    },
+                                                        function () {
+                                                            location.href = data.url;
+                                                        }
+                                                    );
+                                                } else {
+                                                    layer.open({
+                                                        title: "提交失败",
+                                                        content: data.msg,
+                                                        icon: 6
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    });
                                 } else {
                                     layer.open({
                                         title: "提交失败",
@@ -140,39 +172,10 @@
                                         icon: 6
                                     });
                                 }
+
                             },
                         });
-                    },
-                    // rules: {
-                    //     option_B: {
-                    //         required: true,
-                    //         rangelength: [2, 10],
-                    //         remote: {
-                    //             type: "post",
-                    //             url: "{:url('index/Checker/checkSno')}",
-                    //             dataType: "json",
-                    //             data: {
-                    //                 sno: function () {
-                    //                     return $("#option_B").val();
-                    //                 }
-                    //             },
-                    //             dataFilter: function (data, type) {
-                    //                 if (data == "true")
-                    //                     return true;
-                    //                 else
-                    //                     return false;
-                    //             }
-                    //         }
-                    //     }
-                    // },
-                    // messages: {
-                    //     option_B: {
-                    //         required: "请输入用户名，3-16个字符（字母、数字、下划线），注册后不能更改",
-                    //         minlength: "用户名长度不能小-1于3个字符",
-                    //         maxlength: "用户名长度不能大于16个字符",
-                    //         remote: "用户名不可用"
-                    //     }
-                    // }
+                    }
                 });
         });
 
