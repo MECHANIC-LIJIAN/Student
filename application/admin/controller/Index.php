@@ -42,6 +42,7 @@ class Index extends Base
                 'password' => md5(input('post.password')),
                 'conpass' => md5(input('post.conpass')),
                 'email' => input('post.email'),
+                'last_time' => time(),
             ];
             $result = model('Admin')->register($data);
             if ($result == 1) {

@@ -9,9 +9,17 @@ class Admin extends Model
 {
     //软删除
     use SoftDelete;
+// 定义多种登录方式
+
+    private $loginWay = [
+        // 用户名
+        'username',
+        // 邮箱
+        'email',
+    ];
 
     //只读字段
-    protected $readonly=['email'];
+    protected $readonly = ['email'];
     /**
      * 登录校验
      *
@@ -24,24 +32,29 @@ class Admin extends Model
         if (!$validate->scene('login')->check($data)) {
             return $validate->getError();
         }
-   
-        $result = $this->where('username', $data['username'])->find();
-      
+        // 使用循环方式判断用户名是否存在
+        foreach ($this->loginWay as $k => $v) {
+            $result = $this->where($v, $data['username'])->find();
+            // 如果存在就有这个用户，跳出
+            if ($result) {
+                break;
+            }
+        }
         //判断用户是否存在
         if ($result) {
             //判断用户是否可用
             if ($result['status'] == 0) {
                 return "用户不可用！";
-            } elseif ($result['password']==$data['password']) {
+            } elseif ($result['password'] == $data['password']) {
                 //1 表示用户验证正确
                 $sessionData = [
                     'id' => $result['id'],
                     'username' => $result['username'],
                     'is_super' => $result['is_super'],
-                    'last_time'=>$result['last_time'],
+                    'last_time' => $result['last_time'],
                 ];
                 session('admin', $sessionData);
-                $result->last_time=time();
+                $result->last_time = time();
                 $result->save();
                 return 1;
             } else {
@@ -51,7 +64,6 @@ class Admin extends Model
             return "用户名不存在！";
         }
     }
-
 
     /**
      * 添加管理员
@@ -73,7 +85,6 @@ class Admin extends Model
         }
     }
 
-
     /**
      * 修改管理员信息
      *
@@ -88,18 +99,18 @@ class Admin extends Model
             return $validate->getError();
         }
         $result = $this->where('id', $data['id'])
-        ->update([
-            'username'=>$data['username'],
-            'password'=>$data['password'],
-            'email'=>$data['email']
-        ]);
-        if ($result !==false) {
+            ->update([
+                'username' => $data['username'],
+                'password' => $data['password'],
+                'email' => $data['email'],
+            ]);
+        if ($result !== false) {
             return 1;
         } else {
             return '修改失败！';
         }
     }
-    
+
     //注册账户
     public function register($data)
     {
@@ -133,8 +144,6 @@ class Admin extends Model
         }
     }
 
-
-
     //激活验证
     public function checkid($get)
     {
@@ -161,8 +170,6 @@ class Admin extends Model
         }
     }
 
-    
-
     //重置密码
     public function reset($data)
     {
@@ -175,7 +182,7 @@ class Admin extends Model
                 return "验证码不正确";
             } else {
                 $adminInfo = $this->where('email', $data['email'])->find();
-                $password =$data['password'];
+                $password = $data['password'];
                 $adminInfo->password = md5($password);
                 $result = $adminInfo->save();
                 if ($result) {
