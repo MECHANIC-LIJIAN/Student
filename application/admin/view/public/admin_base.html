@@ -12,12 +12,28 @@
     <link href="__CSS__/weather-icons.min.css" rel="stylesheet" />
     <link id="beyond-link" href="__CSS__/beyond.min.css" rel="stylesheet" type="text/css" />
     {block name="page-style"}
+    <style>
+        .login-area {
+            color: white;
+            font-size: 16px;
+        }
 
+        .login-area span {
+            margin-left: 10px;
+        }
+        .login-area a{
+            color:white;
+            text-decoration: none;
+        }
+        .login-area a:hover {
+            text-decoration: underline;
+        }
+    </style>
     {/block}
 </head>
 
 <body>
-    
+
     <!-- Navbar -->
     <div class="navbar">
         <div class="navbar-inner">
@@ -29,8 +45,8 @@
                     </a>
                 </div>
                 <!-- /Navbar Barnd -->
-                 <!-- Sidebar Collapse -->
-                 <div class="sidebar-collapse" id="sidebar-collapse">
+                <!-- Sidebar Collapse -->
+                <div class="sidebar-collapse" id="sidebar-collapse">
                     <i class="collapse-icon fa fa-bars"></i>
                 </div>
                 <!-- /Sidebar Collapse -->
@@ -39,32 +55,10 @@
                     <div class="navbar-account">
                         <ul class="account-area">
                             <li>
-                                <a class="login-area dropdown-toggle" data-toggle="dropdown">
-                                    <!-- <div class="avatar" title="View your public profile">
-                                        <img src="__IMG__/logo.jpg">
-                                    </div> -->
-                                    <section style="min-width:70px">
-                                        <h2><span class="profile"><span>{:session('admin.username')}</span></span>
-                                        </h2>
-                                    </section>
-                                </a>
-                                <!--Login Area Dropdown-->
-                                <ul class="pull-right dropdown-menu dropdown-arrow dropdown-login-area">
-                                    <li class="username"><a>{:session('admin.username')}</a></li>
-                                    <!-- <li class="email"><a>lijianwzx@163.com</a></li> -->
-                                    <!--Avatar Area-->
-                                    <!-- <li>
-                                        <div class="avatar-area">
-                                            <img src="__IMG__/logo.jpg" class="avatar">
-                                            <span class="caption">个人头像</span>
-                                        </div>
-                                    </li> -->
-                                    
-                                    <li class="dropdown-footer">
-                                        <a href="#" id="loginout">退出</a>
-                                    </li>
-                                </ul>
-                                <!--/Login Area Dropdown-->
+                                <div class="login-area">
+                                    <span>{:session('admin.username')}</span>
+                                    <span><a href="#" id="loginout">退出</a></span>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -74,44 +68,44 @@
         </div>
     </div>
     <!-- /Navbar -->
-<!-- Main Container -->
-<div class="main-container container-fluid">
-    <!-- Page Container -->
-    <div class="page-container">
-        <!--left-->
-        {include file="public/_left"}
-        <!--left-->
-        <!-- Page Content -->
-        <div class="page-content">
-            <!-- Page Breadcrumb -->
-            <div class="page-breadcrumbs">
-                <ul class="breadcrumb">
-                    <li class="active">
-                        <i class="fa fa-home"></i>&nbsp;{block name="page-breadcrumb"}控制面板{/block}
-                    </li>
-                </ul>
-            </div>
-            <!-- /Page Breadcrumb -->
-            <!-- Page Body -->
-            <div class="page-body">
-                {block name="page-main"}
+    <!-- Main Container -->
+    <div class="main-container container-fluid">
+        <!-- Page Container -->
+        <div class="page-container">
+            <!--left-->
+            {include file="public/_left"}
+            <!--left-->
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Page Breadcrumb -->
+                <div class="page-breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li class="active">
+                            <i class="fa fa-home"></i>&nbsp;{block name="page-breadcrumb"}控制面板{/block}
+                        </li>
+                    </ul>
+                </div>
+                <!-- /Page Breadcrumb -->
+                <!-- Page Body -->
+                <div class="page-body">
+                    {block name="page-main"}
 
-                {/block}
+                    {/block}
+                </div>
+                <!-- /Page Body -->
             </div>
-            <!-- /Page Body -->
+            <!-- /Page Content -->
+
         </div>
-        <!-- /Page Content -->
+        <!-- /Page Container -->
+        <!-- Main Container -->
 
     </div>
-    <!-- /Page Container -->
-    <!-- Main Container -->
+    <!-- footer -->
+    {include file="public/_footer"}
 
-</div>
-<!-- footer -->
-{include file="public/_footer"}
-
-{block name="page-js"}{/block}
-<!--  /footer -->
+    {block name="page-js"}{/block}
+    <!--  /footer -->
 </body>
 <!--  /Body -->
 
