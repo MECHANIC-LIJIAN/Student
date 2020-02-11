@@ -105,7 +105,6 @@ class Admin extends Base
      */
     public function del()
     {
-        dump(input('post.id'));
         $adminInfo = model('Admin')->find(input('post.id'));
         $result = $adminInfo->delete();
         if ($result == 1) {
