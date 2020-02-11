@@ -17,7 +17,7 @@ return [
     // 应用名称
     'app_name'               => '',
     // 应用地址
-    'app_host'               => '',
+    'app_host'               => '60.205.179.34:8080',
     // 应用调试模式
     'app_debug'              => true,
     // 应用Trace

@@ -131,7 +131,7 @@ class Admin extends Model
             $content .= '<div style="padding: 20px;color: #fff">';
             $content .= '<h3>尊敬的  ' . $data['username'] . '  你好：</h3>';
             $content .= '<p style="line-height: 30px">欢迎您在本网站注册</p>';
-            $content .= "注册成功，你在本站注册的邮箱需要验证！请点击<a href='http://localhost/admin/checkid/?emailkey=" . $data['emailkey'] . "&email=" . $data['email'] . "'>http://localhost/admin/checkid/?emailkey=" . $data['emailkey'] . "&email=" . $data['email'] . "</a>(或者复制到浏览器打开)，完成验证！";
+            $content .= "注册成功，你在本站注册的邮箱需要验证！请点击<a href='config('app_host')/admin/checkid/?emailkey=" . $data['emailkey'] . "&email=" . $data['email'] . "'>config('app_host')/admin/checkid/?emailkey=" . $data['emailkey'] . "&email=" . $data['email'] . "</a>(或者复制到浏览器打开)，完成验证！";
             $content .= '<p style="line-height: 30px">此邮件为系统自动发送，请勿直接回复！</p>';
             $content .= '<p style="text-align: right;">XXX团队</p>';
             $content .= '<p style="text-align: right;">' . $emaildate . '</p>';

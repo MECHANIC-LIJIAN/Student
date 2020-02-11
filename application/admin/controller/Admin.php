@@ -10,6 +10,7 @@ class Admin extends Base
      * @return void
      */
     function list() {
+        
         $admins = model('Admin')->order(['is_super' => 'asc', 'status' => 'desc'])->paginate(10);
         $this->assign('admins', $admins);
         return view();
@@ -104,8 +105,9 @@ class Admin extends Base
      */
     public function del()
     {
-        $cateInfo = model('Admin')->find(input('post.id'));
-        $result = $cateInfo->delete();
+        dump(input('post.id'));
+        $adminInfo = model('Admin')->find(input('post.id'));
+        $result = $adminInfo->delete();
         if ($result == 1) {
             $this->success('管理员删除成功!', 'admin/Admin/list');
         } else {
