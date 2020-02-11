@@ -90,7 +90,7 @@
             ele +
             '<td><textarea required="true" id="' +
             option_id +
-            '_childs" class="form-control" rows="5"></textarea>';
+            '_childs" class="form-control" rows="5" placeholder="一行一个选项"></textarea>';
         ele =
             ele +
             '<a class="confirm" id="'+option_id+'_confirm" dataid="' +
