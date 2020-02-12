@@ -1,7 +1,7 @@
     var id = 1;
     function deleteRow(obj){
         $(obj).parents("tr").remove();
-        var option_id = $(obj).attr('dataid').val();
+        var option_id = $(obj).attr('dataid');
         $("#primaryKey option[value='"+option_id+"']").remove();
         id=id-1
     };
