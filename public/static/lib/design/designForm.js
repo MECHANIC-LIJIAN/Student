@@ -7,14 +7,14 @@
     $("#addInput").click(function() {
         var option_id = "option_" + String.fromCharCode(64 + id);
         $("#tableD").append(getInput(option_id));
-        addPrimaryKey("字段" + id);
+        addPrimaryKey(option_id,"字段" + id);
         id++;
     });
 
     $("#addSelect").click(function() {
         var option_id = "option_" + String.fromCharCode(64 + id);
         $("#tableD").append(getSelect(option_id));
-        addPrimaryKey("字段" + id);
+        addPrimaryKey(option_id,"字段" + id);
         id++;
         $(".confirm").click(function() {
             var eleId = $(this).attr("dataid");
@@ -143,8 +143,8 @@
         }
     }
 
-    function addPrimaryKey(field) {
+    function addPrimaryKey(option_id,field) {
         $("#primaryKey").append(
-            "<option value='" + field + "'>" + field + "</option>"
+            "<option value='" + option_id + "'>" + field + "</option>"
         );
     }
