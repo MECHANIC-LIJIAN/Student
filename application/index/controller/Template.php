@@ -66,7 +66,7 @@ class Template extends Controller
                 foreach ($templateField as $key => $value) {
                     $data[$value] = input("post.$value");
                 }
-
+                dump($data);
                 $res = model('TemplatesData')->allowField(true)->save($data, ['id' => cookie('dataid')]);
                 if ($res) {
                     cookie('ifCheck', null);
