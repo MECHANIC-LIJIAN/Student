@@ -6,9 +6,7 @@
         <div class="widget radius-bordered">
 
             <div>
-                <table id="table"
-                data-search="true"
-                class="table table-striped table-hover table-bordered"></table>
+                <table id="table" data-search="true" class="table table-striped table-hover table-bordered"></table>
             </div>
 
         </div>
@@ -20,8 +18,10 @@
 <link rel="stylesheet" href="__LIB__/bootstrap-table/bootstrap-table.min.css">
 <script src="__LIB__/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="__LIB__/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
-<script src="__LIB__/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+<script src="__LIB__/bootstrap-table/extensions/FileSaver/FileSaver.min.js"></script>
+<script src="__LIB__/bootstrap-table/extensions/xlsx/xlsx.core.min.js"></script>
 <script src="__LIB__/bootstrap-table/extensions/tableExport.js"></script>
+<script src="__LIB__/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
 <script>
     $(function () {
         //初始化Table
@@ -38,26 +38,25 @@
             pageSize: 15, //每页的记录行数（*）
             pageList: [25, 50, 100], //可供选择的每页的行数（*）
             showRefresh: true, //是否显示刷新按钮
-            showSearch:true,
+            showSearch: true,
             minimumCountColumns: 2, //最少允许的列数
             clickToSelect: true, //是否启用点击选中行
             height: 750, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
             uniqueId: "ID", //每一行的唯一标识，一般为主键列
-            
+
             detailView: false, //是否显示父子表
             //显示导出插件
             showExport: true,
             //导出文件类型
-            exportTypes: ['csv', 'excel'],
+            exportTypes: ['csv', 'excel', 'xlsx'],
             //导出范围
-            exportDataType : "all", //basic'导出当前页, 'all'导出全部, 'selected'导出选中项.
+            exportDataType: "all", //basic'导出当前页, 'all'导出全部, 'selected'导出选中项.
             //文件名称设置
             exportOptions: {
                 fileName: "{$template.tname}",
                 tableName: "{$template.tname}",
                 worksheetName: 'sheet1',  //表格工作区名称
-                excelstyles: ['background-color', 'white', 'font-size', '12px'], 设置格式
-                
+                excelstyles: ['font-size', '12px'], //设置格式
             },
 
             columns: {$fields|raw},
@@ -69,9 +68,9 @@
             //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
             limit: params.limit, //页面大小
             offset: params.offset,
-            order:params.order,
+            order: params.order,
             ordername: params.sort,
-            search:params.search
+            search: params.search
         };
     };
     
