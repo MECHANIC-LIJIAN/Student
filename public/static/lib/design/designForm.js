@@ -1,7 +1,7 @@
     var id = 1;
     function deleteRow(obj){
-        console.log("de")
         $(obj).parents("tr").remove();
+        $("#primaryKey option[value='"+option_id+"']").remove();
         id=id-1
     };
     $("#addInput").click(function() {
@@ -58,7 +58,7 @@
             option_id +
             '_rule"><option value="text"">普通文本</option><option value="phone">手机号</option><option value="email">邮箱</option><option value="number">数字</option>';
         ele = ele + "</select></td>";
-        ele = ele + '<td><button onclick="deleteRow(this)" class="btn btn-danger">delEle</button></td>';
+        ele = ele + '<td><button dataid="'+ option_id+'" onclick="deleteRow(this)" class="btn btn-danger">delEle</button></td>';
         ele = ele + "</tr>";
         return ele;
     }
@@ -100,7 +100,7 @@
             '">修改</a></td>';
         ele =
             ele +
-            '<td><button class="btn btn-danger" onclick="deleteRow(this)">delEle</button></td>';
+            '<td><button class="btn btn-danger" dataid="'+ option_id+'" onclick="deleteRow(this)">delEle</button></td>';
         ele = ele + "</tr>";
         return ele;
     }
