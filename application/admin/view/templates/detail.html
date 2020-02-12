@@ -49,9 +49,15 @@
             showExport: true,
             //导出文件类型
             exportTypes: ['csv', 'excel'],
+            //导出范围
+            exportDataType : "all", //basic'导出当前页, 'all'导出全部, 'selected'导出选中项.
             //文件名称设置
             exportOptions: {
-                fileName: "{$template.tname}"
+                fileName: "{$template.tname}",
+                tableName: "{$template.tname}",
+                worksheetName: 'sheet1',  //表格工作区名称
+                excelstyles: ['background-color', 'white', 'font-size', '12px'], 设置格式
+                
             },
 
             columns: {$fields|raw},

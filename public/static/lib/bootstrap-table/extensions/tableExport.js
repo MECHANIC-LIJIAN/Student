@@ -736,7 +736,7 @@
 
                                  if ( typeof tdcss === 'undefined' && typeof defaults.mso.onMsoNumberFormat === 'function' )
                                    tdcss = defaults.mso.onMsoNumberFormat(cell, row, col);
-
+                                  else tdcss='\\@';
                                  if ( typeof tdcss !== 'undefined' && tdcss !== '' )
                                    tdstyle = 'style="mso-number-format:\'' + tdcss + '\'';
 
