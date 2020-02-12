@@ -40,6 +40,7 @@ class Template extends Controller
                 }
 
                 $res = model('TemplatesData')->where(['tid' => $template['tid'], $template['primaryKey'] => $data[$template['primaryKey']]])->find();
+                dump($data);
                 if ($res) {
                     cookie('ifCheck', 1);
                     cookie('dataid', $res['id']);
