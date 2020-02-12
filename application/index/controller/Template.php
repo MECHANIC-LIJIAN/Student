@@ -35,13 +35,11 @@ class Template extends Controller
                 $templateField = cookie('options');
                 $template = cookie('template');
                 $data['tid']=$template['tid'];
-                dump($data);
-                dump($templateField);
-                
+
                 foreach ($templateField as $key => $value) {
                     $data[$value] = input("post.$value");
                 }
-                dump($data);
+
                 $res = model('TemplatesData')->where(['tid' => $template['tid'], $template['primaryKey'] => $data[$template['primaryKey']]])->find();
                 
                 if ($res) {
@@ -66,8 +64,6 @@ class Template extends Controller
                 $templateField = cookie('options');
                 $template = cookie('template');
                 $data['tid'] = $template['tid'];
-                dump($data);
-                dump($templateField);
                 
                 foreach ($templateField as $key => $value) {
                     $data[$value] = input("post.$value");
