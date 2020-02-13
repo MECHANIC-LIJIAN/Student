@@ -11,20 +11,20 @@ class Templates extends Base
      * @return \think\Response
      */
     function list() {
-        
-        if (session('admin.is_super')==1) {
+
+        if (session('admin.is_super') == 1) {
             $templates = model('Templates')
-            ->with('getUser')
-            ->order(['status' => 'asc', 'update_time' => 'desc'])
-            ->select();
-        }else {
+                ->with('getUser')
+                ->order(['status' => 'asc', 'update_time' => 'desc'])
+                ->select();
+        } else {
             $templates = model('Templates')
-            ->where(['tuser' => session('admin.id')])
-            ->with('getUser')
-            ->order(['status' => 'asc', 'update_time' => 'desc'])
-            ->select();
+                ->where(['tuser' => session('admin.id')])
+                ->with('getUser')
+                ->order(['status' => 'asc', 'update_time' => 'desc'])
+                ->select();
         }
-        
+
         foreach ($templates as $value) {
             $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
             $value['tuser'] = $value['getUser']['username'];
@@ -73,20 +73,32 @@ class Templates extends Base
             ->where(['tid' => $tId, 'type' => 'p'])
             ->field('sid,title')
             ->select();
-
         $templateField = [];
         foreach ($fields as $key => $value) {
             $value['field'] = $value['sid'];
-            $value['sortable']=true;
+            $value['sortable'] = true;
             array_push($templateField, $value['sid']);
-            // $value['fomater']='';
         }
-        
+        array_push($templateField, 'create_time');
+        array_push($templateField, 'update_time');
         session('options', $templateField);
+
+        $fields = json_decode($fields, $assoc = false);
+        array_push($fields, [
+            'field' => 'create_time',
+            'title' => '首次提交时间',
+            'sortable' => true,
+        ]);
+        array_push($fields, [
+            'field' => 'update_time',
+            'title' => '最后提交时间',
+            'sortable' => true,
+        ]);
+
         $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
         $this->assign([
             'template' => $template,
-            'fields' => json_encode($fields,JSON_UNESCAPED_UNICODE),
+            'fields' => json_encode($fields, JSON_UNESCAPED_UNICODE),
             'shareUrl' => $shareUrl,
         ]);
         return view();
@@ -95,26 +107,26 @@ class Templates extends Base
     public function dataList()
     {
         if (request()->isAjax()) {
-            $tId=session('tId');
-            $fields=session('options');
+            $tId = session('tId');
+            $fields = session('options');
             #排序字段和规则
             $order = input('post.order');
             $ordername = input('post.ordername');
             if ($ordername) {
-                $order=[$ordername=>$order,'update_time' => 'desc'];
-            }else {
-                $order=['update_time' => 'desc'];
+                $order = [$ordername => $order, 'update_time' => 'desc'];
+            } else {
+                $order = ['update_time' => 'desc'];
             }
             # 获取并且计算 页号 分页大小
             $offset = input('post.offset');
             $limit = input('post.limit');
             $page = floor($offset / $limit) + 1;
-        
+
             #模糊搜索
-            $search=input('post.search');
-            if ($search) {
+            $search = input('post.search');
+            if ($search != "") {
                 $map = [
-                    [implode("|",$fields), 'like', "%$search%"],
+                    [implode("|", $fields), 'like', "%$search%"],
                 ];
             }
             $list = model('TemplatesData')
@@ -123,7 +135,16 @@ class Templates extends Base
                 ->order($order)
                 ->field($fields)
                 ->page($page, $limit)
+                ->withAttr([
+                    'create_time' => function ($value, $data) {
+                        return date("Y-m-d H:i", $value);
+                    },
+                    'update_time' => function ($value, $data) {
+                        return date("Y-m-d H:i", $value);
+                    },
+                ])
                 ->select();
+            // dump($list);
             $count = model('TemplatesData')
                 ->where(['tid' => $tId])
                 ->where($map)
