@@ -109,41 +109,58 @@ class Templates extends Base
         if (request()->isAjax()) {
             $tId = session('tId');
             $fields = session('options');
-            #排序字段和规则
+
+            $offset = input('post.offset');
+            $limit = input('post.limit');
             $order = input('post.order');
             $ordername = input('post.ordername');
+            $search = input('post.search');
+
+            #排序字段和规则
             if ($ordername) {
                 $order = [$ordername => $order, 'update_time' => 'desc'];
             } else {
                 $order = ['update_time' => 'desc'];
             }
-            # 获取并且计算 页号 分页大小
-            $offset = input('post.offset');
-            $limit = input('post.limit');
-            $page = floor($offset / $limit) + 1;
 
             #模糊搜索
-            $search = input('post.search');
+            $map = ['tid' => $tId];
             if ($search != "") {
-                $map = [
-                    [implode("|", $fields), 'like', "%$search%"],
-                ];
+                $map[] = [implode("|", $fields), 'like', "%$search%"];
             }
-            $list = model('TemplatesData')
-                ->where(['tid' => $tId])
-                ->where($map)
-                ->order($order)
-                ->field($fields)
-                ->page($page, $limit)
-                ->withAttr([
-                    'create_time' => function ($value, $data) {
-                        return date("Y-m-d H:i", $value);
-                    },
-                    'update_time' => function ($value, $data) {
-                        return date("Y-m-d H:i", $value);
-                    },
-                ])
-                ->select();
+
+            if ($limit!=null) {
+                # 计算 页号
+                $page = floor($offset / $limit) + 1;
+                $list = model('TemplatesData')
+                    ->where($map)
+                    ->order($order)
+                    ->field($fields)
+                    ->page($page, $limit)
+                    ->withAttr([
+                        'create_time' => function ($value, $data) {
+                            return date("Y-m-d H:i", $value);
+                        },
+                        'update_time' => function ($value, $data) {
+                            return date("Y-m-d H:i", $value);
+                        },
+                    ])
+                    ->select();
+            } else {
+                $list = model('TemplatesData')
+                    ->where($map)
+                    ->field($fields)
+                    ->withAttr([
+                        'create_time' => function ($value, $data) {
+                            return date("Y-m-d H:i", $value);
+                        },
+                        'update_time' => function ($value, $data) {
+                            return date("Y-m-d H:i", $value);
+                        },
+                    ])
+                    ->select();
+            }
+
             // dump($list);
             $count = model('TemplatesData')
                 ->where(['tid' => $tId])
