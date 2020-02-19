@@ -131,7 +131,7 @@ class Templates extends Base
                 $temp_fields=$fields;
                 array_pop($temp_fields);
                 array_pop($temp_fields);
-                $map []=[implode("|", $temp_fields), 'like', "%$search%"];
+                $map =[implode("|", $temp_fields), 'like', "%$search%"];
             }
 
             #判断是否为导出

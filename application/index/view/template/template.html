@@ -69,7 +69,8 @@
                     <fieldset>
                         <legend>{$tname}</legend>
                         <!-- 输出input -->
-                        {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)==0}
+                        {volist name="optionList" id='option'}
+                        {eq name="$option.child|count" value="0"}
                         <div class="form-group">
                             <label for="{$option.title}" class="col-sm-10">{$option.title}</label>
                             <div class="col-sm-8">
@@ -77,10 +78,7 @@
                                     name="{$option.sid}">
                             </div>
                         </div>
-                        {/if} {/volist}
-
-                        <!-- 输出select -->
-                        {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)>0}
+                        {else /}
                         <div class="form-group">
                             <label for="{$option.title}" class="col-sm-10">{$option.title}</label>
                             <div class="col-sm-4">
@@ -92,7 +90,8 @@
                                 </select>
                             </div>
                         </div>
-                        {/if} {/volist}
+                        {/eq}
+                        {/volist}
                         <div class="for-group">
                             <input type="button" class="btn btn-success col-xs-4 col-xs-offset-4" id="submitOpt"
                                 value="提交">
