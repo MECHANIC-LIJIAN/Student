@@ -123,13 +123,19 @@ class Templates extends Base
                 $order = ['update_time' => 'desc'];
             }
 
+            #搜索条件
+            $map []= ['tid','=', $tId];
             #模糊搜索
-            $map = ['tid' => $tId];
             if ($search != "") {
-                $map[] = [implode("|", $fields), 'like', "%$search%"];
+                #删除日期字段
+                $temp_fields=$fields;
+                array_pop($temp_fields);
+                array_pop($temp_fields);
+                $map []=[implode("|", $temp_fields), 'like', "%$search%"];
             }
 
-            if ($limit!=null) {
+            #判断是否为导出
+            if ($limit != null) {
                 # 计算 页号
                 $page = floor($offset / $limit) + 1;
                 $list = model('TemplatesData')
@@ -162,6 +168,7 @@ class Templates extends Base
             }
 
             // dump($list);
+
             $count = model('TemplatesData')
                 ->where(['tid' => $tId])
                 ->where($map)
