@@ -7,3 +7,4 @@ thinkphp
 .DS_Store
 public/uploads/
 public/pma/
+config/app.php
