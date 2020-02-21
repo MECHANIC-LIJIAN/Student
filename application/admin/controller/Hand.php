@@ -78,7 +78,6 @@ class Hand extends Base
             } else {
                 $this->error("模板初始化失败");
             }
-            return $fields;
         }
     }
 }

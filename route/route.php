@@ -31,14 +31,18 @@ Route::group(
         Route::rule('forget', 'admin/Index/forget', 'GET|POST');
         Route::rule('reset', 'admin/Index/reset', 'POST');
 
-        Route::rule('templateList', 'admin/Templates/list', 'GET|POST');
-        Route::rule('templateControl', 'admin/Templates/control', 'GET|POST');
-        Route::rule('templateAdd', 'admin/Templates/add', 'GET|POST');
-        Route::rule('templateDel', 'admin/Templates/del', 'POST');
-
-        Route::rule('templateData/[:id]', 'admin/Templates/detail', 'GET')->ext();
-        Route::rule('templateDataList', 'admin/Templates/dataList', 'POST')->ext('do');
-
+        Route::group('templates', function () {
+            Route::rule('list', 'admin/Templates/list', 'GET|POST');
+            Route::rule('control', 'admin/Templates/control', 'GET|POST');
+            Route::rule('add', 'admin/Templates/add', 'GET|POST');
+            Route::rule('del', 'admin/Templates/del', 'POST');
+        });
+        #单个表单数据
+        Route::group('template', function () {
+            Route::rule('detail/[:id]', 'admin/Template/index', 'GET')->ext();
+            Route::rule('ajax_data', 'admin/Template/dataList', 'POST')->ext('do');
+            Route::rule('ajax_del', 'admin/Template/del', 'POST')->ext('do');
+        });
         #文件创建模板
         Route::group('createByFile', function () {
             Route::rule('First', 'admin/Import/createTemplateFirst', 'GET|POST');
@@ -53,18 +57,11 @@ Route::group(
         });
 
         #用户
-        Route::rule('memberList', 'admin/Member/list', 'GET|POST');
-        Route::rule('memberEdit', 'admin/Member/edit', 'GET|POST');
-        Route::rule('memberAdd', 'admin/Member/add', 'GET|POST');
-        Route::rule('memberDel', 'admin/Member/del', 'GET|POST');
-        #管理员
         Route::rule('adminList', 'admin/Admin/list', 'GET');
         Route::rule('adminAdd', 'admin/Admin/add', 'GET|POST');
         Route::rule('adminStatus', 'admin/Admin/status', 'POST');
         Route::rule('adminEdit/[:id]', 'admin/Admin/edit', 'GET|POST');
         Route::rule('adminDel', 'admin/Admin/del', 'GET|POST');
-
-
 
         Route::rule('system', 'admin/System/index', 'GET|POST');
 

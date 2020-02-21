@@ -2,21 +2,24 @@
 {block name="title"}数据-{$template.tname}{/block}
 {block name="page-style"}
 <style>
-     .login-area {
-            color: white;
-            font-size: 16px;
-        }
+    .login-area {
+        color: white;
+        font-size: 16px;
+    }
 
-        .login-area span {
-            margin-left: 10px;
-        }
-        .login-area a{
-            color:white;
-            text-decoration: none;
-        }
-        .login-area a:hover {
-            text-decoration: underline;
-        }
+    .login-area span {
+        margin-left: 10px;
+    }
+
+    .login-area a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .login-area a:hover {
+        text-decoration: underline;
+    }
+
     input[type=checkbox],
     input[type=radio] {
         opacity: 1;
@@ -33,8 +36,33 @@
 {block name="page-main"}
 <div class="row">
     <div class="col-xs-12">
-        <div class="widget radius-bordered">
-            <div>
+        <div class="widget">
+            <div class="bg-themeprimary widget-header">
+                <span class="widget-caption">{$template.tname}</span>
+                <div class="widget-buttons">{$admins|raw}</div>
+            </div>
+            <div class="widget-body">
+                <!-- <form id="formSearch" class="form-horizontal">
+                    <div class="form-group" style="margin-top:15px">
+                        <label class="control-label col-sm-1" for="txt_search_departmentname">部门名称</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="txt_search_departmentname">
+                        </div>
+                        <label class="control-label col-sm-1" for="txt_search_statu">状态</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="txt_search_statu">
+                        </div>
+                        <div class="col-sm-4" style="text-align:left;">
+                            <button type="button" style="margin-left:50px" id="btn_query"
+                                class="btn btn-primary">查询</button>
+                        </div>
+                    </div>
+                </form> -->
+                <div id="toolbar" class="btn-group">
+                    <button id="btn_delete" type="button" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                    </button>
+                </div>
                 <table id="table" data-search="true"
                     class="table table-striped table-hover table-bordered text-nowrap  table-condensed"></table>
             </div>
@@ -55,7 +83,7 @@
     $(function () {
         //初始化Table
         $("#table").bootstrapTable({
-            url: "{:url('admin/Templates/dataList')}",
+            url: "{:url('admin/Template/dataList')}",
             method: "post", //请求方式（*）
             toolbar: "#toolbar", //工具按钮用哪个容器
             striped: false, //是否显示行间隔色
@@ -72,7 +100,6 @@
             clickToSelect: true, //是否启用点击选中行
             // height: 750, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
             uniqueId: "ID", //每一行的唯一标识，一般为主键列
-
             detailView: false, //是否显示父子表
             //显示导出插件
             showExport: true,
@@ -101,7 +128,35 @@
             search: params.search
         };
     };
-    
+
+    });
+
+    $("#btn_delete").click(function () {
+        if (!confirm("是否确认删除？"))
+            return;
+        var rows = $('#table').bootstrapTable('getSelections');// 获得要删除的数据
+        // rows 主要是为了判断是否选中，下面的else内容才是主要
+        if (rows.length == 0) {
+            alert("请先选择要删除的记录!");
+            return;
+        } else {
+            // 声明一个数组
+            var ids = new Array();
+            // 通过获得别选中的来进行遍历
+            $(rows).each(function () {
+                ids.push(this.id);
+            });
+            console.log(ids)
+            $.ajax({
+                url: "{:url('admin/Template/del')}",
+                data: "ids=" + ids,
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    $('#table').bootstrapTable('refresh');
+                }
+            })
+        }
     });
 </script>
 
