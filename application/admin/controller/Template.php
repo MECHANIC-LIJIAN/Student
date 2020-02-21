@@ -2,6 +2,8 @@
 
 namespace app\admin\controller;
 
+use think\db\Where;
+
 class Template extends Base
 {
 
@@ -82,8 +84,14 @@ class Template extends Base
             // } else {
             //     $this->error("任务删除失败");
             // }
-            $ids=input('ids');
-            return explode(',',$ids);
+            $ids= explode(',',input('ids'));
+            sort($ids,SORT_NUMERIC);
+            $result = model('TemplatesData')->destroy($ids);
+            if ($result) {
+                $this->success('任务删除成功', 'admin/Templates/list');
+            } else {
+                $this->error("任务删除失败");
+            }
         }
     }
 
