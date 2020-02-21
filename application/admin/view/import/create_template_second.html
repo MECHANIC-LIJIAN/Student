@@ -4,6 +4,22 @@
 {block name="page-style"}
 <link href="__CSS__/mysite.css" rel="stylesheet">
 <style>
+.login-area {
+            color: white;
+            font-size: 16px;
+        }
+
+        .login-area span {
+            margin-left: 10px;
+        }
+        .login-area a{
+            color:white;
+            text-decoration: none;
+        }
+        .login-area a:hover {
+            text-decoration: underline;
+        }
+
     .form-inline {
         margin-top: 10px;
     }
@@ -98,6 +114,9 @@
 {/block}
 {block name="page-main"}
 <div class="container project-team-container">
+    <div class="bg-themeprimary widget-header">
+        <span class="widget-caption">第二步：完善表单</span>
+    </div>
     <div class="widget-body">
         <div class="row">
             <div class="col-lg-9">
@@ -107,7 +126,7 @@
                     </li>
                     <li role="tab" class="second current" aria-disabled="false" aria-selected="true">
                         <a id="formWizard-t-1" aria-controls="formWizard-p-1"><span class="current-info audible">current
-                                step: </span><span class="number">2</span> 完善模板</a>
+                                step: </span><span class="number">2</span> 完善表单</a>
                     </li>
                     <li role="tab" class="disabled last" aria-disabled="true">
                         <a id="formWizard-t-2" aria-controls="formWizard-p-2"><span class="number">3</span>完成发布</a>

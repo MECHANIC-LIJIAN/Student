@@ -2,9 +2,31 @@
 
 {block name="title"}导入模板文件{/block}
 {block name="page-style"}
-<link href="__CSS__/mysite.css" rel="stylesheet">{/block}
+<link href="__CSS__/mysite.css" rel="stylesheet">
+<style>
+.login-area {
+            color: white;
+            font-size: 16px;
+        }
+
+        .login-area span {
+            margin-left: 10px;
+        }
+        .login-area a{
+            color:white;
+            text-decoration: none;
+        }
+        .login-area a:hover {
+            text-decoration: underline;
+        }
+
+</style>
+{/block}
 {block name="page-main"}
 <div class="container project-team-container">
+    <div class="bg-themeprimary widget-header">
+        <span class="widget-caption">第一步：导入文件</span>
+    </div>
     <div class="widget-body">
         <div class="row">
             <div class="col-lg-9">
@@ -14,7 +36,7 @@
                                 step: </span><span class="number">1</span> 导入文件</a>
                     </li>
                     <li id='second-step-li' role="tab" class="disabled" aria-disabled="true">
-                        <a id="formWizard-t-1" aria-controls="formWizard-p-1"><span class="number">2</span>完善模板</a>
+                        <a id="formWizard-t-1" aria-controls="formWizard-p-1"><span class="number">2</span>完善表单</a>
                     </li>
                     <li id='third-step-li' role="tab" class="disabled last" aria-disabled="true">
                         <a id="formWizard-t-2" aria-controls="formWizard-p-2"><span class="number">3</span>完成发布</a>

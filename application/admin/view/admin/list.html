@@ -2,71 +2,76 @@
 {block name="title"}用户列表{/block}
 {block name="page-breadcrumb"}控制面板 / 用户管理 / 用户列表{/block}
 {block name="page-main"}
-            <!-- Page Body -->
-            <div class="page-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="widget">
-                            <div class="widget-header">
-                                <span class="widget-caption">用户列表</span>
-                                <div class="widget-buttons">
-                                    {$admins|raw}
-                                </div>
-                            </div>
-                            <div class="widget-body">
-                                <table class="table table-hover table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>用户ID</th>
-                                            <th>用户名</th>
-                                            <th>邮箱</th>
-                                            <th>状态</th>
-                                            <th>权限</th>
-                                            <th>操作</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {volist name="admins" id="vo"}
-                                        <tr>
-                                            <td><span>{$vo.id}</span>
-                                            </td>
-                                            <td>{$vo.username} </td>
-                                            <td>{$vo.email}</td>
-                                            <td>{if $vo.status==1}正常{else /}<p style="color:red;">禁用</p>{/if}</td>
-                                            <td>{if $vo.is_super==1}超级用户{else /}普通用户{/if}</td>
-                                            <td>{if session('admin.is_super')==1} {if $vo.status==1}
-                                                <a href="#" class="admin-status btn btn-darkorange btn-xs" dataid="{$vo.id}" status="{$vo.status}">禁用</a> {else /}
-                                                <a href="#" class="admin-status btn btn-success btn-xs" dataid="{$vo.id}" status="{$vo.status}">启用</a> {/if}
-                                                <a href=" {:url( 'admin/Admin/edit',[ 'id'=>$vo.id])}" class="btn btn-azure btn-xs">编辑</a>
-                                                <a href="#" class="btn btn-danger btn-xs admin-del" dataid="{$vo.id}">删除</a>
-                                                {/if}
-                                            </td>
-                                        </tr>
-                                        {/volist}
+<!-- Page Body -->
+<div class="page-body">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="widget">
+                <div class="widget-header">
+                    <span class="widget-caption">用户列表</span>
+                    <div class="widget-buttons">
+                        {$admins|raw}
+                    </div>
+                </div>
+                <div class="widget-body">
 
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>用户ID</th>
+                                    <th>用户名</th>
+                                    <th>邮箱</th>
+                                    <th>状态</th>
+                                    <th>权限</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {volist name="admins" id="vo"}
+                                <tr>
+                                    <td><span>{$vo.id}</span>
+                                    </td>
+                                    <td>{$vo.username} </td>
+                                    <td>{$vo.email}</td>
+                                    <td>{if $vo.status==1}正常{else /}<p style="color:red;">禁用</p>{/if}</td>
+                                    <td>{if $vo.is_super==1}超级用户{else /}普通用户{/if}</td>
+                                    <td>{if session('admin.is_super')==1} {if $vo.status==1}
+                                        <a href="#" class="admin-status btn btn-darkorange btn-xs" dataid="{$vo.id}"
+                                            status="{$vo.status}">禁用</a> {else /}
+                                        <a href="#" class="admin-status btn btn-success btn-xs" dataid="{$vo.id}"
+                                            status="{$vo.status}">启用</a> {/if}
+                                        <a href=" {:url( 'admin/Admin/edit',[ 'id'=>$vo.id])}"
+                                            class="btn btn-azure btn-xs">编辑</a>
+                                        <a href="#" class="btn btn-danger btn-xs admin-del" dataid="{$vo.id}">删除</a>
+                                        {/if}
+                                    </td>
+                                </tr>
+                                {/volist}
 
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            <!-- /Page Body -->
+        </div>
+    </div>
+</div>
+<!-- /Page Body -->
 {/block}
 {block name="page-js"}
 <script>
-    $(function() {
+    $(function () {
         $('.pagination').addClass('pagination-sm');
 
 
-        $('.admin-del').click(function() {
+        $('.admin-del').click(function () {
 
             var id = $(this).attr('dataid');
             layer.confirm('确定删除该用户吗？', {
                 title: '用户删除确认',
                 icon: 3
-            }, function(index) {
+            }, function (index) {
                 layer.close(index);
                 $.ajax({
                     url: "{:url('admin/Admin/del')}",
@@ -75,12 +80,12 @@
                         id: id
                     },
                     dataType: 'json',
-                    success: function(data) {
+                    success: function (data) {
                         if (data.code == 1) {
                             layer.msg(data.msg, {
                                 icon: 6,
                                 time: 2000
-                            }, function() {
+                            }, function () {
                                 location.href = data.url;
                             });
                         } else {
@@ -99,7 +104,7 @@
             return false;
         });
 
-        $('.admin-status').click(function() {
+        $('.admin-status').click(function () {
 
             var id = $(this).attr('dataid');
             var status = $(this).attr('status');
@@ -112,7 +117,7 @@
             layer.confirm(msg, {
                 title: '状态操作',
                 icon: 3
-            }, function(index) {
+            }, function (index) {
                 layer.close(index);
                 $.ajax({
                     url: "{:url('admin/Admin/status')}",
@@ -122,12 +127,12 @@
                         status: status
                     },
                     dataType: 'json',
-                    success: function(data) {
+                    success: function (data) {
                         if (data.code == 1) {
                             layer.msg(data.msg, {
                                 icon: 6,
                                 time: 2000
-                            }, function() {
+                            }, function () {
                                 location.href = data.url;
                             });
                         } else {

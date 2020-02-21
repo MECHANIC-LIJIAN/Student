@@ -84,6 +84,9 @@ class Templates extends Base
         session('options', $templateField);
 
         $fields = json_decode($fields, $assoc = false);
+        array_unshift($fields, [
+            'checkbox'=>true,
+        ]);
         array_push($fields, [
             'field' => 'create_time',
             'title' => '首次提交时间',
