@@ -2,24 +2,6 @@
 {block name="title"}数据-{$template.tname}{/block}
 {block name="page-style"}
 <style>
-    .login-area {
-        color: white;
-        font-size: 16px;
-    }
-
-    .login-area span {
-        margin-left: 10px;
-    }
-
-    .login-area a {
-        color: white;
-        text-decoration: none;
-    }
-
-    .login-area a:hover {
-        text-decoration: underline;
-    }
-
     input[type=checkbox],
     input[type=radio] {
         opacity: 1;
@@ -30,6 +12,7 @@
         height: 14px;
         cursor: pointer;
     }
+
 </style>
 
 {/block}
@@ -38,9 +21,10 @@
     <div class="col-xs-12">
         <div class="widget">
             <div class="bg-themeprimary widget-header">
+                <i class="fa fa-arrow-left widget-icon"
+                    onClick="window.location.href='{:url(\'admin/Templates/list\')}';" /></i>
                 <span class="widget-caption">{$template.tname}</span>
-                <div class="widget-buttons">{$admins|raw}</div>
-                
+
             </div>
             <div class="widget-body">
                 <!-- <form id="formSearch" class="form-horizontal">
@@ -122,7 +106,6 @@
             },
 
             columns: {$fields|raw},
-            
         });
     //得到查询的参数
     function queryParams(params) {

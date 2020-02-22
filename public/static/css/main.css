@@ -157,3 +157,10 @@ hr {
 .login-area a:hover {
     text-decoration: underline;
 }
+
+
+.fa-arrow-left:hover {
+    transform: scale(1.4);
+    -webkit-transition: all .3s ease-out;
+    transition: all .3s ease-out;
+}
