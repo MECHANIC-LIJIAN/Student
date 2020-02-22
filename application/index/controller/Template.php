@@ -50,7 +50,7 @@ class Template extends Controller
                     cookie('dataid', $res['id']);
                     return json([
                         'code' => 101,
-                        'msg' => "根据唯一字段，该记录已存在，是否覆盖",
+                        'msg' => "该记录已存在，确认覆盖吗?",
                     ]);
                 } else {
                     $res2 = model('TemplatesData')->allowField(true)->save($data);

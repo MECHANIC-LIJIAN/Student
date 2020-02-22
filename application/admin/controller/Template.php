@@ -13,7 +13,7 @@ class Template extends Base
         session('tId', $tId);
         $template = model('Templates')
             ->where(['tid' => $tId])
-            ->field('tname')
+            ->field('tname,tid')
             ->find();
 
         $fields = model('TemplatesOption')

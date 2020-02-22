@@ -12,7 +12,6 @@
         height: 14px;
         cursor: pointer;
     }
-
 </style>
 
 {/block}
@@ -44,16 +43,21 @@
                     </div>
                 </form> -->
                 <div id="toolbar" class="btn-group">
-                    <!-- <input type="text" class="btn btn-xs" value="{$vo.shareUrl}" name="{$vo.tid}"
-                    id="{$vo.tid}">
-                <a href="javascript:;" class="copy btn btn-xs fa fa-align-right" dataid="{$vo.tid}"><span
-                        class="glyphicon glyphicon-share-alt"></span>分享</a>
-                <a href="{$vo.shareUrl}" target="_blank" class="copy btn btn-xs btn-default"><span
-                        class="glyphicon glyphicon-eye-open"></span>查看任务</a> -->
-                    <button id="btn_delete" type="button" class="btn btn-danger">
-                        <span class="fa fa-remove" aria-hidden="true"></span>删除
-                    </button>
+                    <div class="btn-group">
+                        <button id="btn_delete" type="button" class="btn btn-danger">
+                            <span class="fa fa-remove" aria-hidden="true"></span>删除
+                        </button>
+                        <button id="btn_refresh" type="button" class="btn btn-success">
+                            <span class="fa fa-refresh" aria-hidden="true"></span>刷新
+                        </button>
+                        <button id="copy" class="btn btn-info" dataid="{$template.tid}">
+                            <span class="fa fa-share"></span>分享
+                        </button>
+                        <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
+                                class="fa fa-eye"></span>查看任务</a>
+                    </div>
                 </div>
+
                 <table id="table" data-search="true"
                     class="table table-striped table-hover table-bordered text-nowrap  table-condensed"></table>
             </div>
@@ -71,6 +75,23 @@
 <script src="__LIB__/bootstrap-table/extensions/tableExport.js"></script>
 <script src="__LIB__/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
 <script>
+    $("#copy").click(function () {
+        copyToClip("{$shareUrl}");
+    })
+
+    /**
+ * 复制内容到粘贴板
+ * content : 需要复制的内容
+ */
+    function copyToClip(content) {
+        var aux = document.createElement("input");
+        aux.setAttribute("value", content);
+        document.body.appendChild(aux);
+        aux.select();
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+        showMsg("复制成功")
+    }
     $(function () {
         //初始化Table
         $("#table").bootstrapTable({
@@ -85,7 +106,7 @@
             pageNumber: 1, //初始化加载第一页，默认第一页
             pageSize: 15, //每页的记录行数（*）
             pageList: [25, 50, 100], //可供选择的每页的行数（*）
-            showRefresh: true, //是否显示刷新按钮
+            showRefresh: false, //是否显示刷新按钮
             showSearch: true,
             minimumCountColumns: 2, //最少允许的列数
             clickToSelect: true, //是否启用点击选中行
@@ -128,30 +149,54 @@
             showErrorMsg("请先选择要删除的记录!");
             return;
         } else {
-            layer.confirm('确定删除吗？', {
-                title: '删除任务',
-                icon: 3
-            }, function (index) {
-                // 声明一个数组
-                var ids = new Array();
-                // 通过获得别选中的来进行遍历
-                $(rows).each(function () {
-                    ids.push(this.id);
-                });
-                console.log(ids)
-                $.ajax({
-                    url: "{:url('admin/Template/del')}",
-                    data: "ids=" + ids,
-                    type: "post",
-                    dataType: "json",
-                    success: function (data) {
-                        showMsg("删除成功！")
-                        $('#table').bootstrapTable('refresh');
-                    }
+            // 声明一个数组
+            var ids = new Array();
+            // 通过获得别选中的来进行遍历
+            $(rows).each(function () {
+                ids.push(this.id);
+            });
+            if (isPC) {
+                layer.confirm('确定删除吗？', {
+                    title: '删除任务',
+                    icon: 3
+                }, function (index) {
+                    $.ajax({
+                        url: "{:url('admin/Template/del')}",
+                        data: "ids=" + ids,
+                        type: "post",
+                        dataType: "json",
+                        success: function (data) {
+                            showMsg("删除成功！")
+                            $('#table').bootstrapTable('refresh');
+                        }
+                    })
                 })
-            })
+            } else {
+                //询问框
+                layer.open({
+                    content: '确定删除吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        $.ajax({
+                        url: "{:url('admin/Template/del')}",
+                        data: "ids=" + ids,
+                        type: "post",
+                        dataType: "json",
+                        success: function (data) {
+                            showMsg("删除成功！")
+                            $('#table').bootstrapTable('refresh');
+                        }
+                    })
+                    }
+                });
+            }
         }
     });
+    $("#btn_refresh").click(function () {
+        $('#table').bootstrapTable('refresh');
+    })
+
+
 </script>
 
 {/block}
