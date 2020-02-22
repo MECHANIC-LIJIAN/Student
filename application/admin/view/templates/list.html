@@ -4,79 +4,73 @@
 {block name="page-main"}
 <div class="row">
     <div class="col-xs-12">
-        <div class="widget radius-bordered">
-            <div class="widget">
-                <div class="widget-header">
-                    <span class="widget-caption">任务列表</span>
-                    <div class="widget-buttons">
+        <div class="widget">
+            <div class="widget-header bg-themeprimary">
+                <span class="widget-caption">任务列表</span>
+                <div class="widget-buttons">
 
-                    </div>
                 </div>
-                <div class="widget-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered text-nowrap" style="padding: 2px;font-size: 10px;">
-                            <thead>
-                                <tr>
-                                    <th>任务名</th>
-                                    {if session('admin.is_super')==1} <th>用户名</th>{/if}
-                                    <th>记录数</th>
-                                    <th>状态</th>
-                                    <th colspan="3">操作</th>
-                                    <th>创建时间</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {volist name="templates" id="vo"}
-                                <tr>
-                                    <td><a href="{:url('admin/Template/index',['id'=>$vo.tid])}">{$vo.tname}</a> </td>
-                                    {if session('admin.is_super')==1}<td>{$vo.tuser}</td>{/if}
-                                    <td>{$vo.count}</td>
-                                    {if $vo.status==1}
-                                    <td>
-                                        <a href="#" class="tempalte-status btn btn-success btn-xs"
-                                            status="{$vo.status}">进行中</a>
-                                    </td>
-                                    <td>
-                                        <a href="#" class="tempalte-status btn btn-warning btn-xs control-tempalte"
-                                            dataid="{$vo.id}" status="{$vo.status}">暂停</a>
-                                        <a href="#"
-                                            class="tempalte-status btn btn-darkorange btn-xs del-tempalte disabled"
-                                            dataid="{$vo.id}" status="{$vo.status}">删除</a> </td>
+            </div>
+            <div class="widget-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered text-nowrap" style="padding: 2px;font-size: 10px;">
+                        <thead>
+                            <tr>
+                                <th>任务名</th>
+                                {if session('admin.is_super')==1} <th>用户名</th>{/if}
+                                <th>记录数</th>
+                                <th>状态</th>
+                                <th colspan="3">操作</th>
+                                <th>创建时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {volist name="templates" id="vo"}
+                            <tr>
+                                <td><a href="{:url('admin/Template/index',['id'=>$vo.tid])}">{$vo.tname}</a> </td>
+                                {if session('admin.is_super')==1}<td>{$vo.tuser}</td>{/if}
+                                <td>{$vo.count}</td>
+                                {if $vo.status==1}
+                                <td>
+                                    <span class="tempalte-status badge badge-pill badge-success"status="{$vo.status}">进行中</span>
+                                </td>
+                                <td>
+                                    <a href="#" class="tempalte-status btn btn-warning btn-xs control-tempalte"
+                                        dataid="{$vo.id}" status="{$vo.status}">暂停</a>
+                                    <a href="#" class="tempalte-status btn btn-darkorange btn-xs del-tempalte disabled"
+                                        dataid="{$vo.id}" status="{$vo.status}">删除</a> </td>
 
-                                    {else /}
-                                    <td>
-                                        <a href="#" class="tempalte-status btn btn-danger btn-xs"
-                                            status="{$vo.status}">已暂停</a>
-                                    </td>
-                                    <td>
-                                        <a href="#" class="tempalte-status btn btn-success btn-xs control-tempalte"
-                                            dataid="{$vo.id}" status="{$vo.status}">开始</a>
-                                        <a href="#" class="tempalte-status btn btn-darkorange btn-xs del-tempalte"
-                                            dataid="{$vo.id}" status="{$vo.status}">删除</a> </td>
-                                    {/if}
-                                    <td>
-                                        <a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
-                                            class="btn btn-xs btn-success"><span
-                                                class="glyphicon glyphicon-list-alt"></span>数据</a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="btn btn-xs" value="{$vo.shareUrl}" name="{$vo.tid}"
-                                            id="{$vo.tid}">
-                                        <a href="javascript:;" class="copy btn btn-xs btn-info" dataid="{$vo.tid}"><span
-                                                class="glyphicon glyphicon-share-alt"></span>分享</a>
-                                        <a href="{$vo.shareUrl}" target="_blank"
-                                            class="copy btn btn-xs btn-default"><span
-                                                class="glyphicon glyphicon-eye-open"></span>查看任务</a>
-                                    </td>
-                                    <td>{$vo.create_time|date='Y年m月d日 H:i'}</td>
-                                </tr>
-                                {/volist}
+                                {else /}
+                                <td>
+                                    <span href="#" class="tempalte-status badge badge-pill badge-warning"
+                                        status="{$vo.status}">已暂停</span>
+                                </td>
+                                <td>
+                                    <a href="#" class="tempalte-status btn btn-success btn-xs control-tempalte"
+                                        dataid="{$vo.id}" status="{$vo.status}">开始</a>
+                                    <a href="#" class="tempalte-status btn btn-darkorange btn-xs del-tempalte"
+                                        dataid="{$vo.id}" status="{$vo.status}">删除</a> </td>
+                                {/if}
+                                <td>
+                                    <a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
+                                        class="btn btn-xs btn-success"><span
+                                            class="glyphicon glyphicon-list-alt"></span>数据</a>
+                                </td>
+                                <td>
+                                    <input type="text" class="btn btn-xs" value="{$vo.shareUrl}" name="{$vo.tid}"
+                                        id="{$vo.tid}">
+                                    <a href="javascript:;" class="copy btn btn-xs btn-info" dataid="{$vo.tid}"><span
+                                            class="glyphicon glyphicon-share-alt"></span>分享</a>
+                                    <a href="{$vo.shareUrl}" target="_blank" class="copy btn btn-xs btn-default"><span
+                                            class="glyphicon glyphicon-eye-open"></span>查看任务</a>
+                                </td>
+                                <td>{$vo.create_time|date='Y年m月d日 H:i'}</td>
+                            </tr>
+                            {/volist}
 
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
-
             </div>
         </div>
     </div>

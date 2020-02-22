@@ -12,7 +12,6 @@
         var option_id = "option_" + String.fromCharCode(64 + id);
         $("#tableD").append(getInput(option_id));
         addPrimaryKey(option_id,"字段" + id);
-        
         id++;
     });
 
@@ -66,7 +65,7 @@
             option_id +
             '_rule"><option value="text"">普通文本</option><option value="phone">手机号</option><option value="email">邮箱</option><option value="number">数字</option>';
         ele = ele + "</select></td>";
-        ele = ele + '<td><button dataid="'+ option_id+'" onclick="deleteRow(this)" class="btn btn-danger deleteRow">delEle</button></td>';
+        ele = ele + '<td><span dataid="'+ option_id+'" onclick="deleteRow(this)" class="deleteRow">删除</span></td>';
         ele = ele + "</tr>";
         return ele;
     }
@@ -108,7 +107,7 @@
             '">修改</a></td>';
         ele =
             ele +
-            '<td><button class="btn btn-danger deleteRow" dataid="'+ option_id+'" onclick="deleteRow(this)">delEle</button></td>';
+            '<td><button class="btn btn-danger deleteRow" dataid="'+ option_id+'" onclick="deleteRow(this)">删除</button></td>';
         ele = ele + "</tr>";
         return ele;
     }

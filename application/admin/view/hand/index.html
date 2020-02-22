@@ -2,51 +2,52 @@
 
 {block name="title"}创建模板{/block}
 {block name="page-style"}
-<link href="__CSS__/mysite.css" rel="stylesheet">
+<link href="__CSS__/main.css" rel="stylesheet">
 <style>
     #subForm label.error {
         color: red;
+    }
+    label{
+        font-size: 10px;
     }
 </style>
 {/block}
 {block name="page-main"}
 <div class="row">
-    <div class="col-xs-8">
-        <div class="widget radius-bordered">
-            <div class="widget">
-                <div class="bg-themeprimary widget-header">
-                    <span class="widget-caption">手动创建表单</span>
-                    <div class="widget-buttons">
+    <div class="col-lg-12">
+        <div class="widget">
+            <div class="bg-themeprimary widget-header">
+                <span class="widget-caption">手动创建表单</span>
+                <div class="widget-buttons">
 
-                    </div>
                 </div>
-                <div class="widget-body">
-                    <!-- style="background-color:rgba(45, 195, 232,0.25); padding: 20px;" -->
-                    <div class="row">
-                        <div class="col-lg-9">
-                            <div class="form-horizontal">
-                                <form autocomplete="off" id="subForm">
-                                    <table class="table" id="tableD">
-                                        <caption>
-                                            <h4>模板名</h4>
-                                            <input type="text" required="true" name="templateName" class="form-control">
-                                        </caption>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </form>
-                                <button id="addInput" class="btn btn-info">添加一个文本框</button>
-                                <button id="addSelect" class="btn btn-info">添加一个下拉菜单</button>
-                            </div>
+            </div>
+            <div class="widget-body">
+                <!-- style="background-color:rgba(45, 195, 232,0.25); padding: 20px;" -->
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="form-horizontal">
+                            <form autocomplete="off" id="subForm">
+                                <table class="table" id="tableD">
+                                    <caption>
+                                        <h4>模板名</h4>
+                                        <input type="text" required="true" name="templateName" class="form-control">
+                                    </caption>
+                                    <tbody>
+                                </table>
+                            </form>
+                            <button id="addInput" class="btn btn-info">添加文本框</button>
+                            <button id="addSelect" class="btn btn-info">添加下拉菜单</button>
                         </div>
+                    </div>
 
-                        <div class="col-lg-3">
-                            <div class="project-right-sider" style="margin-top: 160px;">
-                                <form class="form-box">
-                                    <h4>请选择唯一标识字段</h4>
-                                    <select class="select" name="primaryKey" id="primaryKey">
-                                    </select>
-                                    <!-- <div class="useXH hidden">
+                    <div class="col-lg-3">
+                        <div class="project-right-sider" style="margin-top: 160px;">
+                            <form class="form-box">
+                                <h4>请选择唯一标识字段</h4>
+                                <select class="select" name="primaryKey" id="primaryKey">
+                                </select>
+                                <!-- <div class="useXH hidden">
                         <h4>是否使用学号对照</h4>
                         <label>
                             <input type="radio" name="ifUseXH" class="a-radio" value="yes" checked>
@@ -58,11 +59,9 @@
                             <span class="b-radio"></span>不使用
                         </label>
                     </div> -->
-                                </form>
-                                <button class="btn btn-success initTemplate" type="button"><span
-                                        class="fa fa-table"></span>
-                                    初始化模板</button>
-                            </div>
+                            </form>
+                            <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
+                                初始化模板</button>
                         </div>
                     </div>
                 </div>
