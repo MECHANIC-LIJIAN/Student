@@ -159,6 +159,28 @@
                     anim: 5
                 });
             }
+
+            function confirm(msg, title, url, data) {
+                layer.confirm(msg, {
+                    title: title,
+                    icon: 3
+                }, function (index) {
+                    layer.close(index);
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        data: data,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.code == 1) {
+                                showMsgAndHref(data)
+                            } else {
+                                showErrorMsg(data.msg)
+                            }
+                        }
+                    });
+                });
+            }
         }
         else {
             layer = mobile;
@@ -178,16 +200,37 @@
                     , end: function (index) {
                         setTimeout(function () {
                             // $.mobile.changePage(data.url); //手机网页式跳转
-                            location.href=data.url
-                        }, 500);
+                            location.href = data.url
+                        }, 1000);
                     }
                 });
-
             }
             function showErrorMsg(msg) {
                 layer.open({
                     content: msg
                     , btn: '我知道了'
+                });
+            }
+            
+            //询问框
+            function confirm(msg,title, url, data) {
+                layer.open({
+                    content: msg
+                    , btn: ['确认', '取消']
+                    , yes: function (index) {
+                        $.ajax({
+                            url: url,
+                            type: 'post',
+                            data: data,
+                            success: function (data) {
+                                if (data.code == 1) {
+                                    showMsgAndHref(data)
+                                } else {
+                                    showErrorMsg(data.msg)
+                                }
+                            }
+                        });
+                    }
                 });
             }
         }
@@ -212,44 +255,9 @@
                                     showMsgAndHref(data)
                                 } else if (data.code == 101) {
                                     if (isPC) {
-                                        layer.confirm(data.msg, {
-                                            title: '数据覆盖确认',
-                                            icon: 3
-                                        }, function (index) {
-                                            layer.close(index);
-                                            $.ajax({
-                                                url: "{:url('index/Template/collect')}",
-                                                type: 'post',
-                                                data: $('form').serialize(),
-                                                success: function (data) {
-                                                    if (data.code == 1) {
-                                                        showMsgAndHref(data)
-                                                    } else {
-                                                        showErrorMsg("提交失败")
-                                                    }
-                                                }
-                                            });
-                                        });
+                                        confirm(data.msg, '数据覆盖确认', "{:url('index/Template/collect')}", $('form').serialize())
                                     } else {
-                                        //询问框
-                                        layer.open({
-                                            content: '该记录已存在，确认覆盖吗?'
-                                            , btn: ['确认', '取消']
-                                            , yes: function (index) {
-                                                $.ajax({
-                                                    url: "{:url('index/Template/collect')}",
-                                                    type: 'post',
-                                                    data: $('form').serialize(),
-                                                    success: function (data) {
-                                                        if (data.code == 1) {
-                                                            showMsgAndHref(data)
-                                                        } else {
-                                                            showErrorMsg("提交失败")
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        });
+                                        confirm(data.msg,'该记录已存在，确认覆盖吗?',"{:url('index/Template/collect')}",$('form').serialize())
                                     }
                                 } else {
                                     showErrorMsg("提交失败")

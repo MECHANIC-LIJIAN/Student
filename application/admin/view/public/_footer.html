@@ -7,7 +7,23 @@
 <script src="__LIB__/layer/layer.js"></script>
 <script src="__LIB__/layer_mobile/layer.js"></script>
 <script>
+    /**
+     * 复制内容到粘贴板
+     * content : 需要复制的内容
+     */
+    function copyToClip(content) {
+        var aux = document.createElement("input");
+        aux.setAttribute("value", content);
+        document.body.appendChild(aux);
+        aux.select();
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+        showMsg("复制成功")
+    }
 
+    /*
+    *判断设备类型
+    */
     function IsPC() {
         var userAgentInfo = navigator.userAgent;
         var Agents = ["Android", "iPhone",
@@ -53,6 +69,27 @@
                 anim: 5
             });
         }
+        function confirm(msg, title, url, data) {
+            layer.confirm(msg, {
+                title: title,
+                icon: 3
+            }, function (index) {
+                layer.close(index);
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    data: data,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.code == 1) {
+                            showMsgAndHref(data)
+                        } else {
+                            showErrorMsg(data.msg)
+                        }
+                    }
+                });
+            });
+        }
     }
     else {
         layer = mobile;
@@ -66,21 +103,44 @@
         }
 
         function showMsgAndHref(data) {
-            layer.msg(
-                data.msg, {
-                icon: 6,
-                time: 2000
-            },
-                function () {
-                    location.href = data.url;
+            layer.open({
+                content: data.msg
+                , btn: '我知道了'
+                , end: function (index) {
+                    setTimeout(function () {
+                        // $.mobile.changePage(data.url); //手机网页式跳转
+                        location.href = data.url
+                    }, 500);
                 }
-            );
+            });
         }
 
         function showErrorMsg(msg) {
             layer.open({
                 content: msg
                 , btn: '我知道了'
+            });
+        }
+
+        //询问框
+        function confirm(msg, title, url, data) {
+            layer.open({
+                content: msg
+                , btn: ['确认', '取消']
+                , yes: function (index) {
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        data: data,
+                        success: function (data) {
+                            if (data.code == 1) {
+                                showMsgAndHref(data)
+                            } else {
+                                showErrorMsg(data.msg)
+                            }
+                        }
+                    });
+                }
             });
         }
     }
@@ -92,21 +152,9 @@
                 dataType: "json",
                 success: function (data) {
                     if (data.code == 1) {
-                        layer.msg(
-                            data.msg, {
-                            icon: 6,
-                            time: 2000
-                        },
-                            function () {
-                                location.href = data.url;
-                            }
-                        );
+                        showMsgAndHref(data)
                     } else {
-                        layer.open({
-                            title: "退出失败",
-                            content: data.msg,
-                            icon: 6
-                        });
+                        showErrorMsg(data.msg)
                     }
                 }
             });

@@ -78,20 +78,6 @@
     $("#copy").click(function () {
         copyToClip("{$shareUrl}");
     })
-
-    /**
- * 复制内容到粘贴板
- * content : 需要复制的内容
- */
-    function copyToClip(content) {
-        var aux = document.createElement("input");
-        aux.setAttribute("value", content);
-        document.body.appendChild(aux);
-        aux.select();
-        document.execCommand("copy");
-        document.body.removeChild(aux);
-        showMsg("复制成功")
-    }
     $(function () {
         //初始化Table
         $("#table").bootstrapTable({
@@ -155,41 +141,7 @@
             $(rows).each(function () {
                 ids.push(this.id);
             });
-            if (isPC) {
-                layer.confirm('确定删除吗？', {
-                    title: '删除任务',
-                    icon: 3
-                }, function (index) {
-                    $.ajax({
-                        url: "{:url('admin/Template/del')}",
-                        data: "ids=" + ids,
-                        type: "post",
-                        dataType: "json",
-                        success: function (data) {
-                            showMsg("删除成功！")
-                            $('#table').bootstrapTable('refresh');
-                        }
-                    })
-                })
-            } else {
-                //询问框
-                layer.open({
-                    content: '确定删除吗？'
-                    , btn: ['确定', '取消']
-                    , yes: function (index) {
-                        $.ajax({
-                        url: "{:url('admin/Template/del')}",
-                        data: "ids=" + ids,
-                        type: "post",
-                        dataType: "json",
-                        success: function (data) {
-                            showMsg("删除成功！")
-                            $('#table').bootstrapTable('refresh');
-                        }
-                    })
-                    }
-                });
-            }
+            confirm('确定删除吗？','删除数据', "{:url('admin/Template/del')}", "ids=" + ids)
         }
     });
     $("#btn_refresh").click(function () {

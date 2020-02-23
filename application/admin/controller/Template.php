@@ -15,11 +15,12 @@ class Template extends Base
             ->where(['tid' => $tId])
             ->field('tname,tid')
             ->find();
-
+        session('template',$template);
         $fields = model('TemplatesOption')
             ->where(['tid' => $tId, 'type' => 'p'])
             ->field('sid,title')
             ->select();
+        #查询字段
         $templateField = [];
         foreach ($fields as $key => $value) {
             $value['field'] = $value['sid'];
@@ -31,6 +32,7 @@ class Template extends Base
         array_push($templateField, 'id');
         session('options', $templateField);
 
+        #显示在页面的字段
         $fields = json_decode($fields, $assoc = false);
         array_unshift($fields, [
             'checkbox' => true,
@@ -51,7 +53,9 @@ class Template extends Base
             'sortable' => true,
         ]);
 
+        #构造分享链接
         $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
+        
         $this->assign([
             'template' => $template,
             'fields' => json_encode($fields, JSON_UNESCAPED_UNICODE),
@@ -71,31 +75,28 @@ class Template extends Base
     }
 
     /**
-     * 删除
+     * 删除数据
      * @return \think\response\View
      */
     public function del()
     {
         if (request()->isAjax()) {
-            // $tInfo = model('Templates')->with('options,datas')->find(input('post.id'));
-            // $result = $tInfo->together('options,datas')->delete();
-            // if ($result == 1) {
-            //     $this->success('任务删除成功', 'admin/Templates/list');
-            // } else {
-            //     $this->error("任务删除失败");
-            // }
+            $template=session('template');
             $ids= explode(',',input('ids'));
             sort($ids,SORT_NUMERIC);
             $result = model('TemplatesData')->destroy($ids);
+            $result=model("Templates")->where('tid', $template['tid'])->setDec('count');
             if ($result) {
-                $this->success('任务删除成功', 'admin/Templates/list');
+                $this->success('数据删除成功');
             } else {
-                $this->error("任务删除失败");
+                $this->error("数据删除失败");
             }
         }
     }
 
-   
+   /**
+    * 请求数据
+    */
 
     public function dataList()
     {

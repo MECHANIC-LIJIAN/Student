@@ -53,13 +53,12 @@
                                 <td>
                                     <a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
                                         class="btn btn-xs btn-success"><span
-                                            class="glyphicon glyphicon-list-alt"></span>数据</a>
+                                            class="fa fa-table"></span>数据</a>
                                 </td>
                                 <td>
-                                    <input type="text" class="btn btn-xs" value="{$vo.shareUrl}" name="{$vo.tid}"id="{$vo.tid}">
-                                    <a href="javascript:;" class="copy btn btn-xs btn-info" dataid="{$vo.tid}"><span class="glyphicon glyphicon-share-alt"></span>分享</a>
+                                    <a class="copy btn btn-xs btn-info" dataid="{$vo.shareUrl}"><span class="fa fa-share"></span>分享</a>
                                     <a href="{$vo.shareUrl}" target="_blank" class="btn btn-xs btn-default"><span
-                                            class="glyphicon glyphicon-eye-open"></span>查看任务</a>
+                                            class="fa fa-eye"></span>查看任务</a>
                                 </td>
                                 <td>{$vo.create_time|date='Y年m月d日 H:i'}</td>
                             </tr>
@@ -79,27 +78,7 @@
 
     $(".del-tempalte").click(function () {
         var id = $(this).attr('dataid');
-        layer.confirm('确定删除吗？', {
-            title: '删除任务',
-            icon: 3
-        }, function (index) {
-            layer.close(index);
-            $.ajax({
-                url: "{:url('admin/Templates/del')}",
-                type: 'post',
-                data: {
-                    id: id
-                },
-                dataType: 'json',
-                success: function (data) {
-                    if (data.code == 1) {
-                        showMsgAndHref(data)
-                    } else {
-                        showErrorMsg(data.msg)
-                    }
-                }
-            });
-        });
+        confirm('确定删除吗？','删除任务',"{:url('admin/Templates/del')}",{id: id})
     })
 
     $(".control-tempalte").click(function () {
@@ -112,36 +91,12 @@
             msg = "确定开始吗？"
             opt = "start"
         }
-        layer.confirm(msg, {
-            title: '任务管理确认',
-            icon: 3
-        }, function (index) {
-            layer.close(index);
-            $.ajax({
-                url: "{:url('admin/Templates/control')}",
-                type: 'post',
-                data: {
-                    id: id,
-                    opt: opt
-                },
-                dataType: 'json',
-                success: function (data) {
-                    if (data.code == 1) {
-                        showMsgAndHref(data)
-                    } else {
-                        showErrorMsg(data.msg)
-                    }
-                }
-            });
-        });
+        confirm(msg,'任务管理确认',"{:url('admin/Templates/control')}",{id: id,opt:opt})
     })
 
     $(".copy").click(function () {
-        var dataid = $(this).attr('dataid')
-        var e = document.getElementById(dataid);
-        e.select(); // 选择对象 
-        document.execCommand("Copy"); // 执行浏览器复制命令 
-        showMsg("复制成功")
+        var data = $(this).attr('dataid')
+        copyToClip(data)
     })
 </script>
 
