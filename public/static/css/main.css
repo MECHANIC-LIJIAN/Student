@@ -164,3 +164,9 @@ hr {
     -webkit-transition: all .3s ease-out;
     transition: all .3s ease-out;
 }
+
+.fa-home:hover {
+    transform: scale(1.4);
+    -webkit-transition: all .3s ease-out;
+    transition: all .3s ease-out;
+}

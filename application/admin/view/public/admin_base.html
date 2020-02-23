@@ -32,8 +32,8 @@
         }
 
         .navbar-account .account-area .login-area+.dropdown-menu {
-    min-width: 100px;
-}
+            min-width: 100px;
+        }
     </style>
     {/block}
 </head>
@@ -113,9 +113,9 @@
                 <!-- Page Breadcrumb -->
                 <div class="page-breadcrumbs">
                     <ul class="breadcrumb">
-                        <li class="active">
-                            <i class="fa fa-home"></i>&nbsp;{block name="page-breadcrumb"}控制面板{/block}
-                        </li>
+                        <li><i class="fa fa-arrow-left" onClick="javascript:window.history.back(-1)" /></i></li>
+                        <li><i class="fa fa-home" onClick="window.location.href='{:url(\'admin/Home/index\')}';"></i>控制面板</li>
+                        {block name="page-breadcrumb"}{/block}
                     </ul>
                 </div>
                 <!-- /Page Breadcrumb -->
