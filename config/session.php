@@ -20,8 +20,8 @@ return [
     // SESSION 前缀
     'prefix'         => 'think',
     // 驱动方式 支持redis memcache memcached
-    'type'           => '',
+    'type'           => 'redis',
     // 是否自动开启 SESSION
     'auto_start'     => true,
-    'expire'         => 3600*24*7
+    'expire'=>604800
 ];
