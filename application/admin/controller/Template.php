@@ -85,7 +85,9 @@ class Template extends Base
             $ids= explode(',',input('ids'));
             sort($ids,SORT_NUMERIC);
             $result = model('TemplatesData')->destroy($ids);
-            $result=model("Templates")->where('tid', $template['tid'])->setDec('count');
+            $t=model("Templates")->where('tid', $template['tid'])->field('count')->find();
+            $t->count=$t->count-count($ids);
+            $result=$t->save();
             if ($result) {
                 $this->success('数据删除成功');
             } else {

@@ -128,6 +128,48 @@
 
     });
 
+
+    var isPC = IsPC();
+    function ajax_del(url, data) {
+        $.ajax({
+            url: url,
+            type: 'post',
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                if (data.code == 1) {
+                    $('#table').bootstrapTable('refresh');
+                } else {
+                    showErrorMsg(data.msg)
+                }
+            }
+        });
+    }
+    if (isPC) {
+        function confirm(msg, title, url, data) {
+            layer.confirm(msg, {
+                title: title,
+                icon: 3
+            }, function (index) {
+                layer.close(index);
+                ajax_del(url,data)
+            });
+        }
+    } else {
+        layer = mobile
+        //询问框
+        function confirm(msg, title, url, data) {
+            layer.open({
+                content: msg
+                , btn: ['确认', '取消']
+                , yes: function (index) {
+                    layer.close(index);
+                    ajax_del(url,data)
+                }
+            });
+        }
+
+    }
     $("#btn_delete").click(function () {
         var rows = $('#table').bootstrapTable('getSelections');// 获得要删除的数据
         // rows 主要是为了判断是否选中，下面的else内容才是主要
@@ -141,9 +183,11 @@
             $(rows).each(function () {
                 ids.push(this.id);
             });
-            confirm('确定删除吗？','删除数据', "{:url('admin/Template/del')}", "ids=" + ids)
+            confirm('确定删除吗？', '删除数据', "{:url('admin/Template/del')}", "ids=" + ids)
         }
     });
+
+
     $("#btn_refresh").click(function () {
         $('#table').bootstrapTable('refresh');
     })
