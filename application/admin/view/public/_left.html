@@ -3,43 +3,28 @@
     <ul class="nav sidebar-menu">
         <li class="active">
             <a href="{:url('admin/Home/index')}">
-                <i class="menu-icon glyphicon glyphicon-home"></i>
+                <i class="menu-icon fa fa-home"></i>
                 <span class="menu-text">后台首页</span>
             </a>
         </li>
         <li>
             <a href="{:url('admin/Templates/list')}" class="menu-dropdown">
-                <i class="menu-icon glyphicon glyphicon glyphicon-list-alt"></i>
+                <i class="menu-icon fa fa-list-alt"></i>
                 <span class="menu-text">任务列表</span>
-                <i class="menu-expand"></i>
             </a>
         </li>
         <li>
             <a href="{:url('admin/Templates/add')}" class="menu-dropdown">
-                <i class="menu-icon glyphicon glyphicon-plus"></i>
+                <i class="menu-icon fa fa-plus"></i>
                 <span class="menu-text">添加任务</span>
-                <i class="menu-expand"></i>
             </a>
         </li>
         {if session('admin.is_super')==1}
         <li>
-            <a href="#" class="menu-dropdown">
-                <i class="menu-icon glyphicon glyphicon glyphicon-user"></i>
-                <span class="menu-text">用户管理</span>
-                <i class="menu-expand"></i>
+            <a href="{:url('admin/Admin/list')}" class="menu-dropdown">
+                <i class="menu-icon fa fa-user"></i>
+                <span class="menu-text">用户列表</span>
             </a>
-            <ul class="submenu">
-                <li>
-                    <a href="{:url('admin/Admin/list')}">
-                        <span class="menu-text">用户列表</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{:url('admin/Admin/add')}">
-                        <span class="menu-text">用户添加</span>
-                    </a>
-                </li>
-            </ul>
         </li>
         {/if}
     </ul>

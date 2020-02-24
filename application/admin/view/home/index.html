@@ -1,11 +1,30 @@
 {extend name="public/admin_base"}
 {block name="page-style"}
 <style>
-    .grid>div {
-        color: #fff;
-        line-height: 2;
-        color: aquamarine;
-        }
+    .fun_grid {
+        opacity: 0.8;
+        color: black;
+        width: 80px;
+        height: 80px;
+        margin: 10px;
+        line-height: 80px;
+        text-align: center;
+        background: #2dc3e8 !important;
+        border: 2px cornflowerblue;
+        box-shadow: darkgrey 10px 10px 30px 5px;
+        border-radius: 5px;
+        padding: 2px;
+        font-size: 16px;
+    }
+
+    .fun_grid:hover {
+        transform: all;
+        -webkit-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        -o-transform: scale(1.2);
+
+    }
 </style>
 {/block}
 {block name="page-main"}
@@ -24,7 +43,33 @@
             <div class="header bg-themeprimary">
                 常用功能
             </div>
-            <!-- <table class="table table-hover table-bordered">
+            <div class="row">
+                <a href="{:url('admin/Templates/list')}">
+                    <div class="col-xs-1 fun_grid">
+                        <span>任务列表</span>
+                    </div>
+                </a>
+                <a href="{:url('admin/Templates/add')}">
+                    <div class="col-xs-1 fun_grid">
+                        <span>添加任务</span>
+                    </div>
+                </a>
+                <a href="{:url('admin/Templates/list')}">
+                    <div class="col-xs-1 fun_grid">
+                        <span>我的数据</span>
+                    </div>
+                </a>
+                {if session('admin.is_super')==1}
+                <a href="{:url('admin/Admin/list')}">
+                    <div class="col-xs-1 fun_grid">
+                        <span>用户列表</span>
+                    </div>
+                </a>
+                {/if}
+            </div>
+            <div class="footer"></div>
+        </div>
+        <!-- <table class="table table-hover table-bordered">
                 <thead>
                     <tr>
                         <th colspan="2">服务器信息</th>
@@ -54,22 +99,6 @@
                     </tr>
                 </tbody>
             </table> -->
-            <!-- <div class="square">
-                <div class="row">
-                    <div class="col-lg-1">1</div>
-                    <div class="col-lg-2">2</div>
-                    <div class="col-lg-3">3</div>
-                    <div>4</div>
-                    <div>5</div>
-                    <div>6</div>
-                    <div>7</div>
-                    <div>8</div>
-                    <div>9</div>
-                </div>
-            </div> -->
-            <div class="footer"></div>
-        </div>
-
     </div>
 </div>
 {/block}
