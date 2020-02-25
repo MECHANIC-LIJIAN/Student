@@ -86,7 +86,9 @@
                 <!-- Page Breadcrumb -->
                 <div class="page-breadcrumbs">
                     <ul class="breadcrumb">
+                        {if $Request.controller!="Home"}
                         <li><i class="fa fa-arrow-left" onClick="javascript:window.history.back(-1)" /></i></li>
+                        {/if}
                         <li><i class="fa fa-home" onClick="window.location.href='{:url(\'admin/Home/index\')}';"></i>控制面板</li>
                         {block name="page-breadcrumb"}{/block}
                     </ul>

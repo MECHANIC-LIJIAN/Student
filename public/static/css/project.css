@@ -1,0 +1,130 @@
+.project-team-container .tablist {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.project-team-container .tablist li:not(:last-child) {
+    margin-right: 10px;
+}
+
+.project-team-container .tablist li {
+    flex-basis: 0;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    position: relative;
+    width: 100%;
+    margin-bottom: 15px;
+    text-align: center;
+    z-index: 0;
+}
+
+.project-team-container .tablist li:before {
+    content: " ";
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    margin: 0 auto;
+    border-style: solid;
+    border-width: 15px 20px 0 20px;
+    border-color: #2bb4c0 transparent transparent transparent;
+    -webkit-transition: bottom .25s ease-in-out;
+    transition: bottom .25s ease-in-out;
+    z-index: -1;
+    display: block;
+}
+
+.project-team-container .tablist li.current:before {
+    bottom: -15px;
+}
+
+.project-team-container li.current a {
+    background-color: #2bb4c0;
+}
+
+.project-team-container .tablist a {
+    display: -ms-inline-flexbox;
+    display: -webkit-inline-box;
+    display: inline-flex;
+    position: relative;
+    width: 100%;
+    min-height: 70px;
+    height: 100%;
+    padding: 1px 20px 5px 80px;
+    color: #fff;
+    background-color: #959595;
+    border-radius: 4px;
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 300;
+    -ms-flex-align: center;
+    -webkit-box-align: center;
+    align-items: center;
+    cursor: default;
+    z-index: 0;
+}
+
+.project-team-container .current-info {
+    display: none;
+}
+
+.project-team-container .number {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    margin-top: -3px;
+    margin-left: 15px;
+    font-size: 98px;
+    line-height: 74px;
+    font-weight: 900;
+    vertical-align: middle;
+}
+
+.project-first-step {
+    border: 1px solid #ddd;
+    padding: 15px;
+}
+
+.project-first-step .project-select-mode {
+    width: auto;
+    padding: 0;
+    border: 0;
+}
+
+.project-first-step label {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    color: #999;
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 700;
+}
+
+.project-team-container .form-control {
+    padding: 8px 20px;
+    padding: 0.5rem 1.25rem;
+    /*border-color: #ebebea;*/
+    font-size: inherit;
+    box-shadow: none;
+    -webkit-transition-duration: .25s;
+    transition-duration: .25s;
+}
+
+.project-team-container .ace-file-input {
+    position: relative;
+    height: 38px;
+    line-height: 38px;
+    margin-bottom: 9px;
+}
