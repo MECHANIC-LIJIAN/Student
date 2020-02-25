@@ -31,7 +31,7 @@
                             <tr>
                                 <td><a href="{:url('admin/MyData/read',['id'=>$vo.dataid])}" style="font-size:14px">{$vo.title}</a> </td>\
                                 {if session('admin.is_super')==1}<td>{$vo.uid}</td>{/if}
-                                <td>{$vo.uid}</td>
+                                <td>{$vo.count}</td>
                                 <td>
                                     <a href="#" class="btn btn-darkorange btn-xs del-data"
                                         dataid="{$vo.id}"">删除</a>
