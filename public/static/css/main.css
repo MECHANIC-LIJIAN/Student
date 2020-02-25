@@ -1,42 +1,81 @@
+@media screen and (max-width: 768px) {
+  .navbar {
+    display: none;
+  }
+  .widget-header {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .fa-arrow-left:hover {
+    transform: scale(1.4);
+    -webkit-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+  }
+
+  .fa-home:hover {
+    transform: scale(1.4);
+    -webkit-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+  }
+
+  .fun_grid:hover {
+    transform: all;
+    -webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+  }
+}
+.fun_grid {
+  opacity: 0.8;
+  color: aliceblue;
+  width: 80px;
+  height: 80px;
+  margin: 10px;
+  line-height: 80px;
+  text-align: center;
+  background: #2dc3e8 !important;
+  border: 2px cornflowerblue;
+  box-shadow: darkgrey 10px 10px 30px 5px;
+  border-radius: 5px;
+  padding: 2px;
+  font-size: 16px;
+  word-break: break-all;
+}
+.fun_grid>span {
+    width: 64px;
+    height: 64px;
+    display：block;
+    text-align: justify;
+    text-align-last: justify;
+  }
+
 a {
-    text-decoration: none!important;
+  text-decoration: none !important;
 }
 
 hr {
-    border-top: 1px solid #e8e8e8;
+  border-top: 1px solid #e8e8e8;
 }
 
 .displaynone {
-    display: none!important;
+  display: none !important;
 }
 
-
-
 .login-area {
-    color: white;
-    font-size: 16px;
+  color: white;
+  font-size: 16px;
 }
 
 .login-area span {
-    margin-left: 10px;
+  margin-left: 10px;
 }
-.login-area a{
-    color:white;
-    text-decoration: none;
+.login-area a {
+  color: white;
+  text-decoration: none;
 }
 .login-area a:hover {
-    text-decoration: underline;
-}
-
-
-.fa-arrow-left:hover {
-    transform: scale(1.4);
-    -webkit-transition: all .3s ease-out;
-    transition: all .3s ease-out;
-}
-
-.fa-home:hover {
-    transform: scale(1.4);
-    -webkit-transition: all .3s ease-out;
-    transition: all .3s ease-out;
+  text-decoration: underline;
 }

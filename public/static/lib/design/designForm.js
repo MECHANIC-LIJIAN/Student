@@ -1,7 +1,7 @@
     var id = 1;
     function deleteRow(obj){
         $(obj).parents("tr").remove();
-        $("button.deleteRow").last().removeClass("hidden").addClass("show")
+        $("span.deleteRow").last().removeClass("hidden").addClass("show")
         var option_id = $(obj).attr('dataid');
         $("#primaryKey option[value='"+option_id+"']").remove();
         id=id-1
@@ -46,19 +46,19 @@
             ele +
             '<td><label for="' +
             option_id +
-            '" class="col-sm-10 control-label">字段' +
+            '" class="control-label">字段' +
             id +
             "</label></td>";
         ele =
             ele +
-            '<td><input type="text" required="true" class="form-control" name="' +
+            '<td><input type="text" required="true" class="form-control" style="max-width: 80px;padding:2px" name="' +
             option_id +
             '"></td>';
         ele =
             ele +
             '<td><label for="' +
             option_id +
-            '" class="col-sm-10 control-label">规则</label></td>';
+            '" class="control-label">规则</label></td>';
         ele =
             ele +
             '<td><select class="form-control" name="' +
@@ -77,12 +77,12 @@
             ele +
             '<td><label for="' +
             option_id +
-            '" class="col-sm-10 control-label">字段' +
+            '" class="control-label">字段' +
             id +
             "</label></td>";
         ele =
             ele +
-            '<td><input type="text" required="true" class="form-control" name="' +
+            '<td><input type="text" required="true" class="form-control" style="max-width: 80px;padding:2px" name="' +
             option_id +
             '"><input type="text" class="hidden" value="required" name="' +
             option_id +
@@ -97,7 +97,7 @@
             ele +
             '<td><textarea required="true" id="' +
             option_id +
-            '_childs" class="form-control" rows="5" placeholder="一行一个选项"></textarea>';
+            '_childs" class="form-control" rows="4" cols="3" placeholder="一行一个选项"></textarea>';
         ele =
             ele +
             '<a class="confirm" id="'+option_id+'_confirm" dataid="' +
@@ -107,7 +107,7 @@
             '">修改</a></td>';
         ele =
             ele +
-            '<td><button class="btn btn-danger deleteRow" dataid="'+ option_id+'" onclick="deleteRow(this)">删除</button></td>';
+            '<td><span dataid="'+ option_id+'" onclick="deleteRow(this)" class="deleteRow">删除</span></td>';
         ele = ele + "</tr>";
         return ele;
     }

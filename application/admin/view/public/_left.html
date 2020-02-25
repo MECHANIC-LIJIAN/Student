@@ -8,20 +8,26 @@
             </a>
         </li>
         <li>
-            <a href="{:url('admin/Templates/list')}" class="menu-dropdown">
+            <a href="{:url('admin/Templates/list')}">
                 <i class="menu-icon fa fa-list-alt"></i>
                 <span class="menu-text">任务列表</span>
             </a>
         </li>
         <li>
-            <a href="{:url('admin/Templates/add')}" class="menu-dropdown">
+            <a href="{:url('admin/Templates/add')}">
                 <i class="menu-icon fa fa-plus"></i>
                 <span class="menu-text">添加任务</span>
             </a>
         </li>
+        <li>
+            <a href="{:url('admin/MyData/index')}">
+                <i class="menu-icon fa fa-server"></i>
+                <span class="menu-text">我的数据集</span>
+            </a>
+        </li>
         {if session('admin.is_super')==1}
         <li>
-            <a href="{:url('admin/Admin/list')}" class="menu-dropdown">
+            <a href="{:url('admin/Admin/list')}">
                 <i class="menu-icon fa fa-user"></i>
                 <span class="menu-text">用户列表</span>
             </a>

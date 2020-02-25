@@ -57,6 +57,15 @@ Route::group(
             Route::rule('add', 'admin/Hand/add', 'POST')->ext('do');
         });
 
+        #数据集
+        Route::group('mydatas', function () {
+            Route::rule('index', 'admin/MyData/index', 'GET|POST');
+            Route::rule('create', 'admin/MyData/create', 'GET|POST');
+            Route::rule('createByFile', 'admin/MyData/createByFile', 'POST');
+            Route::rule('dataList/[:id]', 'admin/MyData/read', 'GET|POST')->ext();
+            Route::rule('delete', 'admin/MyData/delete', 'POST')->ext('do');
+
+        });
         #用户
         Route::rule('adminList', 'admin/Admin/list', 'GET');
         Route::rule('adminAdd', 'admin/Admin/add', 'GET|POST');

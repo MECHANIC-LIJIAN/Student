@@ -127,7 +127,7 @@
                             {volist name="optionList" id='option'}
                             {if $option.type='p' AND count($option.child)==0}
                             <tr>
-                                <td><label for="{$option.title}" class="col-sm-10 control-label">{$option.title}</label>
+                                <td><label for="{$option.title}" class="col-lg-10 control-label">{$option.title}</label>
                                 </td>
                                 <td><input type="text" class="form-control" name="{$option.sid}"></td>
 
@@ -137,7 +137,7 @@
                             <!-- 输出select -->
                             {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)>0}
                             <tr>
-                                <td><label for="{$option.title}" class="col-sm-10 control-label">{$option.title}</label>
+                                <td><label for="{$option.title}" class="col-lg-10 control-label">{$option.title}</label>
                                 </td>
                                 <td><select class="form-control">
                                         {volist name="option.child" id="vo"}

@@ -11,7 +11,27 @@
     #subForm label.error {
         color: red;
     }
-    label{
+
+    select {
+        min-width: 50px;
+    }
+
+    td,
+    label {
+        font-size: 10px;
+    }
+    .td>input{
+        max-width: 80px;
+        padding: 2px;
+        font-size: 10px;
+    }
+    .table>thead>tr>th,
+    .table>tbody>tr>th,
+    .table>tfoot>tr>th,
+    .table>thead>tr>td,
+    .table>tbody>tr>td,
+    .table>tfoot>tr>td {
+        padding: 2px;
         font-size: 10px;
     }
 </style>
@@ -21,7 +41,8 @@
     <div class="col-lg-12">
         <div class="widget">
             <div class="bg-themeprimary widget-header">
-                <i class="fa fa-arrow-left widget-icon" onClick="window.location.href='{:url(\'admin/Templates/add\')}';"/></i>
+                <i class="fa fa-arrow-left widget-icon"
+                    onClick="window.location.href='{:url(\'admin/Templates/add\')}';" /></i>
                 <span class="widget-caption">手动创建表单</span>
             </div>
             <div class="widget-body">

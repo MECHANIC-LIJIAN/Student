@@ -273,7 +273,7 @@
             var column = _ref;
 
             if (!column.checkbox && column.visible && column.searchable) {
-              html.push('\n            <div class="form-group row">\n              <label class="col-sm-4 control-label">' + column.title + '</label>\n              <div class="col-sm-6">\n                <input type="text" class="form-control input-md" name="' + column.field + '" placeholder="' + column.title + '" id="' + column.field + '">\n              </div>\n            </div>\n          ');
+              html.push('\n            <div class="form-group row">\n              <label class="col-lg-4 control-label">' + column.title + '</label>\n              <div class="col-lg-6">\n                <input type="text" class="form-control input-md" name="' + column.field + '" placeholder="' + column.title + '" id="' + column.field + '">\n              </div>\n            </div>\n          ');
             }
           }
 
