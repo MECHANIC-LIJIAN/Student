@@ -75,7 +75,7 @@
                         {volist name="optionList" id='option'}
                         {eq name="$option.child|count" value="0"}
                         <div class="form-group">
-                            <label for="{$option.title}" class="col-lg-10">{$option.title}</label>
+                            <label for="{$option.content}" class="col-lg-10">{$option.content}</label>
                             <div class="col-lg-8">
                                 <input type="text" class="form-control required {$option.rule}" id="{$option.sid}"
                                     name="{$option.sid}">
@@ -83,12 +83,12 @@
                         </div>
                         {else /}
                         <div class="form-group">
-                            <label for="{$option.title}" class="col-lg-10">{$option.title}</label>
+                            <label for="{$option.content}" class="col-lg-10">{$option.content}</label>
                             <div class="col-lg-4">
                                 <select class="form-control" required="true" name="{$option.sid}">
                                     <option value="">--请选择--</option>
                                     {volist name="option.child" id="vo"}
-                                    <option value="{$vo.title}">{$vo.title}</option>
+                                    <option value="{$vo.content}">{$vo.content}</option>
                                     {/volist}
                                 </select>
                             </div>

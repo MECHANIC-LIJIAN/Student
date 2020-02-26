@@ -5,8 +5,6 @@ namespace app\admin\controller;
 use Env;
 use Overtrue\Pinyin\Pinyin;
 use think\Db;
-use think\facade\Request;
-use think\Model;
 
 class Import extends Base
 {
@@ -19,54 +17,38 @@ class Import extends Base
     {
         header("content-type:text/html;charset=utf-8");
         //上传excel文件
-        $file = request()->file('tempalte');
-        $tname = Request::param('tname');
-        // $user=Request::param('user');
+        $data['tName']=input('post.tname');
+        $data['tFile']=input('file.tempalte');
 
-        $validate = new \app\admin\validate\Import;
-        if (!$validate->scene('upload')->check(['tname' => $tname, 'template' => $file])) {
+        $validate = new \app\admin\validate\Templates();
+        if (!$validate->scene('upload')->check($data)) {
             $this->error($validate->getError());
-        }
-
-        //将文件保存到public/uploads目录下面
-        $info = $file->validate(['size' => 1048576, 'ext' => 'xls,xlsx'])->move('./uploads');
-
-        if ($info) {
-            //获取上传到后台的文件名
-            $fileName = $info->getSaveName();
-            //获取文件路径
-            $filePath = Env::get('root_path') . 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $fileName;
-        } else {
-            $this->error('文件过大或格式不正确导致上传失败-_-!');
         }
         
         $tInfo = [
             'tId' => uuid(),
             'user' => session('admin.id'),
-            'tName' => $tname,
-            'filePath' => str_replace("\\", "/", $info->getPathName()),
-            'fileName' => $info->getInfo()['name'],
+            'tName' => $data['tName'],
         ];
+        session('tInfo', $tInfo);
 
-        $data = readExcel($tInfo['filePath']);
-        if ($data=="nullError") {
-            $this->error('不能有空字段,请重新选择文件');
+        $res =model('Templates')->getDataByFile($data);
+        if ($res!=1) {
+            $this->error($res);
         }
 
-        session('tInfo', $tInfo);
-        
-        return $this->success("模板文件上传成功！",url('admin/Import/createTemplateSecond'));
+        return $this->success("表单文件上传成功！",url('admin/Import/createTemplateSecond'));
     }
 
     /**
-     * 查看模板文件
+     * 查看表单文件
      * @return void 读取结果
      */
     public function createTemplateSecond()
     {
-        if (!session('?tInfo')) {
-            $this->redirect('admin/Import/createTemplateFirst');
-        }
+        // if (!session('?tInfo')) {
+        //     $this->redirect('admin/Import/createTemplateFirst');
+        // }
 
         if (request()->isAjax()) {
 
@@ -78,7 +60,7 @@ class Import extends Base
                 ->find();
 
             if ($template['status'] == '1') {
-                $this->error("模板已经初始化，不可更改");
+                $this->error("表单已经初始化，不可更改");
             }
             $pinyin = new Pinyin();
             $template = new \app\admin\model\Templates;
@@ -90,44 +72,46 @@ class Import extends Base
             $template->tabbr = $pinyin->abbr($tInfo['tName']);
             $template->status = '1';
             $template->primaryKey = input('post.primaryKey');
-            $template->ifUseXh = input('post.ifUseXH');
+            $template->myData = input('post.myData');
+            $template->ifUseData = input('post.ifUseData');
             $res = $template->save();
 
             $res2 = model("TemplatesOption")->isUpdate(false)->saveAll($data);
             Db::name("templates_sum")->where('id', 1)->setInc('count');
             if ($res2) {
-                $this->success("模板初始化成功", "admin/import/createtemplateThird");
+                $this->success("表单初始化成功", "admin/import/createtemplateThird");
             } else {
-                $this->error("模板初始化失败");
+                $this->error("表单初始化失败");
             }
         }
 
         $tInfo = session('tInfo');
-        $data = readExcel($tInfo['filePath']);
+        $data = session('tData');
         end($data);
         $finalKey = key($data);
-        $optionList = array();
-        $tableField = array();
+        $optionList = [];
+        $tableField = [];
         $pinyin = new Pinyin();
 
         for ($col = 'A'; $col <= $finalKey; $col++) {
             $option = 'option_' . $col;
             for ($row = 1; $row <= count($data[$col]); $row++) {
-                $tmp = array();
+                $tmp = [];
                 if ($row == 1) {
                     $tmp['tid'] = $tInfo['tId'];
                     $tmp['pid'] = '0';
                     $tmp['sid'] = $option;
                     $tmp['type'] = 'p';
-                    $tmp['title'] = $data[$col][$row];
-                    $abbr = $pinyin->abbr($data[$col][1]);
+                    $tmp['content'] = $data[$col][$row];
+                    $tmp['abbr'] = $pinyin->abbr($data[$col][1]);
                     $tableField[$option] = $data[$col][1];
                 } else {
                     $tmp['tid'] = $tInfo['tId'];
                     $tmp['pid'] = $option;
                     $tmp['sid'] = $option . "_" . $row;
                     $tmp['type'] = 'c';
-                    $tmp['title'] = $data[$col][$row];
+                    $tmp['content'] = $data[$col][$row];
+                    $tmp['abbr'] = $pinyin->abbr($data[$col][1]);
                 }
                 $optionList[] = $tmp;
             }

@@ -3,7 +3,7 @@
 use think\migration\Migrator;
 use think\migration\db\Column;
 
-class Template extends Migrator
+class TemplatseOption extends Migrator
 {
     /**
      * Change Method.
@@ -28,8 +28,8 @@ class Template extends Migrator
      */
     public function up()
     {
-        $table = $this->table('templates');
+        $table = $this->table('templates_option');
         $table->addColumn('abbr', 'string', ['limit' => 20, 'null' => false,'comment'=>'字段首字母缩写'])
-        ->update();
+        ->save();
     }
 }

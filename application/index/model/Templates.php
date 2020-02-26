@@ -12,7 +12,7 @@ class Templates extends Model
 
     public function options()
     {
-        return $this->hasMany('TemplatesOption', 'tid', 'tid')->field('tid,sid,pid,title,rule');
+        return $this->hasMany('TemplatesOption', 'tid', 'tid')->field('tid,sid,pid,content,rule');
     }
 
     

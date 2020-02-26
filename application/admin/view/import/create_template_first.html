@@ -127,7 +127,7 @@
         var file = document.getElementById("tempalteFile")
         if (CheckFile(file) === true) {
             var fd = new FormData();
-            fd.append("tempalte", $("#tempalteFile").get(0).files[0]);
+            fd.append("tempalte", $("#tempalteFile")[0].files[0]);
             fd.append("tname", $("#tname").val())
             $.ajax({
                 method: "post",

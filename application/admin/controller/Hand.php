@@ -53,7 +53,7 @@ class Hand extends Base
                     $field['pid'] = '0';
                     $field['sid'] = $key;
                     $field['type'] = 'p';
-                    $field['title'] = $value;
+                    $field['content'] = $value;
                     $field['rule'] = $params[$key."_rule"];
                     $abbr = $pinyin->abbr($value);
                     $data[] = $field;
@@ -64,7 +64,7 @@ class Hand extends Base
                     $field['pid'] = $pId;
                     $field['sid'] = $key;
                     $field['type'] = 'c';
-                    $field['title'] = $value;
+                    $field['content'] = $value;
                     $field['rule'] = $params[$pId."_rule"];
                     $abbr = $pinyin->abbr($value);
                     $data[] = $field;

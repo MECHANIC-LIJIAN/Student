@@ -161,22 +161,22 @@
                             {/volist}
                         </select>
                         <div class="useData">
-                            <h4>是否使用自定义数据集</h4>
+                            <h5>是否使用自定义数据集</h5>
                             <label>
-                                <input type="radio" name="ifUseData" class="a-radio" value="yes" checked>
+                                <input type="radio" name="ifUseData" class="a-radio" value="1">
                                 <span class="b-radio"></span>使用
                             </label>
 
                             <label>
-                                <input type="radio" name="ifUseData" class="a-radio" value="no">
+                                <input type="radio" name="ifUseData" class="a-radio" value="0" checked>
                                 <span class="b-radio"></span>不使用
                             </label>
                         </div>
-                        <div>
-                            <h4>请选择数据集</h4>
+                        <div class="hidden myData">
+                            <h5>请选择数据集</h5>
                             <select class="select" name="primaryKeyData" id="primaryKeyData">
-                                {volist name="tableField" id="vo"}
-                                <option value="{$key}">{$vo}</option>
+                                {volist name="Think.session.myData" id="vo"}
+                                <option value="{$vo.id}">{$vo.title}</option>
                                 {/volist}
                             </select>
                         </div>
@@ -193,16 +193,20 @@
 <script>
 
     $(function () {
-        $(".a-radio").change(function () {
-            var key = $(this).children('option:selected').text()
-            if (key == "学号") {
-                $(".useData").removeClass("hidden").addClass("show")
+        $(".a-radio").click(function () {
+            var value = $(this).val();
+            if (value === "1") {
+                $(".myData").removeClass("hidden").addClass("show")
             } else {
-                $(".useData").removeClass("show").addClass("hidden")
+                $(".myData").removeClass("show").addClass("hidden")
             }
         })
 
         $(".initTemplate").click(function () {
+            var myData = $("#primaryKeyData").val();
+            var ifUseData = $("input[name='ifUseData']:checked").val();
+            var primaryKey = $("#primaryKey").val();
+            var data =$.param({ 'myData': myData, 'ifUseData': ifUseData, 'primaryKey': primaryKey })
             $.ajax({
                 method: "post",
                 url: "{:url('admin/import/createtemplateSecond')}",

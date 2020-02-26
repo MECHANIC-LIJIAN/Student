@@ -18,7 +18,7 @@ class Template extends Base
         session('template',$template);
         $fields = model('TemplatesOption')
             ->where(['tid' => $tId, 'type' => 'p'])
-            ->field('sid,title')
+            ->field('sid,content')
             ->select();
         #查询字段
         $templateField = [];
