@@ -64,18 +64,9 @@ class Template extends Base
         return view();
     }
 
-    /**
-     * 添加
-     * @return \think\response\View
-     */
-    public function add()
-    {
-
-        return view();
-    }
 
     /**
-     * 删除数据
+     * 删除表单数据
      * @return \think\response\View
      */
     public function del()
@@ -132,7 +123,7 @@ class Template extends Base
 
             #判断是否为导出
             if ($limit != null) {
-                # 计算 页号
+                # 计算页号
                 $page = floor($offset / $limit) + 1;
                 $list = model('TemplatesData')
                     ->where($map)
@@ -162,9 +153,6 @@ class Template extends Base
                     ])
                     ->select();
             }
-
-            // dump($list);
-
             $count = model('TemplatesData')
                 ->where(['tid' => $tId])
                 ->where($map)

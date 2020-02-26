@@ -30,29 +30,34 @@
                             <ul class="list-group">
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="dataList" style="margin-top: 10px;" class="col-lg-2 control-label">方式一</label>
+                                        <label for="dataText" style="margin-top: 10px;"
+                                            class="col-lg-2 control-label">方式一</label>
                                         <div class="col-lg-8" style="margin-top: 10px;">
-                                            <textarea name="dataList" class="form-control" id="dataList" cols="10"
+                                            <textarea name="dataText" class="form-control" id="dataText" cols="10"
                                                 rows="10" placeholder="将数据粘贴到此处,一行一个"></textarea>
                                         </div>
                                         <div class="col-lg-2">
-                                            <button type="button" style="margin-top: 10px;float: right;" class="btn btn-info" id="subByText">提交</button>
+                                            <button type="button" style="margin-top: 10px;float: right;"
+                                                class="btn btn-info" id="subByText">提交</button>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="dataList" style="margin-top: 10px;" class="col-lg-2 control-label">方式二</label>
+                                        <label for="uploadForm" style="margin-top: 10px;"
+                                            class="col-lg-2 control-label">方式二</label>
                                         <form id="uploadForm" enctype="multipart/form-data">
                                             <div class="form-inline col-lg-10">
                                                 <input type="text" class="form-control" name="fileBrowserInput"
                                                     id="fileBrowserInput" readonly="readonly" style="margin-top: 10px;">
-                                                <input type="file" class="hidden" id="dataFile" style="margin-top: 10px;">
+                                                <input type="file" class="hidden" id="dataFile"
+                                                    style="margin-top: 10px;">
                                                 <div class="input-group" style="margin-top: 10px;">
-                                                    <input type="button" id="fileBrowser" class="btn btn-default" 
+                                                    <input type="button" id="fileBrowser" class="btn btn-default"
                                                         value="选择文件">
                                                 </div>
-                                                <input type="button" style="margin-top: 10px;float:right" class="btn btn-info" value="提交" id="subByFile">
+                                                <input type="button" style="margin-top: 10px;float:right"
+                                                    class="btn btn-info" value="提交" id="subByFile">
                                             </div>
                                         </form>
                                     </div>
@@ -67,65 +72,85 @@
     </div>
     {/block}
     {block name="page-js"}
-<script type="application/javascript">
+    <script type="application/javascript">
 
-    $("#fileBrowser").click(function () {
-        $("#dataFile").val("");
-        $("#dataFile").click();
-        $("#dataFile").change(function () {
-            CheckFile(this)
-            $("#fileBrowserInput").val($("#dataFile").val())
-        });
-    })
-    //文件上传验证.
-    function CheckFile(obj) {
-        var array = new Array('xls', 'xlsx'); //可以上传的文件类型 
-        if (obj.value == '') {
-            showErrorMsg("选择要上传的文件!");
-            return false;
-        }
-        else {
-            var fileContentType = obj.value.match(/^(.*)(\.)(.{1,8})$/)[3];
-            var isExists = false;
-            for (var i in array) {
-                if (fileContentType.toLowerCase() == array[i].toLowerCase()) {
-                    isExists = true;
-                    return true;
-                }
-            }
-            if (isExists == false) {
-                obj.value = null;
-                showErrorMsg("上传文件类型不正确,必须为.xls或.xlsx!");
+        $("#fileBrowser").click(function () {
+            $("#dataFile").val("");
+            $("#dataFile").click();
+            $("#dataFile").change(function () {
+                CheckFile(this)
+                $("#fileBrowserInput").val($("#dataFile").val())
+            });
+        })
+        //文件上传验证.
+        function CheckFile(obj) {
+            var array = new Array('xls', 'xlsx'); //可以上传的文件类型 
+            if (obj.value == '') {
+                showErrorMsg("选择要上传的文件!");
                 return false;
             }
+            else {
+                var fileContentType = obj.value.match(/^(.*)(\.)(.{1,8})$/)[3];
+                var isExists = false;
+                for (var i in array) {
+                    if (fileContentType.toLowerCase() == array[i].toLowerCase()) {
+                        isExists = true;
+                        return true;
+                    }
+                }
+                if (isExists == false) {
+                    obj.value = null;
+                    showErrorMsg("上传文件类型不正确,必须为.xls或.xlsx!");
+                    return false;
+                }
+            }
         }
-    }
 
-    $("#subByFile").click(function () {
-        var file = document.getElementById("dataFile")
-        if (CheckFile(file) === true) {
-            var fd = new FormData();
-            fd.append("dataFile", $("#dataFile")[0].files[0]);
-            fd.append("dataName", $("#dataName").val())
+        $("#subByFile").click(function () {
+            var file = document.getElementById("dataFile")
+            if (CheckFile(file) === true) {
+                var fd = new FormData();
+                fd.append("dataFile", $("#dataFile")[0].files[0]);
+                fd.append("dataName", $("#dataName").val())
+                $.ajax({
+                    method: "post",
+                    url: "{:url('admin/MyData/createByFile')}",
+                    data: fd,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data.code == 1) {
+                            showMsgAndHref(data);
+                        } else {
+                            showErrorMsg(data.msg)
+                            $("#dataFile").val("");
+                            $("#fileBrowserInput").val("");
+                        }
+                    }
+                })
+            }
+        })
+
+        $("#subByText").click(function () {
+            var text = $("#dataText").val()
+            var dataName=$("#dataName").val()
             $.ajax({
+                url: "{:url('admin/MyData/createByText')}",
                 method: "post",
-                url: "{:url('admin/MyData/createByFile')}",
-                data: fd,
-                cache: false,
-                processData: false,
-                contentType: false,
+                data: {
+                    dataName: dataName,
+                    dataText: text,
+                },
+                dataType: 'json',
                 success: function (data) {
                     if (data.code == 1) {
                         showMsgAndHref(data);
                     } else {
                         showErrorMsg(data.msg)
-                        $("#dataFile").val("");
-                        $("#fileBrowserInput").val("");
                     }
                 }
             })
-        }
-
-    })
-</script>
-{/block}
+        })
+    </script>
+    {/block}

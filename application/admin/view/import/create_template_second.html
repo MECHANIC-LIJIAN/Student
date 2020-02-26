@@ -160,17 +160,25 @@
                             <option value="{$key}">{$vo}</option>
                             {/volist}
                         </select>
-                        <div class="useXH hidden">
-                            <h4>是否使用学号对照</h4>
+                        <div class="useData">
+                            <h4>是否使用自定义数据集</h4>
                             <label>
-                                <input type="radio" name="ifUseXH" class="a-radio" value="yes" checked>
+                                <input type="radio" name="ifUseData" class="a-radio" value="yes" checked>
                                 <span class="b-radio"></span>使用
                             </label>
 
                             <label>
-                                <input type="radio" name="ifUseXH" class="a-radio" value="no">
+                                <input type="radio" name="ifUseData" class="a-radio" value="no">
                                 <span class="b-radio"></span>不使用
                             </label>
+                        </div>
+                        <div>
+                            <h4>请选择数据集</h4>
+                            <select class="select" name="primaryKeyData" id="primaryKeyData">
+                                {volist name="tableField" id="vo"}
+                                <option value="{$key}">{$vo}</option>
+                                {/volist}
+                            </select>
                         </div>
                     </form>
                     <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
@@ -185,12 +193,12 @@
 <script>
 
     $(function () {
-        $("#primaryKey").change(function () {
+        $(".a-radio").change(function () {
             var key = $(this).children('option:selected').text()
             if (key == "学号") {
-                $(".useXH").removeClass("hidden").addClass("show")
+                $(".useData").removeClass("hidden").addClass("show")
             } else {
-                $(".useXH").removeClass("show").addClass("hidden")
+                $(".useData").removeClass("show").addClass("hidden")
             }
         })
 

@@ -61,9 +61,10 @@ Route::group(
         Route::group('mydatas', function () {
             Route::rule('index', 'admin/MyData/index', 'GET|POST');
             Route::rule('create', 'admin/MyData/create', 'GET|POST');
-            Route::rule('createByFile', 'admin/MyData/createByFile', 'POST');
+            Route::rule('createByFile', 'admin/MyData/createByFile', 'POST')->ext('do');
+            Route::rule('createByText', 'admin/MyData/createByText', 'POST')->ext('do');
             Route::rule('dataList/[:id]', 'admin/MyData/read', 'GET|POST')->ext();
-            Route::rule('delete', 'admin/MyData/delete', 'POST')->ext('do');
+            Route::rule('del_data', 'admin/MyData/delete', 'POST')->ext('do');
 
         });
         #用户

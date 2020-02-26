@@ -12,32 +12,120 @@
         color: red;
     }
 
-   @media screen and (max-width: 768px){
-    select {
-        min-width: 50px;
+    @media screen and (max-width: 768px) {
+        select {
+            min-width: 50px;
+        }
+
+        input {
+            max-width: 100px;
+        }
+
+        td,
+        label {
+            font-size: 10px;
+        }
+
+        .td>input {
+            max-width: 80px;
+            padding: 2px;
+            font-size: 10px;
+        }
+
+        .table>thead>tr>th,
+        .table>tbody>tr>th,
+        .table>tfoot>tr>th,
+        .table>thead>tr>td,
+        .table>tbody>tr>td,
+        .table>tfoot>tr>td {
+            padding: 2px;
+            font-size: 10px;
+        }
     }
-    input{
-        max-width: 100px;
+
+    .a-radio {
+        display: none;
     }
-    td,
-    label {
-        font-size: 10px;
+
+    .b-radio {
+        display: inline-block;
+        border: 1px solid #ccc;
+        width: 16px;
+        height: 16px;
+        border-radius: 2px;
+        vertical-align: middle;
+        margin-right: 5px;
+        position: relative;
     }
-    .td>input{
-        max-width: 80px;
-        padding: 2px;
-        font-size: 10px;
+
+    .b-radio:before {
+        content: '';
+        font-size: 0;
+        width: 10px;
+        height: 10px;
+        background: rgb(143, 188, 238);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -5px;
+        margin-top: -5px;
+        border-radius: 2px;
+        display: none;
     }
-    .table>thead>tr>th,
-    .table>tbody>tr>th,
-    .table>tfoot>tr>th,
-    .table>thead>tr>td,
-    .table>tbody>tr>td,
-    .table>tfoot>tr>td {
-        padding: 2px;
-        font-size: 10px;
+
+    .a-radio:checked~.b-radio:before {
+        display: block;
     }
-   }
+
+    .select {
+        display: inline-block;
+        width: auto;
+        min-width: 80px;
+        height: 30px;
+        position: relative;
+        vertical-align: middle;
+        padding: 0;
+        overflow: hidden;
+        background-color: #fff;
+        color: #555;
+        border: 1px solid #aaa;
+        text-shadow: none;
+        border-radius: 4px;
+        transition: box-shadow 0.25s ease;
+        z-index: 2;
+    }
+
+    .select:hover {
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .select:before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border: 10px solid transparent;
+        border-top-color: #ccc;
+        top: 14px;
+        right: 10px;
+        cursor: pointer;
+        z-index: -2;
+    }
+
+    .select select {
+        cursor: pointer;
+        padding: 10px;
+        width: 100%;
+        border: none;
+        background: transparent;
+        background-image: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    .select select:focus {
+        outline: none;
+    }
 </style>
 {/block}
 {block name="page-main"}
@@ -58,7 +146,8 @@
                                 <table class="table" id="tableD">
                                     <caption>
                                         <h4>表单名</h4>
-                                        <input type="text" required="true" name="templateName" class="form-control" style="max-width:none;">
+                                        <input type="text" required="true" name="templateName" class="form-control"
+                                            style="max-width:none;">
                                     </caption>
                                     <tbody>
                                 </table>
@@ -69,16 +158,35 @@
                     </div>
 
                     <div class="col-lg-3">
-                        <div class="panel panel-default"  style="margin-top: 60px;">
-                           <div class="panel-body">
-                            <form>
-                                <h4>请选择唯一标识字段</h4>
+                        <div class="panel panel-default" style="margin-top: 60px;">
+                            <div class="panel-body">
+                                <h5>请选择唯一标识字段</h5>
                                 <select class="select" name="primaryKey" id="primaryKey">
                                 </select>
-                            </form>
-                            <button class="btn btn-success initTemplate" type="button"  style="margin-top:20px;"><span class="fa fa-table"></span>
-                                初始化表单</button>
-                           </div>
+                                <div class="useData">
+                                    <h5>是否使用自定义数据集</h5>
+                                    <label>
+                                        <input type="radio" name="ifUseData" class="a-radio" value="1">
+                                        <span class="b-radio"></span>使用
+                                    </label>
+
+                                    <label>
+                                        <input type="radio" name="ifUseData" class="a-radio" value="0" checked>
+                                        <span class="b-radio"></span>不使用
+                                    </label>
+                                </div>
+                                <div class="hidden myData">
+                                    <h5>请选择数据集</h5>
+                                    <select class="select" name="primaryKeyData" id="primaryKeyData">
+                                        {volist name="Think.session.myData" id="vo"}
+                                        <option value="{$vo.id}">{$vo.title}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                                <button class="btn btn-success initTemplate" type="button"
+                                    style="margin-top:20px;"><span class="fa fa-table"></span>
+                                    初始化表单</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,17 +203,29 @@
 
 <script>
     $(function () {
+        $(".a-radio").click(function () {
+            var value = $(this).val();
+            if (value === "1") {
+                $(".myData").removeClass("hidden").addClass("show")
+            } else {
+                $(".myData").removeClass("show").addClass("hidden")
+            }
+        })
         $(".initTemplate").click(function () {
             $("#subForm").submit()
         })
         $("#subForm").validate(
             {
                 submitHandler: function (form) {
+                    var myData=$("#primaryKeyData").val();
+                    var ifUseData=$("input[name='ifUseData']:checked").val();
+                    var data= $('form').serialize()+ '&' +$.param({'myData':myData,'ifUseData':ifUseData}) 
+                    console.log($("#primaryKeyData").val())
                     $.ajax({
                         url: "{:url('admin/Hand/add')}",
                         type: "post",
                         dataType: 'json',
-                        data: $('form').serialize(),
+                        data: data,
                         success: function (data) {
                             if (data.code == 1) {
                                 showMsgAndHref(data)
@@ -117,8 +237,5 @@
                 },
             });
     });
-
-
-
 </script>
 {/block}

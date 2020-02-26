@@ -14,7 +14,11 @@ class MyData extends Controller
      */
     public function index()
     {
-        $dataSetList=model("MyData")->where(['uid'=>session('admin.id')])->select();
+        $dataSetList=model("MyData")
+        ->where(['uid'=>session('admin.id')])
+        ->order(['create_time'=>'desc'])
+        ->select();
+
         $this->assign([
             'dataSetList'=>$dataSetList
         ]);
@@ -22,27 +26,20 @@ class MyData extends Controller
     }
 
     /**
-     * 显示创建资源表单页.
+     * 显示创建数据集页面
      *
      * @return \think\Response
      */
     public function create()
     {
-        
         return view();
     }
 
     /**
-     * 保存新建的资源
+     * 通过文件新建数据集
      *
-     * @param  \think\Request  $request
-     * @return \think\Response
+     * @return void
      */
-    public function save(Request $request)
-    {
-        //
-    }
-
     public function createByFile()
     {
         $data['dataName']=input('post.dataName');
@@ -58,12 +55,34 @@ class MyData extends Controller
     }
 
     /**
+     * 通过文本新建数据集
+     *
+     * @return void
+     */
+    public function createByText()
+    {
+        $data['dataName']=input('post.dataName');
+        $data['dataText']=input('post.dataText');
+        
+        $result=model("MyData")->getDataByText($data);
+
+        if($result==1){
+            return $this->success("提交成功！",url('admin/MyData/index'));
+        }else{
+            return $this->error($result);
+        }
+    }
+
+    /**
      * 数据集详情
      */
     public function read()
     {
         $id=input('id');
-        $dataInfo=model('MyData')->with('options')->find($id);
+        $dataInfo=model('MyData')
+        ->with('options')
+        ->find($id);
+        
         $this->assign([
             'dataInfo'=>$dataInfo
         ]);
@@ -93,7 +112,12 @@ class MyData extends Controller
     {
         if (request()->isAjax()) {
             $id=input('post.id');
-            $dataInfo=model('MyData')->with('options')->field('id')->where(['id'=>$id])->find();
+            $dataInfo=model('MyData')
+            ->with('options')
+            ->field('id')
+            ->where(['id'=>$id])
+            ->find();
+            
             $result=$dataInfo->together('options')->delete();
             if($result){
                 $this->success('删除成功',url('admin/MyData/index'));

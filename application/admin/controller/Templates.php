@@ -6,7 +6,7 @@ class Templates extends Base
 {
 
     /**
-     * 显示任务列表
+     * 显示表单列表
      *
      * @return \think\Response
      */
@@ -34,17 +34,21 @@ class Templates extends Base
     }
 
     /**
-     * 添加
+     * 添加表单
      * @return \think\response\View
      */
     public function add()
     {
-
+        $myData=model("MyData")
+        ->where(['uid'=>session('admin.id')])
+        ->field('id,title')
+        ->select();
+        session('myData',$myData);
         return view();
     }
 
     /**
-     * 删除
+     * 删除表单
      * @return \think\response\View
      */
     public function del()
@@ -53,14 +57,14 @@ class Templates extends Base
             $tInfo = model('Templates')->with('options,datas')->find(input('post.id'));
             $result = $tInfo->together('options,datas')->delete();
             if ($result == 1) {
-                $this->success('任务删除成功', 'admin/Templates/list');
+                $this->success('表单删除成功', 'admin/Templates/list');
             } else {
-                $this->error("任务删除失败");
+                $this->error("表单删除失败");
             }
         }
     }
     /**
-     * 任务管理
+     * 表单管理
      *
      * @return void
      */

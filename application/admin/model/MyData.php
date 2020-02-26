@@ -12,13 +12,13 @@ class MyData extends Model
 
     public function options()
     {
-        return $this->hasMany('MyDataOption');
+        return $this->hasMany('MyDataOption')->limit(20);
     }
 
     public function getDataByFile($data)
     {
         header("content-type:text/html;charset=utf-8");
-        //上传excel文件
+        
         $validate = new \app\admin\validate\MyData;
         if (!$validate->scene('upload')->check($data)) {
             return $validate->getError();
@@ -54,24 +54,52 @@ class MyData extends Model
         if (empty($excelData)) {
             return '不能有空字段,请重新选择文件';
         }
+
+        $res=$this->saveData($data['dataName'],$excelData);
         
-       
-        
+        return $res;
+    }
+
+
+    public function getDataByText($data)
+    {
+        $validate = new \app\admin\validate\MyData;
+        if (!$validate->scene('text')->check($data)) {
+            return $validate->getError();
+        }
+        $textData=array_filter(array_unique(explode("\n",trim($data['dataText']))));
+
+        $res=$this->saveData($data['dataName'],$textData);
+
+        return $res;
+    }
+
+    private function saveData($dataName,$data){
         Db::startTrans();
         try {
             $dataInfo = [
                 'uid' => session('admin.id'),
-                'title' => $data['dataName'],
-                'count' => count($excelData),
+                'title' => $dataName,
+                'count' => count($data),
                 'create_time'=> time(),
             ];
+            $res=Db::name("my_data")
+            ->where([
+                'uid'=>session('admin.id'),
+                'title'=>$dataName
+            ])
+            ->find();
+            if ($res) {
+                return "已存在同名数据集";
+            }
+            
             $dataid=Db::name("my_data")->insertGetId($dataInfo);
 
             $dataSets = [];
-            for ($row = 1; $row <= count($excelData); $row++) {
+            foreach ($data as $key => $value) {
                 $tmp = [];
                 $tmp['my_data_id'] = $dataid;
-                $tmp['content'] = $excelData[$row];
+                $tmp['content'] = $value;
                 $tmp['create_time'] = time();
                 $dataSets[] = $tmp;
             }
@@ -80,7 +108,7 @@ class MyData extends Model
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            return $e->getMessage();
+            // return $e->getMessage();
             return "提交失败";
         }
         return 1;

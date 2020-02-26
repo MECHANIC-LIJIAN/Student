@@ -44,6 +44,7 @@
   box-shadow: darkgrey 10px 10px 30px 5px;
   border-radius: 5px;
   padding: 2px;
+  padding-left: 8px;
   font-size: 16px;
   word-break: break-all;
 }

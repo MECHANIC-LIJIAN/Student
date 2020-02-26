@@ -16,7 +16,7 @@ class Import extends Validate
         'tname.max'     => '名称最多不能超过25个字符',
     ];
 
-    public function senceUpload()
+    public function sceneUpload()
     {
         return $this->only(['tname']);
     }

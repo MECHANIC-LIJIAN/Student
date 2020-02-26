@@ -3,7 +3,6 @@
 namespace app\admin\controller;
 
 use Overtrue\Pinyin\Pinyin;
-use think\facade\Request;
 use think\Db;
 
 class Hand extends Base
@@ -16,8 +15,8 @@ class Hand extends Base
     public function add()
     {
         if (request()->isAjax()) {
-            $params = Request::post();
-
+            $params = input('post.');
+            dump($params);
             if (!array_key_exists('primaryKey',$params)) {
                 $this->error("请至少添加一个字段");
             }
@@ -37,11 +36,14 @@ class Hand extends Base
             $template->tabbr = $pinyin->abbr($params['templateName']);
             $template->status = '1';
             $template->primaryKey = $params['primaryKey'];
+            $template->myData = $params['myData'];
+            $template->ifUseData = $params['ifUseData'];
             $res = $template->save();
 
             unset($params['templateName']);
             unset($params['primaryKey']);
-
+            unset($params['myData']);
+            unset($params['ifUseData']);
             
             $data = [];
             foreach ($params as $key => $value) {
