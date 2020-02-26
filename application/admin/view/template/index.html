@@ -1,5 +1,9 @@
 {extend name="public/admin_base"}
 {block name="title"}数据-{$template.tname}{/block}
+{block name="page-breadcrumb"}
+<li>表单列表</li>
+<li class="active">{$template.tname}</li>
+{/block}
 {block name="page-style"}
 <style>
     input[type=checkbox],
@@ -53,7 +57,7 @@
                             <span class="fa fa-share"></span>分享
                         </button>
                         <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
-                                class="fa fa-eye"></span>查看任务</a>
+                                class="fa fa-eye"></span>查看表单</a>
                     </div>
                 </div>
 

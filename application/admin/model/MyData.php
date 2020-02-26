@@ -9,12 +9,10 @@ use think\model\concern\SoftDelete;
 class MyData extends Model
 {
     use SoftDelete;
-    protected $autoWriteTimestamp = true;
 
-
-    public function getOption()
+    public function options()
     {
-        return $this->hasMany('MyDataOption','dataid','dataid');
+        return $this->hasMany('MyDataOption');
     }
 
     public function getDataByFile($data)
@@ -56,31 +54,33 @@ class MyData extends Model
         if (empty($excelData)) {
             return '不能有空字段,请重新选择文件';
         }
-        $dataSets = [];
-        $dataInfo = [
-            'uid' => session('admin.id'),
-            'dataid' => uuid(),
-            'title' => $data['dataName'],
-            'count' => count($dataSets),
-            'create_time'=> time(),
-        ];
-        for ($row = 1; $row <= count($excelData); $row++) {
-            $tmp = [];
-            $tmp['dataid'] = $dataInfo['dataid'];
-            $tmp['content'] = $excelData[$row];
-            $tmp['create_time'] = time();
-            $dataSets[] = $tmp;
-        }
-        // dump($dataSets);
+        
+       
+        
         Db::startTrans();
         try {
-            Db::name("my_data")->insert($dataInfo);
+            $dataInfo = [
+                'uid' => session('admin.id'),
+                'title' => $data['dataName'],
+                'count' => count($excelData),
+                'create_time'=> time(),
+            ];
+            $dataid=Db::name("my_data")->insertGetId($dataInfo);
+
+            $dataSets = [];
+            for ($row = 1; $row <= count($excelData); $row++) {
+                $tmp = [];
+                $tmp['my_data_id'] = $dataid;
+                $tmp['content'] = $excelData[$row];
+                $tmp['create_time'] = time();
+                $dataSets[] = $tmp;
+            }
             Db::name('my_data_option')->insertAll($dataSets);
             Db::commit();
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            // return $e->getMessage();
+            return $e->getMessage();
             return "提交失败";
         }
         return 1;

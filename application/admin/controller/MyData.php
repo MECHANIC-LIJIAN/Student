@@ -63,7 +63,7 @@ class MyData extends Controller
     public function read()
     {
         $id=input('id');
-        $dataInfo=model('MyData')->with('getOption')->where(['dataid'=>$id])->find();
+        $dataInfo=model('MyData')->with('options')->find($id);
         $this->assign([
             'dataInfo'=>$dataInfo
         ]);
@@ -93,8 +93,8 @@ class MyData extends Controller
     {
         if (request()->isAjax()) {
             $id=input('post.id');
-            $dataInfo=model('MyData')->find($id);
-            $result=$dataInfo->together('getOption')->delete();
+            $dataInfo=model('MyData')->with('options')->field('id')->where(['id'=>$id])->find();
+            $result=$dataInfo->together('options')->delete();
             if($result){
                 $this->success('删除成功',url('admin/MyData/index'));
             }else{

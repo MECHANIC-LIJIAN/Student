@@ -29,13 +29,13 @@
                         <tbody>
                             {volist name="dataSetList" id="vo"}
                             <tr>
-                                <td><a href="{:url('admin/MyData/read',['id'=>$vo.dataid])}" style="font-size:14px">{$vo.title}</a> </td>\
+                                <td><a href="{:url('admin/MyData/read',['id'=>$vo.id])}" style="font-size:14px">{$vo.title}</a> </td>
                                 {if session('admin.is_super')==1}<td>{$vo.uid}</td>{/if}
                                 <td>{$vo.count}</td>
                                 <td>
                                     <a href="#" class="btn btn-darkorange btn-xs del-data"
                                         dataid="{$vo.id}"">删除</a>
-                                    <a href="{:url('admin/MyData/read',['id'=>$vo.dataid])}"
+                                    <a href="{:url('admin/MyData/read',['id'=>$vo.id])}"
                                         class="btn btn-xs btn-success"><span
                                             class="fa fa-table"></span>数据</a>
                                 </td>
@@ -45,9 +45,10 @@
         
                         </tbody>
                     </table>
-                    
                 </div>
+               <div class="text-align-right" style="margin-top: 20px;">
                 <a href="{:url('admin/MyData/create')}" class="btn btn-success">添加</a>
+               </div>
             </div>
         </div>
     </div>
@@ -58,7 +59,7 @@
 <script>
     $(".del-data").click(function () {
         var id = $(this).attr('dataid');
-        confirm('确定删除吗？','删除任务',"{:url('admin/MyData/delete')}",{id: id})
+        confirm('确定删除吗？','删除数据',"{:url('admin/MyData/delete')}",{id: id})
     })
 </script>
 {/block}

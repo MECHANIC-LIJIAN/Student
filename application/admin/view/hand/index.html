@@ -1,9 +1,9 @@
 {extend name="public/admin_base"}
 
-{block name="title"}创建任务{/block}
+{block name="title"}创建表单{/block}
 {block name="page-breadcrumb"}
-<li>创建任务</li>
-<li class="active">手动创建任务</li>
+<li>创建表单</li>
+<li class="active">手动创建表单</li>
 {/block}
 {block name="page-style"}
 <link href="__CSS__/main.css" rel="stylesheet">
@@ -12,10 +12,13 @@
         color: red;
     }
 
+   @media screen and (max-width: 768px){
     select {
         min-width: 50px;
     }
-
+    input{
+        max-width: 100px;
+    }
     td,
     label {
         font-size: 10px;
@@ -34,6 +37,7 @@
         padding: 2px;
         font-size: 10px;
     }
+   }
 </style>
 {/block}
 {block name="page-main"}
@@ -48,13 +52,13 @@
             <div class="widget-body">
                 <!-- style="background-color:rgba(45, 195, 232,0.25); padding: 20px;" -->
                 <div class="row">
-                    <div class="col-lg-9">
+                    <div class="col-lg-6">
                         <div class="form-horizontal">
                             <form autocomplete="off" id="subForm">
                                 <table class="table" id="tableD">
                                     <caption>
-                                        <h4>模板名</h4>
-                                        <input type="text" required="true" name="templateName" class="form-control">
+                                        <h4>表单名</h4>
+                                        <input type="text" required="true" name="templateName" class="form-control" style="max-width:none;">
                                     </caption>
                                     <tbody>
                                 </table>
@@ -65,26 +69,16 @@
                     </div>
 
                     <div class="col-lg-3">
-                        <div class="project-right-sider" style="margin-top: 160px;">
-                            <form class="form-box">
+                        <div class="panel panel-default"  style="margin-top: 60px;">
+                           <div class="panel-body">
+                            <form>
                                 <h4>请选择唯一标识字段</h4>
                                 <select class="select" name="primaryKey" id="primaryKey">
                                 </select>
-                                <!-- <div class="useXH hidden">
-                        <h4>是否使用学号对照</h4>
-                        <label>
-                            <input type="radio" name="ifUseXH" class="a-radio" value="yes" checked>
-                            <span class="b-radio"></span>使用
-                        </label>
-
-                        <label>
-                            <input type="radio" name="ifUseXH" class="a-radio" value="no">
-                            <span class="b-radio"></span>不使用
-                        </label>
-                    </div> -->
                             </form>
-                            <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
-                                初始化模板</button>
+                            <button class="btn btn-success initTemplate" type="button"  style="margin-top:20px;"><span class="fa fa-table"></span>
+                                初始化表单</button>
+                           </div>
                         </div>
                     </div>
                 </div>

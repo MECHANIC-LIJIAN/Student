@@ -1,7 +1,7 @@
 {extend name="public/admin_base"}
-{block name="title"}任务列表{/block}
+{block name="title"}表单列表{/block}
 {block name="page-breadcrumb"}
-<li class="active">任务列表</li>
+<li class="active">表单列表</li>
 {/block}
 {block name="page-main"}
 <div class="row">
@@ -9,14 +9,14 @@
         <div class="widget">
             <div class="widget-header bg-themeprimary">
                 <i class="fa fa-arrow-left widget-icon" onClick="window.location.href='{:url(\'admin/Home/index\')}';"/></i>
-                <span class="widget-caption">任务列表</span>
+                <span class="widget-caption">表单列表</span>
             </div>
             <div class="widget-body">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered text-nowrap" style="padding: 2px;font-size: 10px;">
                         <thead>
                             <tr>
-                                <th>任务名</th>
+                                <th>表单名</th>
                                 {if session('admin.is_super')==1} <th>用户名</th>{/if}
                                 <th>记录数</th>
                                 <th>状态</th>
@@ -59,7 +59,7 @@
                                 <td>
                                     <a class="copy btn btn-xs btn-info" dataid="{$vo.shareUrl}"><span class="fa fa-share"></span>分享</a>
                                     <a href="{$vo.shareUrl}" target="_blank" class="btn btn-xs btn-default"><span
-                                            class="fa fa-eye"></span>查看任务</a>
+                                            class="fa fa-eye"></span>查看表单</a>
                                 </td>
                                 <td>{$vo.create_time|date='Y年m月d日 H:i'}</td>
                             </tr>
@@ -79,7 +79,7 @@
 
     $(".del-tempalte").click(function () {
         var id = $(this).attr('dataid');
-        confirm('确定删除吗？','删除任务',"{:url('admin/Templates/del')}",{id: id})
+        confirm('确定删除吗？','删除表单',"{:url('admin/Templates/del')}",{id: id})
     })
 
     $(".control-tempalte").click(function () {
@@ -92,7 +92,7 @@
             msg = "确定开始吗？"
             opt = "start"
         }
-        confirm(msg,'任务管理确认',"{:url('admin/Templates/control')}",{id: id,opt:opt})
+        confirm(msg,'表单管理确认',"{:url('admin/Templates/control')}",{id: id,opt:opt})
     })
 
     $(".copy").click(function () {

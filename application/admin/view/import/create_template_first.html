@@ -1,18 +1,34 @@
 {extend name="public/admin_base"}
 
-{block name="title"}导入模板文件{/block}
+{block name="title"}导入表单文件{/block}
 {block name="page-breadcrumb"}
-<li>创建模板</li>
-<li class="active">导入模板</li>
+<li>创建表单</li>
+<li class="active">导入表单</li>
 {/block}
 {block name="page-style"}
 <link href="__CSS__/main.css" rel="stylesheet">
 <link href="__CSS__/project.css" rel="stylesheet">
+<style>
+    img {
+        width: 150px;
+        -webkit-transition: -webkit-transform .3s ease;
+        -moz-transition: -moz-transform .3s ease;
+        -ms-transition: -ms-transform .3s ease;
+        transition: transform .3s ease;
+    }
+
+    img:hover {
+        -webkit-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        transform: scale(1.2)
+    }
+</style>
 {/block}
 {block name="page-main"}
 <div class="project-team-container">
     <div class="bg-themeprimary widget-header">
-        <i class="fa fa-arrow-left widget-icon" onClick="window.location.href='{:url(\'admin/Templates/add\')}';"/></i>
+        <i class="fa fa-arrow-left widget-icon" onClick="window.location.href='{:url(\'admin/Templates/add\')}';" /></i>
         <span class="widget-caption">第一步：导入文件</span>
     </div>
     <div class="widget-body">
@@ -33,9 +49,9 @@
                 <div class="project-first-step">
                     <form id="uploadForm" enctype="multipart/form-data">
                         <div class="form-inline">
-                            <label for="tname" class="col-lg-2 control-label">模板名字</label>
-                            <input type="text" class="form-control" id="tname">
-                            <input type="text" class="form-control" name="fileBrowserInput" id="fileBrowserInput"
+                            <label for="tname" class="col-lg-2 control-label">表单名字</label>
+                            <input type="text" class="form-control " id="tname">
+                            <input type="text" class="form-control file-input" name="fileBrowserInput" id="fileBrowserInput"
                                 readonly="readonly">
                             <input type="file" class="hidden" id="tempalteFile">
                             <div class="input-group">
@@ -47,16 +63,23 @@
                     <br>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <h3 class="panel-title">模板文件说明</h3>
+                            <h3 class="panel-title">表单文件说明</h3>
                         </div>
-                            <ul class="list-group">
-                                <li class="list-group-item">1、导入的模板第一行为字段名</li>
-                                <li class="list-group-item">2、第二行起为空时生成文本框，字段下方有待选文字时生成下拉菜单</li>
-                                <li class="list-group-item">3、不能有空行和列</li>
-                                <li class="list-group-item">
-                                    4、所有字段都是必填项   <font color="red" style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font></li>
-                            </ul>
-                            
+                        <ul class="list-group">
+                            <li class="list-group-item">1、excel文件第一行为字段名</li>
+                            <li class="list-group-item">2、第二行起为空时生成文本框，有待选文字时生成下拉菜单</li>
+                            <li class="list-group-item">3、不能有空行和列</li>
+                            <li class="list-group-item">
+                                4、所有字段都是必填项 <font color="red"
+                                    style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
+                            </li>
+                            <li class="list-group-item">
+                                <p>5、示例图片</p>
+                                <img src="__IMG__/example-1.jpg" alt="表单文件示例">
+                                <img src="__IMG__/example-2.jpg" alt="生成表单示例">
+                            </li>
+                        </ul>
+
                     </div>
                 </div>
             </div>
