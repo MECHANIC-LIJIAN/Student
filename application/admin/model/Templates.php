@@ -13,13 +13,14 @@ class Templates extends Model
     {
         return $this->hasMany('TemplatesOption', 'tid', 'tid');
     }
+
     public function datas()
     {
         return $this->hasMany('TemplatesData', 'tid', 'tid');
     }
     public function getUser()
     {
-        return $this->belongsTo('Admin', 'tuser', 'id');
+        return $this->belongsTo('Admin', 'uid', 'id');
     }
 
     public function getDataByFile($data)

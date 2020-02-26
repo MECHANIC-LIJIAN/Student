@@ -127,7 +127,7 @@
                             {volist name="optionList" id='option'}
                             {if $option.type='p' AND count($option.child)==0}
                             <tr>
-                                <td><label for="{$option.title}" class="col-lg-10 control-label">{$option.title}</label>
+                                <td><label for="{$option.content}" class="col-lg-10 control-label">{$option.content}</label>
                                 </td>
                                 <td><input type="text" class="form-control" name="{$option.sid}"></td>
 
@@ -137,11 +137,11 @@
                             <!-- 输出select -->
                             {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)>0}
                             <tr>
-                                <td><label for="{$option.title}" class="col-lg-10 control-label">{$option.title}</label>
+                                <td><label for="{$option.content}" class="col-lg-10 control-label">{$option.content}</label>
                                 </td>
                                 <td><select class="form-control">
                                         {volist name="option.child" id="vo"}
-                                        <option name="{$option.sid}">{$vo.title}</option>
+                                        <option name="{$option.sid}">{$vo.content}</option>
                                         {/volist}
                                     </select></td>
 
@@ -203,10 +203,10 @@
         })
 
         $(".initTemplate").click(function () {
-            var myData = $("#primaryKeyData").val();
-            var ifUseData = $("input[name='ifUseData']:checked").val();
-            var primaryKey = $("#primaryKey").val();
-            var data =$.param({ 'myData': myData, 'ifUseData': ifUseData, 'primaryKey': primaryKey })
+            // var myData = $("#primaryKeyData").val();
+            // var ifUseData = $("input[name='ifUseData']:checked").val();
+            // var primaryKey = $("#primaryKey").val();
+            // var data =$.param({ 'myData': myData, 'ifUseData': ifUseData, 'primaryKey': primaryKey })
             $.ajax({
                 method: "post",
                 url: "{:url('admin/import/createtemplateSecond')}",

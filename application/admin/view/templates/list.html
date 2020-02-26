@@ -28,7 +28,7 @@
                             {volist name="templates" id="vo"}
                             <tr>
                                 <td><a href="{:url('admin/Template/index',['id'=>$vo.tid])}" style="font-size:14px">{$vo.tname}</a> </td>
-                                {if session('admin.is_super')==1}<td>{$vo.tuser}</td>{/if}
+                                {if session('admin.is_super')==1}<td>{$vo.user}</td>{/if}
                                 <td>{$vo.count}</td>
                                 {if $vo.status==1}
                                 <td>

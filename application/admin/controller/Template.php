@@ -15,15 +15,19 @@ class Template extends Base
             ->where(['tid' => $tId])
             ->field('tname,tid')
             ->find();
-        session('template',$template);
         $fields = model('TemplatesOption')
-            ->where(['tid' => $tId, 'type' => 'p'])
+            ->where([
+                'tid' => $tId,
+                'type'=>'p'
+            ])
             ->field('sid,content')
             ->select();
+        session('template',$template);
         #查询字段
         $templateField = [];
         foreach ($fields as $key => $value) {
             $value['field'] = $value['sid'];
+            $value['title'] = $value['content'];
             $value['sortable'] = true;
             array_push($templateField, $value['sid']);
         }
@@ -32,8 +36,8 @@ class Template extends Base
         array_push($templateField, 'id');
         session('options', $templateField);
 
-        #显示在页面的字段
-        $fields = json_decode($fields, $assoc = false);
+        #显示在页面的字段 json->array
+        $fields = json_decode($fields);
         array_unshift($fields, [
             'checkbox' => true,
         ]);
@@ -52,14 +56,18 @@ class Template extends Base
             'title' => '最后提交时间',
             'sortable' => true,
         ]);
+        #array->json
+        $fields=json_encode($fields);
+        // $fields=json_encode($fields, JSON_UNESCAPED_UNICODE);
 
         #构造分享链接
         $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
         
         $this->assign([
             'template' => $template,
-            'fields' => json_encode($fields, JSON_UNESCAPED_UNICODE),
+            'fields' => $fields,
             'shareUrl' => $shareUrl,
+            'tId' => $tId,
         ]);
         return view();
     }

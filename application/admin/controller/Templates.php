@@ -19,7 +19,7 @@ class Templates extends Base
                 ->select();
         } else {
             $templates = model('Templates')
-                ->where(['tuser' => session('admin.id')])
+                ->where(['uid' => session('admin.id')])
                 ->with('getUser')
                 ->order(['status' => 'asc', 'update_time' => 'desc'])
                 ->select();
@@ -27,7 +27,7 @@ class Templates extends Base
 
         foreach ($templates as $value) {
             $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
-            $value['tuser'] = $value['getUser']['username'];
+            $value['user'] = $value['getUser']['username'];
         }
         $this->assign('templates', $templates);
         return view();

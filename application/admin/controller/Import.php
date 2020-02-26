@@ -27,7 +27,7 @@ class Import extends Base
         
         $tInfo = [
             'tId' => uuid(),
-            'user' => session('admin.id'),
+            'uid' => session('admin.id'),
             'tName' => $data['tName'],
         ];
         session('tInfo', $tInfo);
@@ -46,37 +46,39 @@ class Import extends Base
      */
     public function createTemplateSecond()
     {
-        // if (!session('?tInfo')) {
-        //     $this->redirect('admin/Import/createTemplateFirst');
-        // }
-
+        if (!session('?tInfo')) {
+            $this->redirect('admin/Import/createTemplateFirst');
+        }
         if (request()->isAjax()) {
-
+            $primaryKey = input('post.primaryKey');
+            $myData = input('post.primaryKeyData');
+            $ifUseData = input('post.ifUseData');
+            
             $tInfo = session('tInfo');
             $data = session("optionList");
 
-            $template = model('templates')
+            $template = model('Templates')
                 ->where('tid', $tInfo['tId'])
                 ->find();
 
             if ($template['status'] == '1') {
                 $this->error("表单已经初始化，不可更改");
             }
+
             $pinyin = new Pinyin();
             $template = new \app\admin\model\Templates;
             $template->tid = $tInfo['tId'];
-            $template->tuser = $tInfo['user'];
+            $template->uid = $tInfo['uid'];
             $template->tname = $tInfo['tName'];
-            $template->tfilename = $tInfo['fileName'];
-            $template->tfilepath = $tInfo['filePath'];
             $template->tabbr = $pinyin->abbr($tInfo['tName']);
             $template->status = '1';
-            $template->primaryKey = input('post.primaryKey');
-            $template->myData = input('post.myData');
-            $template->ifUseData = input('post.ifUseData');
+            $template->primaryKey = $primaryKey;
+            $template->myData = $myData;
+            $template->ifUseData = $ifUseData;
             $res = $template->save();
 
             $res2 = model("TemplatesOption")->isUpdate(false)->saveAll($data);
+
             Db::name("templates_sum")->where('id', 1)->setInc('count');
             if ($res2) {
                 $this->success("表单初始化成功", "admin/import/createtemplateThird");
@@ -87,6 +89,7 @@ class Import extends Base
 
         $tInfo = session('tInfo');
         $data = session('tData');
+        session('tData',null);
         end($data);
         $finalKey = key($data);
         $optionList = [];
@@ -117,10 +120,11 @@ class Import extends Base
             }
         }
 
+        
         session('optionList', $optionList);
 
         $optionList = getOptionList($optionList, $pid = 'pid', $id = 'sid');
-
+        
         return $this->fetch('create_template_second', ['optionList' => $optionList, 'tname' => $tInfo['tName'], 'tableField' => $tableField]);
 
     }
@@ -131,7 +135,6 @@ class Import extends Base
             $this->redirect('admin/Import/createTemplateFirst');
         }
 
-        
         $shareUrl = url('index/Template/readTemplate', ['id' => session('tInfo')['tId']],'',true);
         $this->assign("shareUrl", $shareUrl);
         session('tInfo',null);

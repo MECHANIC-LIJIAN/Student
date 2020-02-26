@@ -83,15 +83,6 @@ class MyData extends Model
                 'count' => count($data),
                 'create_time'=> time(),
             ];
-            $res=Db::name("my_data")
-            ->where([
-                'uid'=>session('admin.id'),
-                'title'=>$dataName
-            ])
-            ->find();
-            if ($res) {
-                return "已存在同名数据集";
-            }
             
             $dataid=Db::name("my_data")->insertGetId($dataInfo);
 

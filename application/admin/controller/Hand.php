@@ -30,7 +30,7 @@ class Hand extends Base
             $pinyin = new Pinyin();
             $template = new \app\admin\model\Templates;
             $template->tid = $tId;
-            $template->tuser = session('admin.id');
+            $template->uid = session('admin.id');
             $template->tname = $params['templateName'];
             $template->tabbr = $pinyin->abbr($params['templateName']);
             $template->status = '1';
@@ -55,7 +55,7 @@ class Hand extends Base
                     $field['type'] = 'p';
                     $field['content'] = $value;
                     $field['rule'] = $params[$key."_rule"];
-                    $abbr = $pinyin->abbr($value);
+                    $field['abbr'] = $pinyin->abbr($value);
                     $data[] = $field;
                 } elseif ($temp[2] != "rule") {
                     $field = [];
@@ -66,12 +66,12 @@ class Hand extends Base
                     $field['type'] = 'c';
                     $field['content'] = $value;
                     $field['rule'] = $params[$pId."_rule"];
-                    $abbr = $pinyin->abbr($value);
+                    $field['abbr'] = $pinyin->abbr($value);
                     $data[] = $field;
                 }
             }
             
-            // return $data;
+            
             $res = model("TemplatesOption")->isUpdate(false)->saveAll($data);
             $res2 = Db::name("templates_sum")->where('id', 1)->setInc('count');
             if ($res2) {
