@@ -219,8 +219,8 @@
                 submitHandler: function (form) {
                     var myData=$("#primaryKeyData").val();
                     var ifUseData=$("input[name='ifUseData']:checked").val();
-                    var data= $('form').serialize()+ '&' +$.param({'myData':myData,'ifUseData':ifUseData}) 
-                    console.log($("#primaryKeyData").val())
+                    var primaryKey=$("#primaryKey").val();
+                    var data= $('form').serialize()+ '&' +$.param({'myData':myData,'ifUseData':ifUseData,'primaryKey':primaryKey})
                     $.ajax({
                         url: "{:url('admin/Hand/add')}",
                         type: "post",

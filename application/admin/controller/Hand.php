@@ -16,7 +16,6 @@ class Hand extends Base
     {
         if (request()->isAjax()) {
             $params = input('post.');
-            dump($params);
             if (!array_key_exists('primaryKey',$params)) {
                 $this->error("请至少添加一个字段");
             }
