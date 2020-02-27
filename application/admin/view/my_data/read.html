@@ -1,6 +1,6 @@
 {extend name="public/admin_base"}
 {block name="title"}
-数据集{$dataInfo.title}
+数据集-{$dataInfo.title}
 {/block}
 {block name="page-breadcrumb"}
 <li class="active"><i class="fa fa-server"></i>我的数据集</li>
@@ -12,9 +12,10 @@
         <div class="widget">
             <div class="widget-header bg-themeprimary">
                 <i class="fa fa-arrow-left widget-icon" onClick="window.location.href='{:url(\'admin/Home/index\')}';"/></i>
-                <span class="widget-caption">数据集</span>
+                <span class="widget-caption">{$dataInfo.title}</span>
             </div>
             <div class="widget-body">
+                <div class="alert alert-info" style="font-size: 16px;">显示数据集的前20条</div>
                 <div class="table-responsive">
                    <table class="table table-bordered">
                     {volist name="dataInfo.options" id="vo"}

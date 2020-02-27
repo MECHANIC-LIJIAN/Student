@@ -17,6 +17,7 @@ class MyData extends Controller
         $dataSetList = model("MyData")
             ->where(['uid' => session('admin.id')])
             ->order(['create_time' => 'desc'])
+            ->field('title,id,count')
             ->select();
 
         $this->assign([
@@ -89,6 +90,7 @@ class MyData extends Controller
         $id = input('id');
         $dataInfo = model('MyData')
             ->with('options')
+            ->field('title,id,count')
             ->find($id);
 
         $this->assign([
