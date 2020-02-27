@@ -90,7 +90,7 @@ class MyData extends Controller
         $id = input('id');
         $dataInfo = model('MyData')
             ->with('options')
-            ->field('title,id,count')
+            ->field('uid,title,id,count')
             ->find($id);
 
         $this->assign([
