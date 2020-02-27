@@ -11,7 +11,7 @@ class Template extends Controller
     {
 
         $id = input('id');
-        $template = model("Templates")->with('options')->where(['tid' => $id])->field('tid,tname,primaryKey,status')->find();
+        $template = model("Templates")->with('options')->where(['tid' => $id])->field('tid,tname,primaryKey,status,ifUseData,myData')->find();
         if (!$template || $template['status'] != 1) {
             return $this->fetch('template', ['hello' => '该表单已关闭或未创建']);
         }
@@ -41,7 +41,14 @@ class Template extends Controller
             foreach ($templateField as $key => $value) {
                 $data[$value] = input("post.$value");
             }
-
+            // if ($template['ifUseData']==1) {
+            //     $mydata=model('MyData')
+            //             ->where([
+            //                 'my_data_id'=>$template['myData'],
+            //                 'content'=>$data[$template['primaryKey']],
+            //                 ])
+            //             ->find();
+            // }
             if (cookie('ifCheck') == 0) {
                 $res = model('TemplatesData')->where(['tid' => $template['tid'], $template['primaryKey'] => $data[$template['primaryKey']]])->find();
 

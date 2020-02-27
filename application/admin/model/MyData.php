@@ -12,8 +12,9 @@ class MyData extends Model
 
     public function options()
     {
-        return $this->hasMany('MyDataOption')->limit(20);
+        return $this->hasMany('MyDataOption')->field('content,my_data_id')->limit(20);
     }
+    
 
     public function getDataByFile($dataInfo)
     {

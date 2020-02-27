@@ -13,7 +13,7 @@ class Template extends Base
         session('tId', $tId);
         $template = model('Templates')
             ->where(['tid' => $tId])
-            ->field('tname,tid')
+            ->field('tname,tid,ifUseData,myData')
             ->find();
         $fields = model('TemplatesOption')
             ->where([
@@ -23,6 +23,10 @@ class Template extends Base
             ->field('sid,content')
             ->select();
         session('template',$template);
+
+        // if ($template['ifUseData']==1) {
+        //     $mydata=model('MyData')->with('options')->find($template['myData']);
+        // }
         #查询字段
         $templateField = [];
         foreach ($fields as $key => $value) {

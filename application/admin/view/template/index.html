@@ -16,6 +16,10 @@
         height: 14px;
         cursor: pointer;
     }
+
+    .nav-tabs {
+        width: auto;
+    }
 </style>
 
 {/block}
@@ -29,6 +33,21 @@
                 <span class="widget-caption">{$template.tname}</span>
             </div>
             <div class="widget-body">
+                <ul id="myTab" class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#firstPage" data-toggle="tab">
+                            数据页
+                        </a>
+                    </li>
+                    <!-- {if $template.ifUseData==1}
+                    
+                    <li>
+                        <a href="#secondPage" data-toggle="tab">
+                            未填数据
+                        </a>
+                    </li>
+                    {/if} -->
+                </ul>
                 <!-- <form id="formSearch" class="form-horizontal">
                     <div class="form-group" style="margin-top:15px">
                         <label class="control-label col-lg-1" for="txt_search_departmentname">部门名称</label>
@@ -45,27 +64,38 @@
                         </div>
                     </div>
                 </form> -->
-                <div id="toolbar" class="btn-group">
-                    <div class="btn-group">
-                        <button id="btn_delete" type="button" class="btn btn-danger">
-                            <span class="fa fa-remove" aria-hidden="true"></span>删除
-                        </button>
-                        <button id="btn_refresh" type="button" class="btn btn-success">
-                            <span class="fa fa-refresh" aria-hidden="true"></span>刷新
-                        </button>
-                        <button id="copy" class="btn btn-info" dataid="{$template.tid}">
-                            <span class="fa fa-share"></span>分享
-                        </button>
-                        <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
-                                class="fa fa-eye"></span>查看表单</a>
-                    </div>
-                </div>
+                <div id="myTabContent" class="tab-content">
+                    <div id="firstPage" class="tab-pane active">
+                        <div id="toolbar" class="btn-group">
+                            <div class="btn-group">
+                                <button id="btn_delete" type="button" class="btn btn-danger">
+                                    <span class="fa fa-remove" aria-hidden="true"></span>删除
+                                </button>
+                                <button id="btn_refresh" type="button" class="btn btn-success">
+                                    <span class="fa fa-refresh" aria-hidden="true"></span>刷新
+                                </button>
+                                <button id="copy" class="btn btn-info" dataid="{$template.tid}">
+                                    <span class="fa fa-share"></span>分享
+                                </button>
+                                <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
+                                        class="fa fa-eye"></span>查看表单</a>
+                            </div>
 
-                <table id="table" data-search="true"
-                    class="table table-striped table-hover table-bordered text-nowrap  table-condensed"></table>
+                        </div>
+                        <table id="table" data-search="true"
+                            class="table table-striped table-hover table-bordered text-nowrap  table-condensed">
+                        </table>
+                    </div>
+                    <!-- {if $template.ifUseData==1}
+                    <div class="tab-pane" id="secondPage">
+
+                    </div>
+                    {/if} -->
+                </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 {/block}
 
@@ -155,7 +185,7 @@
                 icon: 3
             }, function (index) {
                 layer.close(index);
-                ajax_del(url,data)
+                ajax_del(url, data)
             });
         }
     } else {
@@ -167,7 +197,7 @@
                 , btn: ['确认', '取消']
                 , yes: function (index) {
                     layer.close(index);
-                    ajax_del(url,data)
+                    ajax_del(url, data)
                 }
             });
         }
