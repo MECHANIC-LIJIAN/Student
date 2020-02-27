@@ -3,7 +3,7 @@
 namespace app\index\controller;
 
 use think\Controller;
-
+use think\Db;
 class Template extends Controller
 {
 
@@ -25,7 +25,7 @@ class Template extends Controller
             }
         }
         cookie('options', $templateField);
-
+        
         unset($template['options']);
         cookie('template', $template);
         cookie('ifCheck', 0);
@@ -41,14 +41,17 @@ class Template extends Controller
             foreach ($templateField as $key => $value) {
                 $data[$value] = input("post.$value");
             }
-            // if ($template['ifUseData']==1) {
-            //     $mydata=model('MyData')
-            //             ->where([
-            //                 'my_data_id'=>$template['myData'],
-            //                 'content'=>$data[$template['primaryKey']],
-            //                 ])
-            //             ->find();
-            // }
+            if ($template['ifUseData']==1) {
+                $mydata=Db::name('my_data_option')
+                        ->where([
+                            'my_data_id'=>$template['myData'],
+                            'content'=>$data[$template['primaryKey']],
+                            ])
+                        ->find();
+                if (!$mydata) {
+                    return $this->error("系统中未匹配到:".$data[$template['primaryKey']]);
+                }
+            }
             if (cookie('ifCheck') == 0) {
                 $res = model('TemplatesData')->where(['tid' => $template['tid'], $template['primaryKey'] => $data[$template['primaryKey']]])->find();
 

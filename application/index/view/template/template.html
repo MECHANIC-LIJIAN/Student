@@ -260,7 +260,7 @@
                                         confirm(data.msg,'该记录已存在，确认覆盖吗?',"{:url('index/Template/collect')}",$('form').serialize())
                                     }
                                 } else {
-                                    showErrorMsg("提交失败")
+                                    showErrorMsg(data.msg)
                                 }
                             },
                         });
