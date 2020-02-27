@@ -2,143 +2,89 @@
 
 namespace app\admin\controller;
 
-use Env;
-use Overtrue\Pinyin\Pinyin;
-use think\Db;
-
 class Import extends Base
 {
-    public function createTemplateFirst()
+    public function First()
     {
+        if (request()->isAjax()) {
+            header("content-type:text/html;charset=utf-8");
+            $tInfo = [
+                'tid' => uuid(),
+                'uid' => session('admin.id'),
+                'tname' => input('post.tname'),
+                'tFile' => input('file.tempalte'),
+            ];
+            #验证文件类型 模板名是否重复
+            $validate = new \app\admin\validate\Templates();
+            if (!$validate->scene('upload')->check($tInfo)) {
+                return $this->error($validate->getError());
+            }
+            #读文件 存到session
+            $res = model('Templates')->uploadTempate($tInfo);
+            if ($res == 1) {
+                return $this->success("表单文件上传成功！", url('admin/Import/Second'));
+            } else {
+                return $this->error($res);
+            }
+        }
+
         return view();
-    }
-
-    public function upload()
-    {
-        header("content-type:text/html;charset=utf-8");
-        //上传excel文件
-        $data['tName']=input('post.tname');
-        $data['tFile']=input('file.tempalte');
-
-        $validate = new \app\admin\validate\Templates();
-        if (!$validate->scene('upload')->check($data)) {
-            $this->error($validate->getError());
-        }
-        
-        $tInfo = [
-            'tId' => uuid(),
-            'uid' => session('admin.id'),
-            'tName' => $data['tName'],
-        ];
-        session('tInfo', $tInfo);
-
-        $res =model('Templates')->getDataByFile($data);
-        if ($res!=1) {
-            $this->error($res);
-        }
-
-        return $this->success("表单文件上传成功！",url('admin/Import/createTemplateSecond'));
     }
 
     /**
      * 查看表单文件
      * @return void 读取结果
      */
-    public function createTemplateSecond()
+    public function Second()
     {
-        if (!session('?tInfo')) {
-            $this->redirect('admin/Import/createTemplateFirst');
-        }
         if (request()->isAjax()) {
-            $primaryKey = input('post.primaryKey');
-            $myData = input('post.primaryKeyData');
-            $ifUseData = input('post.ifUseData');
-            
+
             $tInfo = session('tInfo');
-            $data = session("optionList");
+            $tInfo['primaryKey'] = input('post.primaryKey');
+            $tInfo['myData'] = input('post.primaryKeyData');
+            $tInfo['ifUseData'] = input('post.ifUseData');
 
-            $template = model('Templates')
-                ->where('tid', $tInfo['tId'])
-                ->find();
+            $res = model('Templates')->createByFile($tInfo);
 
-            if ($template['status'] == '1') {
-                $this->error("表单已经初始化，不可更改");
-            }
-
-            $pinyin = new Pinyin();
-            $template = new \app\admin\model\Templates;
-            $template->tid = $tInfo['tId'];
-            $template->uid = $tInfo['uid'];
-            $template->tname = $tInfo['tName'];
-            $template->tabbr = $pinyin->abbr($tInfo['tName']);
-            $template->status = '1';
-            $template->primaryKey = $primaryKey;
-            $template->myData = $myData;
-            $template->ifUseData = $ifUseData;
-            $res = $template->save();
-
-            $res2 = model("TemplatesOption")->isUpdate(false)->saveAll($data);
-
-            Db::name("templates_sum")->where('id', 1)->setInc('count');
-            if ($res2) {
-                $this->success("表单初始化成功", "admin/import/createtemplateThird");
+            if ($res == 1) {
+                $this->success("表单初始化成功", "admin/import/Third");
             } else {
-                $this->error("表单初始化失败");
+                $this->error($res);
             }
         }
+        
+        if (!session('?excelData')) {
+            $this->redirect('admin/Import/First');
+        }
 
+        #读取模板信息
         $tInfo = session('tInfo');
-        $data = session('tData');
-        session('tData',null);
-        end($data);
-        $finalKey = key($data);
-        $optionList = [];
-        $tableField = [];
-        $pinyin = new Pinyin();
+        #获取存入数据库的数据
+        $res = model('Templates')->getOptionList($tInfo);
 
-        for ($col = 'A'; $col <= $finalKey; $col++) {
-            $option = 'option_' . $col;
-            for ($row = 1; $row <= count($data[$col]); $row++) {
-                $tmp = [];
-                if ($row == 1) {
-                    $tmp['tid'] = $tInfo['tId'];
-                    $tmp['pid'] = '0';
-                    $tmp['sid'] = $option;
-                    $tmp['type'] = 'p';
-                    $tmp['content'] = $data[$col][$row];
-                    $tmp['abbr'] = $pinyin->abbr($data[$col][1]);
-                    $tableField[$option] = $data[$col][1];
-                } else {
-                    $tmp['tid'] = $tInfo['tId'];
-                    $tmp['pid'] = $option;
-                    $tmp['sid'] = $option . "_" . $row;
-                    $tmp['type'] = 'c';
-                    $tmp['content'] = $data[$col][$row];
-                    $tmp['abbr'] = $pinyin->abbr($data[$col][1]);
-                }
-                $optionList[] = $tmp;
-            }
-        }
-
+        #获取显示在页面的数据列表
+        $optionList = getOptionList($res['optionList'], $pid = 'pid', $id = 'sid');
         
-        session('optionList', $optionList);
-
-        $optionList = getOptionList($optionList, $pid = 'pid', $id = 'sid');
-        
-        return $this->fetch('create_template_second', ['optionList' => $optionList, 'tname' => $tInfo['tName'], 'tableField' => $tableField]);
+        $this->assign([
+            'optionList' => $optionList,
+            'tname' => $tInfo['tname'],
+            'tableField' => $res['tFields'],
+        ]);
+        return view();
 
     }
 
-    public function createTemplateThird()
+    public function Third()
     {
         if (!session('?tInfo')) {
-            $this->redirect('admin/Import/createTemplateFirst');
+            $this->redirect('admin/Import/First');
         }
 
-        $shareUrl = url('index/Template/readTemplate', ['id' => session('tInfo')['tId']],'',true);
+        $shareUrl = url('index/Template/readTemplate', ['id' => session('tInfo')['tId']], '', true);
         $this->assign("shareUrl", $shareUrl);
-        session('tInfo',null);
-        session('optionList',null);
+        session('tInfo', null);
+        session('optionList', null);
+        session('excelData', null);
         return view();
     }
 }

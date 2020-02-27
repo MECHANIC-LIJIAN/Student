@@ -14,13 +14,13 @@ class MyData extends Controller
      */
     public function index()
     {
-        $dataSetList=model("MyData")
-        ->where(['uid'=>session('admin.id')])
-        ->order(['create_time'=>'desc'])
-        ->select();
+        $dataSetList = model("MyData")
+            ->where(['uid' => session('admin.id')])
+            ->order(['create_time' => 'desc'])
+            ->select();
 
         $this->assign([
-            'dataSetList'=>$dataSetList
+            'dataSetList' => $dataSetList,
         ]);
         return view();
     }
@@ -42,14 +42,18 @@ class MyData extends Controller
      */
     public function createByFile()
     {
-        $data['dataName']=input('post.dataName');
-        $data['dataFile']=input('file.dataFile');
-        
-        $result=model("MyData")->getDataByFile($data);
+        $dataInfo = [
+            'uid' => session('admin.id'),
+            'title' => input('post.dataName'),
+            'dataFile' => input('file.dataFile'),
+            'create_time' => time(),
+        ];
 
-        if($result==1){
-            return $this->success("提交成功！",url('admin/MyData/index'));
-        }else{
+        $result = model("MyData")->getDataByFile($dataInfo);
+
+        if ($result == 1) {
+            return $this->success("提交成功！", url('admin/MyData/index'));
+        } else {
             return $this->error($result);
         }
     }
@@ -61,14 +65,18 @@ class MyData extends Controller
      */
     public function createByText()
     {
-        $data['dataName']=input('post.dataName');
-        $data['dataText']=input('post.dataText');
-        
-        $result=model("MyData")->getDataByText($data);
+        $dataInfo = [
+            'uid' => session('admin.id'),
+            'title' => input('post.dataName'),
+            'dataText' => input('post.dataText'),
+            'create_time' => time(),
+        ];
 
-        if($result==1){
-            return $this->success("提交成功！",url('admin/MyData/index'));
-        }else{
+        $result = model("MyData")->getDataByText($dataInfo);
+
+        if ($result == 1) {
+            return $this->success("提交成功！", url('admin/MyData/index'));
+        } else {
             return $this->error($result);
         }
     }
@@ -78,17 +86,16 @@ class MyData extends Controller
      */
     public function read()
     {
-        $id=input('id');
-        $dataInfo=model('MyData')
-        ->with('options')
-        ->find($id);
-        
+        $id = input('id');
+        $dataInfo = model('MyData')
+            ->with('options')
+            ->find($id);
+
         $this->assign([
-            'dataInfo'=>$dataInfo
+            'dataInfo' => $dataInfo,
         ]);
         return view();
     }
-
 
     /**
      * 保存更新的资源
@@ -111,17 +118,17 @@ class MyData extends Controller
     public function delete()
     {
         if (request()->isAjax()) {
-            $id=input('post.id');
-            $dataInfo=model('MyData')
-            ->with('options')
-            ->field('id')
-            ->where(['id'=>$id])
-            ->find();
-            
-            $result=$dataInfo->together('options')->delete();
-            if($result){
-                $this->success('删除成功',url('admin/MyData/index'));
-            }else{
+            $id = input('post.id');
+            $dataInfo = model('MyData')
+                ->with('options')
+                ->field('id')
+                ->where(['id' => $id])
+                ->find();
+
+            $result = $dataInfo->together('options')->delete();
+            if ($result) {
+                $this->success('删除成功', url('admin/MyData/index'));
+            } else {
                 $this->error('删除失败');
             }
         }

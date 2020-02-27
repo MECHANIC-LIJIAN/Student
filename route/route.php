@@ -37,24 +37,24 @@ Route::group(
             Route::rule('control', 'admin/Templates/control', 'GET|POST');
             Route::rule('add', 'admin/Templates/add', 'GET|POST');
             Route::rule('del', 'admin/Templates/del', 'POST');
+
+            #文件创建模板
+            Route::group('createByFile', function () {
+                Route::rule('First', 'admin/Import/First', 'GET|POST');
+                Route::rule('Second', 'admin/Import/Second', 'GET|POST');
+                Route::rule('Third', 'admin/Import/Third', 'GET|POST');
+            });
+            #手动创建模板
+            Route::group('createByHand', function () {
+                Route::rule('index', 'admin/Hand/index', 'GET|POST');
+                Route::rule('add', 'admin/Hand/add', 'POST')->ext('do');
+            });
         });
         #单个表单数据
         Route::group('template', function () {
             Route::rule('detail/[:id]', 'admin/Template/index', 'GET')->ext();
             Route::rule('ajax_data', 'admin/Template/dataList', 'POST')->ext('do');
             Route::rule('ajax_del', 'admin/Template/del', 'POST')->ext('do');
-        });
-        #文件创建模板
-        Route::group('createByFile', function () {
-            Route::rule('First', 'admin/Import/createTemplateFirst', 'GET|POST');
-            Route::rule('Second', 'admin/Import/createTemplateSecond', 'GET|POST');
-            Route::rule('Third', 'admin/Import/createTemplateThird', 'GET|POST');
-            Route::rule('upload', 'admin/Import/upload', 'GET|POST')->ext('do');
-        });
-        #手动创建模板
-        Route::group('createByHand', function () {
-            Route::rule('index', 'admin/Hand/index', 'GET|POST');
-            Route::rule('add', 'admin/Hand/add', 'POST')->ext('do');
         });
 
         #数据集

@@ -15,18 +15,19 @@ class MyData extends Model
         return $this->hasMany('MyDataOption')->limit(20);
     }
 
-    public function getDataByFile($data)
+    public function getDataByFile($dataInfo)
     {
         header("content-type:text/html;charset=utf-8");
         
         $validate = new \app\admin\validate\MyData;
-        if (!$validate->scene('upload')->check($data)) {
+        if (!$validate->scene('upload')->check($dataInfo)) {
             return $validate->getError();
         }
 
         #获取文件信息
-        $fileInfo = $data['dataFile']->getInfo();
-
+        $fileInfo = $dataInfo['dataFile']->getInfo();
+        unset($dataInfo['dataFile']);
+        
         //获取文件后缀
         $suffix = explode(".", $fileInfo['name'])[1];
         //判断哪种类型
@@ -36,7 +37,6 @@ class MyData extends Model
             $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
         }
         $excel = $reader->load($fileInfo['tmp_name'], $encode = 'utf-8');
-
         //读取活动表
         $sheet = $excel->getActiveSheet();
         //获取总行数
@@ -55,39 +55,39 @@ class MyData extends Model
             return '不能有空字段,请重新选择文件';
         }
 
-        $res=$this->saveData($data['dataName'],$excelData);
+        $dataInfo['count']=count($excelData);
+        $dataInfo['data']=$excelData;
+        
+        $res=$this->saveData($dataInfo);
         
         return $res;
     }
 
 
-    public function getDataByText($data)
+    public function getDataByText($dataInfo)
     {
         $validate = new \app\admin\validate\MyData;
-        if (!$validate->scene('text')->check($data)) {
+        if (!$validate->scene('text')->check($dataInfo)) {
             return $validate->getError();
         }
-        $textData=array_filter(array_unique(explode("\n",trim($data['dataText']))));
+        $textData=array_filter(array_unique(explode("\n",trim($dataInfo['dataText']))));
 
-        $res=$this->saveData($data['dataName'],$textData);
+        unset($dataInfo['dataText']);
+
+        $dataInfo['count']=count($textData);
+        $dataInfo['data']=$textData;
+
+        $res=$this->saveData($dataInfo);
 
         return $res;
     }
 
-    private function saveData($dataName,$data){
+    private function saveData($dataInfo){
         Db::startTrans();
-        try {
-            $dataInfo = [
-                'uid' => session('admin.id'),
-                'title' => $dataName,
-                'count' => count($data),
-                'create_time'=> time(),
-            ];
-            
-            $dataid=Db::name("my_data")->insertGetId($dataInfo);
-
+        try {            
+            $dataid=Db::name("my_data")->strict(false)->insertGetId($dataInfo);
             $dataSets = [];
-            foreach ($data as $key => $value) {
+            foreach ($dataInfo['data'] as $key => $value) {
                 $tmp = [];
                 $tmp['my_data_id'] = $dataid;
                 $tmp['content'] = $value;

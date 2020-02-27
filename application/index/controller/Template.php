@@ -12,24 +12,24 @@ class Template extends Controller
 
         $id = input('id');
         $template = model("Templates")->with('options')->where(['tid' => $id])->field('tid,tname,primaryKey,status')->find();
-        if ($template&$template['status']==1) {
-            $template=$template->toArray();
-            $optionList = getOptionList($template['options'], $pid = 'pid', $id = 'sid');
-            $templateField = [];
-            foreach ($template['options'] as $value) {
-                if ($value['pid'] == "0") {
-                    array_push($templateField, $value['sid']);
-                }
-            }
-            cookie('options', $templateField);
-
-            unset($template['options']);
-            cookie('template', $template);
-            cookie('ifCheck', 0);
-            return $this->fetch('template', ['optionList' => $optionList, 'tname' => $template['tname']]);
-        }else{
+        if (!$template || $template['status'] != 1) {
             return $this->fetch('template', ['hello' => '该表单已关闭或未创建']);
         }
+        
+        $template = $template->toArray();
+        $optionList = getOptionList($template['options'], $pid = 'pid', $id = 'sid');
+        $templateField = [];
+        foreach ($template['options'] as $value) {
+            if ($value['pid'] == "0") {
+                array_push($templateField, $value['sid']);
+            }
+        }
+        cookie('options', $templateField);
+
+        unset($template['options']);
+        cookie('template', $template);
+        cookie('ifCheck', 0);
+        return $this->fetch('template', ['optionList' => $optionList, 'tname' => $template['tname']]);
     }
 
     public function collect()
@@ -44,7 +44,7 @@ class Template extends Controller
 
             if (cookie('ifCheck') == 0) {
                 $res = model('TemplatesData')->where(['tid' => $template['tid'], $template['primaryKey'] => $data[$template['primaryKey']]])->find();
-                
+
                 if ($res) {
                     cookie('ifCheck', 1);
                     cookie('dataid', $res['id']);
