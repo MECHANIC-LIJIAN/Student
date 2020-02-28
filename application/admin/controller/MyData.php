@@ -14,18 +14,18 @@ class MyData extends Controller
      */
     public function index()
     {
-        if (session('admin.is_super') == 1) {
-            $dataSetList = model("MyData")
-            ->order(['create_time' => 'desc'])
-            ->field('id,uid,title,count')
-            ->select();
-        } else {
-            $dataSetList = model("MyData")
-            ->where(['uid' => session('admin.id')])
-            ->order(['create_time' => 'desc'])
-            ->field('id,uid,title,count')
-            ->select();
+        $where=[];
+        
+        if (session('admin.is_super') != 1) {
+            $where=['uid' => session('admin.id')];
+            
         }
+        $dataSetList = model("MyData")
+        ->with('getUser')
+        ->where($where)
+        ->order(['create_time' => 'desc'])
+        ->field('id,uid,title,count,create_time')
+        ->select();
         $this->assign([
             'dataSetList' => $dataSetList,
         ]);

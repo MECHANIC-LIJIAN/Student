@@ -20,9 +20,9 @@
                     <table class="table table-hover table-bordered text-nowrap" style="padding: 2px;font-size: 10px;">
                         <thead>
                             <tr>
-                                <th>数据集</th>
+                                <th>数据集名</th>
                                 {if session('admin.is_super')==1} <th>用户名</th>{/if}
-                                <th>数据集大小</th>
+                                <th>数据量</th>
                                 <th>操作</th>
                                 <th>创建时间</th>
                             </tr>
@@ -31,7 +31,7 @@
                             {volist name="dataSetList" id="vo"}
                             <tr>
                                 <td><a href="{:url('admin/MyData/read',['id'=>$vo.id])}" style="font-size:14px">{$vo.title}</a> </td>
-                                {if session('admin.is_super')==1}<td>{$vo.uid}</td>{/if}
+                                {if session('admin.is_super')==1}<td>{$vo.getUser.username}</td>{/if}
                                 <td>{$vo.count}</td>
                                 <td>
                                     <a href="#" class="btn btn-darkorange btn-xs del-data"

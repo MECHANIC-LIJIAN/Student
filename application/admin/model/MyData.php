@@ -15,6 +15,10 @@ class MyData extends Model
         return $this->hasMany('MyDataOption')->field('content,my_data_id')->limit(20);
     }
     
+    public function getUser()
+    {
+        return $this->belongsTo('Admin', 'uid', 'id')->field('id,username');
+    }
 
     public function getDataByFile($dataInfo)
     {
