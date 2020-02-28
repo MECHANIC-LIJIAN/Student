@@ -12,18 +12,15 @@ class Templates extends Base
      */
     function list() {
 
-        if (session('admin.is_super') == 1) {
-            $templates = model('Templates')
-                ->with('getUser')
-                ->order(['status' => 'asc', 'update_time' => 'desc'])
-                ->select();
-        } else {
-            $templates = model('Templates')
-                ->where(['uid' => session('admin.id')])
-                ->with('getUser')
-                ->order(['status' => 'asc', 'update_time' => 'desc'])
-                ->select();
+        $where = [];
+        if (session('admin.is_super') != 1) {
+            $where = ['uid' => session('admin.id')];
         }
+        $templates = model('Templates')
+            ->where($where)
+            ->with('getUser')
+            ->order(['status' => 'asc', 'update_time' => 'desc'])
+            ->select();
 
         foreach ($templates as $value) {
             $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
@@ -39,11 +36,11 @@ class Templates extends Base
      */
     public function add()
     {
-        $myData=model("MyData")
-        ->where(['uid'=>session('admin.id')])
-        ->field('id,title')
-        ->select();
-        session('myData',$myData);
+        $myData = model("MyData")
+            ->where(['uid' => session('admin.id')])
+            ->field('id,title')
+            ->select();
+        session('myData', $myData);
         return view();
     }
 

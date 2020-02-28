@@ -177,11 +177,15 @@
                                 </div>
                                 <div class="hidden myData">
                                     <h5>请选择数据集</h5>
+                                    {neq name="Think.session.myData|count" value="0"}
                                     <select class="select" name="primaryKeyData" id="primaryKeyData">
                                         {volist name="Think.session.myData" id="vo"}
                                         <option value="{$vo.id}">{$vo.title}</option>
                                         {/volist}
                                     </select>
+                                    {else /}
+                                    <p class="alert alert-warning">您还没有数据集，请新建数据集</p>
+                                    {/neq}
                                 </div>
                                 <button class="btn btn-success initTemplate" type="button"
                                     style="margin-top:20px;"><span class="fa fa-table"></span>
@@ -217,10 +221,14 @@
         $("#subForm").validate(
             {
                 submitHandler: function (form) {
-                    var myData=$("#primaryKeyData").val();
-                    var ifUseData=$("input[name='ifUseData']:checked").val();
-                    var primaryKey=$("#primaryKey").val();
-                    var data= $('form').serialize()+ '&' +$.param({'myData':myData,'ifUseData':ifUseData,'primaryKey':primaryKey})
+                    var myData = $("#primaryKeyData").val();
+                    var ifUseData = $("input[name='ifUseData']:checked").val();
+                    var primaryKey = $("#primaryKey").val();
+                    var data = $('form').serialize() + '&' + $.param({ 'ifUseData': ifUseData, 'primaryKey': primaryKey })
+                    if (ifUseData == "1") {
+                        data = data + '&' + $.param({ 'myData': myData, })
+                    }
+
                     $.ajax({
                         url: "{:url('admin/Hand/add')}",
                         type: "post",

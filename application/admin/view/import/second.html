@@ -127,7 +127,8 @@
                             {volist name="optionList" id='option'}
                             {if $option.type='p' AND count($option.child)==0}
                             <tr>
-                                <td><label for="{$option.content}" class="col-lg-10 control-label">{$option.content}</label>
+                                <td><label for="{$option.content}"
+                                        class="col-lg-10 control-label">{$option.content}</label>
                                 </td>
                                 <td><input type="text" class="form-control" name="{$option.sid}"></td>
 
@@ -137,7 +138,8 @@
                             <!-- 输出select -->
                             {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)>0}
                             <tr>
-                                <td><label for="{$option.content}" class="col-lg-10 control-label">{$option.content}</label>
+                                <td><label for="{$option.content}"
+                                        class="col-lg-10 control-label">{$option.content}</label>
                                 </td>
                                 <td><select class="form-control">
                                         {volist name="option.child" id="vo"}
@@ -174,11 +176,15 @@
                         </div>
                         <div class="hidden myData">
                             <h5>请选择数据集</h5>
+                            {neq name="Think.session.myData|count" value="0"}
                             <select class="select" name="primaryKeyData" id="primaryKeyData">
                                 {volist name="Think.session.myData" id="vo"}
                                 <option value="{$vo.id}">{$vo.title}</option>
                                 {/volist}
                             </select>
+                            {else /}
+                            <p class="alert alert-warning">您还没有数据集，请新建数据集</p>
+                            {/neq}
                         </div>
                     </form>
                     <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
@@ -203,14 +209,17 @@
         })
 
         $(".initTemplate").click(function () {
-            // var myData = $("#primaryKeyData").val();
-            // var ifUseData = $("input[name='ifUseData']:checked").val();
-            // var primaryKey = $("#primaryKey").val();
-            // var data =$.param({ 'myData': myData, 'ifUseData': ifUseData, 'primaryKey': primaryKey })
+            var myData = $("#primaryKeyData").val();
+            var ifUseData = $("input[name='ifUseData']:checked").val();
+            var primaryKey = $("#primaryKey").val();
+            var data =$.param({ 'ifUseData': ifUseData, 'primaryKey': primaryKey })
+            if (ifUseData == "1") {
+                data = data + '&' + $.param({ 'myData': myData, })
+            }
             $.ajax({
                 method: "post",
                 url: "{:url('admin/import/Second')}",
-                data: $("form").serialize(),
+                data: data,
                 dataType: 'json',
                 success: function (data) {
                     if (data.code == 1) {

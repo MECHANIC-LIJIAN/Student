@@ -19,7 +19,6 @@ class Hand extends Base
             if (!array_key_exists('option_A', $params)) {
                 $this->error("请至少添加一个字段");
             }
-
             $pinyin = new Pinyin();
             $tInfo = [
                 'tid' => uuid(),
@@ -40,7 +39,7 @@ class Hand extends Base
             if (!$validate->scene('hand')->check($tInfo)) {
                 return $this->error($validate->getError());
             }
-
+            
             $template = model('templates')
                 ->where('tid', $tInfo['tid'])
                 ->find();

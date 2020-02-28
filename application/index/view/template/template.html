@@ -211,9 +211,9 @@
                     , btn: '我知道了'
                 });
             }
-            
+
             //询问框
-            function confirm(msg,title, url, data) {
+            function confirm(msg, title, url, data) {
                 layer.open({
                     content: msg
                     , btn: ['确认', '取消']
@@ -257,7 +257,7 @@
                                     if (isPC) {
                                         confirm(data.msg, '数据覆盖确认', "{:url('index/Template/collect')}", $('form').serialize())
                                     } else {
-                                        confirm(data.msg,'该记录已存在，确认覆盖吗?',"{:url('index/Template/collect')}",$('form').serialize())
+                                        confirm(data.msg, '该记录已存在，确认覆盖吗?', "{:url('index/Template/collect')}", $('form').serialize())
                                     }
                                 } else {
                                     showErrorMsg(data.msg)
