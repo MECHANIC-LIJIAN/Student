@@ -10,21 +10,19 @@
         <div class="widget radius-bordered">
             <div class="widget">
                 <div class="bg-themeprimary widget-header">
-                <i class="fa fa-arrow-left widget-icon" onClick="window.location.href='{:url(\'admin/Home/index\')}';"/></i>
-                <span class="widget-caption">选择添加方式</span>
+                    <i class="fa fa-arrow-left widget-icon"
+                        onClick="window.location.href='{:url(\'admin/Home/index\')}';" /></i>
+                    <span class="widget-caption">选择添加方式</span>
                 </div>
                 <div class="widget-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <a href="{:url('admin/Import/First')}" style="margin-right: 10px;">
-                                    <button class="btn btn-primary btn-lg">文件导入</button>
-                                </a>
-                                <a href="{:url('admin/Hand/index')}">
-                                    <button class="btn btn-primary btn-lg">手动创建</button>
-                                </a>
-                            </div>
-                        </div>
+                    <p class="alert alert-danger">目前系统支持的最大字段数为25</p>
+                    <div class="form-group">
+                        <a href="{:url('admin/Import/First')}" style="margin-right: 10px;">
+                            <button class="btn btn-primary btn-lg">文件导入</button>
+                        </a>
+                        <a href="{:url('admin/Hand/index')}">
+                            <button class="btn btn-primary btn-lg">手动创建</button>
+                        </a>
                     </div>
                 </div>
             </div>
