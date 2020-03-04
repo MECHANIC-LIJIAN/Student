@@ -53,8 +53,8 @@ class Templates extends Base
     public function del()
     {
         if (request()->isAjax()) {
-            $tInfo = model('Templates')->with('options,datas')->find(input('post.id'));
-            $result = $tInfo->together('options,datas')->delete();
+            $tInfo = model('Templates')->with('datas')->find(input('post.id'));
+            $result = $tInfo->together('datas')->delete();
             if ($result == 1) {
                 $this->success('表单删除成功', 'admin/Templates/list');
             } else {
