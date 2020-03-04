@@ -237,7 +237,7 @@ class Templates extends Model
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            return $e->getMessage();
+            // return $e->getMessage();
             return "初始化失败";
         }
         return 1;
