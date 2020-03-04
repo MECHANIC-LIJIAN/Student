@@ -13,7 +13,7 @@ class Template extends Base
         
         $template = model('Templates')
             ->where(['tid' => $tId])
-            ->field('tid,tname,ifUseData,primaryKey,myData,options')
+            ->field('tid,tname,primaryKey,myData,options')
             // ->json(['options'])
             ->find();
 

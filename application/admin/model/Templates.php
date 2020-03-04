@@ -73,11 +73,10 @@ class Templates extends Model
             }
             for ($rowIndex = 1; $rowIndex <= $row_num; $rowIndex++) {
                 $rowCell = $sheet->getCellByColumnAndRow($colIndex, $rowIndex)->getValue();
-                if ($rowCell != null) {
+                
+                if ($rowCell!==NULL) {
                     $excelData[$colIndex][$rowIndex] = $rowCell;
-                } else {
-                    break;
-                }
+                } 
             }
         }
         // return $excelData;
@@ -111,7 +110,7 @@ class Templates extends Model
     {
         #读数据
         $excelData = session('excelData');
-
+        
         $optionList = [];
         $tFields = [];
         for ($col = 1; $col <= count($excelData); $col++) {
@@ -222,6 +221,7 @@ class Templates extends Model
 
         $tInfo['options'] = $tDdata;
 
+        // return $tInfo;
         return $this->saveData($tInfo);
     }
 

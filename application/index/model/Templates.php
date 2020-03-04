@@ -10,10 +10,6 @@ class Templates extends Model
 {
     use SoftDelete;
 
-    public function options()
-    {
-        return $this->hasMany('TemplatesOption', 'tid', 'tid')->field('tid,sid,pid,content,rule');
-    }
 
     /**
      * 判断数据是否在自定义数据集中

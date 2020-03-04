@@ -43,7 +43,6 @@ class Import extends Base
             $tInfo = session('tInfo');
             $tInfo['primaryKey'] = input('post.primaryKey');
             $tInfo['myData'] = input('post.myData');
-            $tInfo['ifUseData'] = input('post.ifUseData');
             
             $res = model('Templates')->createByFile($tInfo);
 
@@ -62,7 +61,6 @@ class Import extends Base
         $tInfo = session('tInfo');
         #获取显示在页面的数据列表
         $optionList = model('Templates')->getOptionList($tInfo);
-        
         $this->assign([
             'optionList' => $optionList,
             'tname' => $tInfo['tname'],

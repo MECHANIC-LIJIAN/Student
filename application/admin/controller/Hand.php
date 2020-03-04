@@ -25,21 +25,19 @@ class Hand extends Base
                 'uid' => session('admin.id'),
                 'tname' => $params['templateName'],
                 'tabbr' => $pinyin->abbr($params['templateName']),
-                'ifUseData' => $params['ifUseData'],
                 'primaryKey' => $params['primaryKey'],
                 'myData' => $params['myData'],
             ];
             unset($params['templateName']);
             unset($params['primaryKey']);
             unset($params['myData']);
-            unset($params['ifUseData']);
 
             #模板名是否重复
             $validate = new \app\admin\validate\Templates();
             if (!$validate->scene('hand')->check($tInfo)) {
                 return $this->error($validate->getError());
             }
-            
+
             $template = model('templates')
                 ->where('tid', $tInfo['tid'])
                 ->find();
@@ -47,8 +45,12 @@ class Hand extends Base
                 $this->error("模板已经初始化，不可更改");
             }
             $tInfo['params'] = $params;
-            $res=model('Templates')->createByHand($tInfo);
-            if ($res==1) {
+            $res = model('Templates')->createByHand($tInfo);
+            // return $res;
+            if ($res == 1) {
+                session('tInfo', null);
+                session('optionList', null);
+                session('excelData', null);
                 $this->success("模板初始化成功", 'admin/Templates/list');
             } else {
                 $this->error($res);

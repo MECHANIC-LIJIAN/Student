@@ -13,7 +13,8 @@
     .select {
         display: inline-block;
         width: auto;
-        height: 40px;
+        height: 30px;
+        width: 100px;
         position: relative;
         vertical-align: middle;
         padding: 0;
@@ -63,11 +64,11 @@
         margin: 10px;
     }
 
-    .a-radio {
+    .i-radio {
         display: none;
     }
 
-    .b-radio {
+    .s-radio {
         display: inline-block;
         border: 1px solid #ccc;
         width: 16px;
@@ -78,7 +79,7 @@
         position: relative;
     }
 
-    .b-radio:before {
+    .s-radio:before {
         content: '';
         font-size: 0;
         width: 10px;
@@ -93,7 +94,7 @@
         display: none;
     }
 
-    .a-radio:checked~.b-radio:before {
+    .i-radio:checked~.s-radio:before {
         display: block;
     }
 </style>
@@ -134,8 +135,7 @@
                             </tr>
                             {else /}
                             <tr>
-                                <td><label for="{$option.title}"
-                                        class="col-lg-10 control-label">{$option.title}</label>
+                                <td><label for="{$option.title}" class="col-lg-10 control-label">{$option.title}</label>
                                 </td>
                                 <td><select class="form-control">
                                         {volist name="option.options" id="vo"}
@@ -151,35 +151,56 @@
             <div class="col-lg-3">
                 <div class="project-right-sider" style="margin-top: 160px;">
                     <form class="form-box">
-                        <h4>请选择唯一标识字段</h4>
-                        <select class="select" name="primaryKey" id="primaryKey">
-                            {volist name="optionList" id='option'}
-                            <option value="{$key}">{$option.title}</option>
-                            {/volist}
-                        </select>
-                        <div class="useData">
-                            <h5>是否使用自定义数据集</h5>
-                            <label>
-                                <input type="radio" name="ifUseData" class="a-radio" value="1">
-                                <span class="b-radio"></span>使用
-                            </label>
-
-                            <label>
-                                <input type="radio" name="ifUseData" class="a-radio" value="0" checked>
-                                <span class="b-radio"></span>不使用
-                            </label>
+                        <div class="well">
+                            <div>
+                                <h4><font color="red"
+                                    style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>是否指定唯一标识字段</h4>
+                                <label>
+                                    <input type="radio" name="ifUseKey" class="key-radio i-radio" value="1">
+                                    <span class="s-radio"></span>指定
+                                </label>
+    
+                                <label>
+                                    <input type="radio" name="ifUseKey" class="key-radio i-radio" value="0" checked>
+                                    <span class="s-radio"></span>不指定
+                                </label>
+                            </div>
+                            <div class="hidden myKey">
+                                <h5>请选择唯一标识字段</h5>
+                                <select class="select" name="primaryKey" id="primaryKey">
+                                    {volist name="optionList" id='option'}
+                                    <option value="{$key}">{$option.title}</option>
+                                    {/volist}
+                                </select>
+                            </div>
                         </div>
-                        <div class="hidden myData">
-                            <h5>请选择数据集</h5>
-                            {neq name="Think.session.myData|count" value="0"}
-                            <select class="select" name="primaryKeyData" id="primaryKeyData">
-                                {volist name="Think.session.myData" id="vo"}
-                                <option value="{$vo.id}">{$vo.title}</option>
-                                {/volist}
-                            </select>
-                            {else /}
-                            <p class="alert alert-warning">您还没有数据集，请新建数据集</p>
-                            {/neq}
+                        
+                        <div class="well mydata-box hidden">
+                            <div>
+                                <h4><font color="red"
+                                    style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>是否使用自定义数据集</h4>
+                                <label>
+                                    <input type="radio" name="ifUseData" class="data-radio i-radio" value="1">
+                                    <span class="s-radio"></span>使用
+                                </label>
+    
+                                <label>
+                                    <input type="radio" name="ifUseData" class="data-radio i-radio" value="0" checked>
+                                    <span class="s-radio"></span>不使用
+                                </label>
+                            </div>
+                            <div class="hidden myData">
+                                <h5>请选择数据集</h5>
+                                {neq name="Think.session.myData|count" value="0"}
+                                <select class="select" name="primaryKeyData" id="primaryKeyData" style="margin-bottom: 10px;">
+                                    {volist name="Think.session.myData" id="vo"}
+                                    <option value="{$vo.id}">{$vo.title}</option>
+                                    {/volist}
+                                </select>
+                                {else /}
+                                <p class="alert alert-warning">您还没有数据集，请新建数据集</p>
+                                {/neq}
+                            </div>
                         </div>
                     </form>
                     <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
@@ -194,7 +215,18 @@
 <script>
 
     $(function () {
-        $(".a-radio").click(function () {
+        $(".key-radio").click(function () {
+            var value = $(this).val();
+            if (value === "1") {
+                $(".myKey").removeClass("hidden").addClass("show")
+                $(".mydata-box").removeClass("hidden").addClass("show")
+            } else {
+                $(".form-box")[0].reset();
+                $(".myKey").removeClass("show").addClass("hidden")
+                $(".mydata-box").removeClass("show").addClass("hidden")
+            }
+        })
+        $(".data-radio").click(function () {
             var value = $(this).val();
             if (value === "1") {
                 $(".myData").removeClass("hidden").addClass("show")
@@ -202,17 +234,24 @@
                 $(".myData").removeClass("show").addClass("hidden")
             }
         })
+        
+        
 
         $(".initTemplate").click(function () {
             var myData = $("#primaryKeyData").val();
             var ifUseData = $("input[name='ifUseData']:checked").val();
+            var ifUseKey = $("input[name='ifUseKey']:checked").val();
             var primaryKey = $("#primaryKey").val();
-            var data =$.param({ 'ifUseData': ifUseData, 'primaryKey': primaryKey })
-            
+            var data;
+
             if (ifUseData == "1") {
                 data = data + '&' + $.param({ 'myData': myData, })
             }
-            console.log(data)
+
+            if (ifUseKey == "1") {
+                data = data + '&' + $.param({ 'primaryKey': primaryKey, })
+            }
+
             $.ajax({
                 method: "post",
                 url: "{:url('admin/import/Second')}",
