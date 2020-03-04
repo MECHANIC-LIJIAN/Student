@@ -18,14 +18,16 @@ class Templates extends Base
         }
         $templates = model('Templates')
             ->where($where)
+            ->field('id,tid,uid,tname,count,myData,primaryKey,create_time,status')
             ->with('getUser')
             ->order(['status' => 'asc', 'update_time' => 'desc'])
             ->select();
 
         foreach ($templates as $value) {
             $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
-            $value['user'] = $value['getUser']['username'];
+            // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
         }
+        // dump($templates);
         $this->assign('templates', $templates);
         return view();
     }
