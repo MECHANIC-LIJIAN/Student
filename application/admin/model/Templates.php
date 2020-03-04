@@ -61,9 +61,9 @@ class Templates extends Model
         $row_num = $sheet->getHighestRow(); // 取得总行数
         //获取总列数
         $col_num = Coordinate::columnIndexFromString($sheet->getHighestColumn());
-        if ($col_num > 25) {
-            return "字段数大于25";
-        }
+        // if ($col_num > 25) {
+        //     return "字段数大于25";
+        // }
         $excelData = [];
 
         #获取数组形式的原始数据并存到session
