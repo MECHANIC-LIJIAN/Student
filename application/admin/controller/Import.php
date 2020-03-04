@@ -21,6 +21,7 @@ class Import extends Base
             }
             #读文件 存到session
             $res = model('Templates')->uploadTempate($tInfo);
+            
             if ($res == 1) {
                 return $this->success("表单文件上传成功！", url('admin/Import/Second'));
             } else {
@@ -41,9 +42,9 @@ class Import extends Base
 
             $tInfo = session('tInfo');
             $tInfo['primaryKey'] = input('post.primaryKey');
-            $tInfo['myData'] = input('post.primaryKeyData');
+            $tInfo['myData'] = input('post.myData');
             $tInfo['ifUseData'] = input('post.ifUseData');
-
+            
             $res = model('Templates')->createByFile($tInfo);
 
             if ($res == 1) {
@@ -52,23 +53,19 @@ class Import extends Base
                 $this->error($res);
             }
         }
-        
-        if (!session('?excelData')) {
-            $this->redirect('admin/Import/First');
-        }
+
+        // if (!session('?excelData')) {
+        //     $this->redirect('admin/Import/First');
+        // }
 
         #读取模板信息
         $tInfo = session('tInfo');
-        #获取存入数据库的数据
-        $res = model('Templates')->getOptionList($tInfo);
-
         #获取显示在页面的数据列表
-        $optionList = getOptionList($res['optionList'], $pid = 'pid', $id = 'sid');
+        $optionList = model('Templates')->getOptionList($tInfo);
         
         $this->assign([
             'optionList' => $optionList,
             'tname' => $tInfo['tname'],
-            'tableField' => $res['tFields'],
         ]);
         return view();
 
@@ -79,8 +76,8 @@ class Import extends Base
         if (!session('?tInfo')) {
             $this->redirect('admin/Import/First');
         }
-
-        $shareUrl = url('index/Template/readTemplate', ['id' => session('tInfo')['tId']], '', true);
+        
+        $shareUrl = url('index/Template/readTemplate', ['id' => session('tInfo')['tid']], '', true);
         $this->assign("shareUrl", $shareUrl);
         session('tInfo', null);
         session('optionList', null);

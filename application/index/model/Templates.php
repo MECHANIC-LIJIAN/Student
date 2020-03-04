@@ -22,17 +22,17 @@ class Templates extends Model
      * @param [type] $content
      * @return void
      */
-    public function ifUseData($template, $content)
+    public function ifUseData($template, $keyContent)
     {
         $mydata = Db::name('my_data_option')
             ->where([
                 'my_data_id' => $template['myData'],
-                'content' => $content,
+                'content' => $keyContent,
             ])
             ->find();
-
+            
         if (!$mydata) {
-            return "系统中未匹配到:" . $template['primaryKey']['content'] . "=" . $content;
+            return "系统中未匹配到:" . $template['options'][$template['primaryKey']]['title'] . "=" . $keyContent;
         }
         return 1;
 
@@ -47,11 +47,14 @@ class Templates extends Model
      */
     public function ifExist($template, $keyContent)
     {
-        $res = model('TemplatesData')
+        $keySid=$template['primaryKey'];
+        $res = model('TemplatesDatas')
+            ->json(['cotent'])
             ->where([
                 'tid' => $template['tid'],
-                $template['primaryKey']['sid'] => $keyContent,
+                "content->$keySid" => $keyContent
             ])
+            ->field('id,tid,content')
             ->find();
         if ($res) {
             #数据已存在
@@ -72,17 +75,17 @@ class Templates extends Model
         // 启动事务
         Db::startTrans();
         try {
-            $data['create_time']=time();
-            Db::name('templates_data')->insert($data);
+            model('TemplatesDatas')->save($data);
             #记录数加1
-            Db::name('templates')
+            model('templates')
                 ->where('tid', $template['tid'])
                 ->setInc('count');
             // 提交事务
-            $res = Db::commit();
+           Db::commit();
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
+            return $e->getMessage();
             return '提交失败！';
         }
         return 1;

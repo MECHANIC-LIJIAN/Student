@@ -16,7 +16,7 @@ class Hand extends Base
         if (request()->isAjax()) {
 
             $params = input('post.');
-            if (!array_key_exists('option_A', $params)) {
+            if (!array_key_exists('option_1', $params)) {
                 $this->error("请至少添加一个字段");
             }
             $pinyin = new Pinyin();
@@ -48,7 +48,6 @@ class Hand extends Base
             }
             $tInfo['params'] = $params;
             $res=model('Templates')->createByHand($tInfo);
-
             if ($res==1) {
                 $this->success("模板初始化成功", 'admin/Templates/list');
             } else {

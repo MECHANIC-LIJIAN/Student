@@ -125,28 +125,23 @@
                         </caption>
                         <tbody>
                             {volist name="optionList" id='option'}
-                            {if $option.type='p' AND count($option.child)==0}
+                            {if count($option.options)==0}
                             <tr>
                                 <td><label for="{$option.content}"
-                                        class="col-lg-10 control-label">{$option.content}</label>
+                                        class="col-lg-10 control-label">{$option.title}</label>
                                 </td>
-                                <td><input type="text" class="form-control" name="{$option.sid}"></td>
-
+                                <td><input type="text" class="form-control" name="{$key}"></td>
                             </tr>
-                            {/if}
-                            {/volist}
-                            <!-- 输出select -->
-                            {volist name="optionList" id='option'} {if $option.type='p' AND count($option.child)>0}
+                            {else /}
                             <tr>
-                                <td><label for="{$option.content}"
-                                        class="col-lg-10 control-label">{$option.content}</label>
+                                <td><label for="{$option.title}"
+                                        class="col-lg-10 control-label">{$option.title}</label>
                                 </td>
                                 <td><select class="form-control">
-                                        {volist name="option.child" id="vo"}
-                                        <option name="{$option.sid}">{$vo.content}</option>
+                                        {volist name="option.options" id="vo"}
+                                        <option name="{$key}">{$vo}</option>
                                         {/volist}
                                     </select></td>
-
                             </tr>{/if}{/volist}
                         </tbody>
                     </table>
@@ -158,8 +153,8 @@
                     <form class="form-box">
                         <h4>请选择唯一标识字段</h4>
                         <select class="select" name="primaryKey" id="primaryKey">
-                            {volist name="tableField" id="vo"}
-                            <option value="{$key}">{$vo}</option>
+                            {volist name="optionList" id='option'}
+                            <option value="{$key}">{$option.title}</option>
                             {/volist}
                         </select>
                         <div class="useData">
@@ -213,9 +208,11 @@
             var ifUseData = $("input[name='ifUseData']:checked").val();
             var primaryKey = $("#primaryKey").val();
             var data =$.param({ 'ifUseData': ifUseData, 'primaryKey': primaryKey })
+            
             if (ifUseData == "1") {
                 data = data + '&' + $.param({ 'myData': myData, })
             }
+            console.log(data)
             $.ajax({
                 method: "post",
                 url: "{:url('admin/import/Second')}",

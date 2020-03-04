@@ -2,7 +2,7 @@
 
 namespace app\admin\controller;
 
-use think\db\Where;
+use think\Db;
 
 class Template extends Base
 {
@@ -10,63 +10,54 @@ class Template extends Base
     public function index()
     {
         $tId = input('id');
-        session('tId', $tId);
+        
         $template = model('Templates')
             ->where(['tid' => $tId])
-            ->field('tname,tid,ifUseData,myData')
+            ->field('tid,tname,ifUseData,primaryKey,myData,options')
+            // ->json(['options'])
             ->find();
-        $fields = model('TemplatesOption')
-            ->where([
-                'tid' => $tId,
-                'type'=>'p'
-            ])
-            ->field('sid,content')
-            ->select();
-        session('template',$template);
 
-        // if ($template['ifUseData']==1) {
-        //     $mydata=model('MyData')->with('options')->find($template['myData']);
-        // }
-        #查询字段
-        $templateField = [];
-        foreach ($fields as $key => $value) {
-            $value['field'] = $value['sid'];
-            $value['title'] = $value['content'];
-            $value['sortable'] = true;
-            array_push($templateField, $value['sid']);
-        }
-        array_push($templateField, 'create_time');
-        array_push($templateField, 'update_time');
-        array_push($templateField, 'id');
-        session('options', $templateField);
-
-        #显示在页面的字段 json->array
-        $fields = json_decode($fields);
-        array_unshift($fields, [
+        #显示在页面的字段
+        $fields[] = [
             'checkbox' => true,
-        ]);
-        array_unshift($fields, [
+        ];
+        $fields[] = [
             'field' => 'id',
             'title' => '编号',
             'visible' => false, //这一列隐藏
-        ]);
-        array_push($fields, [
+        ];
+
+        $template['options'] = json_decode($template['options'], true);
+        #查询字段
+
+        foreach ($template['options'] as $key => $value) {
+            $tmp = [];
+            $tmp['field'] ='content.'. $key;
+            $tmp['title'] = $value['title'];
+            if ($key==$template['primaryKey']) {
+                $tmp['sortable'] = true;
+            }
+            
+            $fields[] = $tmp;
+        }
+        unset($template['options']);
+
+        session('tInfo', $template);
+        $fields[] = [
             'field' => 'create_time',
             'title' => '首次提交时间',
             'sortable' => true,
-        ]);
-        array_push($fields, [
+        ];
+        $fields[] = [
             'field' => 'update_time',
             'title' => '最后提交时间',
             'sortable' => true,
-        ]);
-        #array->json
-        $fields=json_encode($fields);
-        // $fields=json_encode($fields, JSON_UNESCAPED_UNICODE);
+        ];
 
+        $fields = json_encode($fields);
         #构造分享链接
         $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
-        
+
         $this->assign([
             'template' => $template,
             'fields' => $fields,
@@ -76,7 +67,6 @@ class Template extends Base
         return view();
     }
 
-
     /**
      * 删除表单数据
      * @return \think\response\View
@@ -84,13 +74,14 @@ class Template extends Base
     public function del()
     {
         if (request()->isAjax()) {
-            $template=session('template');
-            $ids= explode(',',input('ids'));
-            sort($ids,SORT_NUMERIC);
-            $result = model('TemplatesData')->destroy($ids);
-            $t=model("Templates")->where('tid', $template['tid'])->field('count')->find();
-            $t->count=$t->count-count($ids);
-            $result=$t->save();
+            
+            $tId = session('tInfo.tid');
+            $ids = explode(',', input('ids'));
+            sort($ids, SORT_NUMERIC);
+            $result = model('TemplatesDatas')->destroy($ids);
+            $t = model("Templates")->where('tid', $tId)->field('count')->find();
+            $t->count = $t->count - count($ids);
+            $result = $t->save();
             if ($result) {
                 $this->success('数据删除成功');
             } else {
@@ -99,48 +90,51 @@ class Template extends Base
         }
     }
 
-   /**
-    * 请求数据
-    */
+    /**
+     * 请求数据
+     */
 
     public function dataList()
     {
         if (request()->isAjax()) {
-            $tId = session('tId');
-            $fields = session('options');
-
+            $tId = session('tInfo.tid');
+            $primaryKey=session('tInfo.primaryKey');
             $offset = input('post.offset');
             $limit = input('post.limit');
             $order = input('post.order');
             $ordername = input('post.ordername');
             $search = input('post.search');
 
+            #默认排序字段和规则
+            $fields=['id,tid,content,create_time,update_time'];
+            $orders = ['update_time' => 'desc'];
+
             #排序字段和规则
             if ($ordername) {
-                $order = [$ordername => $order, 'update_time' => 'desc'];
-            } else {
-                $order = ['update_time' => 'desc'];
+                if ($ordername=='content.'.$primaryKey) {
+                    array_push($fields,"JSON_EXTRACT(content,'$.$primaryKey') as jsonOrder");
+                    $orders = ['jsonOrder' => $order];
+                } else {
+                    $orders = [$ordername => $order];
+                }
             }
-
-            #搜索条件
+            
+            #默认搜索条件
             $map[] = ['tid', '=', $tId];
             #模糊搜索
             if ($search != "") {
-                #删除日期字段
-                $temp_fields = $fields;
-                array_pop($temp_fields);
-                array_pop($temp_fields);
-                $map[] = [implode("|", $temp_fields), 'like', "%$search%"];
+                $map[] = ["content->$primaryKey", 'like', "%$search%"];
             }
 
             #判断是否为导出
             if ($limit != null) {
                 # 计算页号
                 $page = floor($offset / $limit) + 1;
-                $list = model('TemplatesData')
+                $list = model('TemplatesDatas')
                     ->where($map)
-                    ->order($order)
-                    ->field($fields)
+                    ->json(['content'])
+                    ->field($fields)                    
+                    ->order($orders)
                     ->page($page, $limit)
                     ->withAttr([
                         'create_time' => function ($value, $data) {
@@ -152,8 +146,9 @@ class Template extends Base
                     ])
                     ->select();
             } else {
-                $list = model('TemplatesData')
+                $list = model('TemplatesDatas')
                     ->where($map)
+                    ->json(['content'])
                     ->field($fields)
                     ->withAttr([
                         'create_time' => function ($value, $data) {
@@ -165,7 +160,8 @@ class Template extends Base
                     ])
                     ->select();
             }
-            $count = model('TemplatesData')
+
+            $count = model('TemplatesDatas')
                 ->where(['tid' => $tId])
                 ->where($map)
                 ->count();

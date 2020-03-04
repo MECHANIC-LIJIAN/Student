@@ -14,7 +14,7 @@ function deleteRow(obj) {
 
 $("#addInput").click(function() {
   $(".deleteRow").addClass("hidden");
-  var option_id = "option_" + String.fromCharCode(64 + id);
+  var option_id = "option_" + id;
   $("#tableD").append(getInput(option_id));
   addPrimaryKey(option_id, "字段" + id);
   id++;
@@ -22,7 +22,7 @@ $("#addInput").click(function() {
 
 $("#addSelect").click(function() {
   $(".deleteRow").addClass("hidden");
-  var option_id = "option_" + String.fromCharCode(64 + id);
+  var option_id = "option_" + id;
   $("#tableD").append(getSelect(option_id));
   addPrimaryKey(option_id, "字段" + id);
 

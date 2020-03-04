@@ -73,22 +73,22 @@
                         <legend>{$tname}</legend>
                         <!-- 输出input -->
                         {volist name="optionList" id='option'}
-                        {eq name="$option.child|count" value="0"}
+                        {eq name="$option.options|count" value="0"}
                         <div class="form-group">
-                            <label for="{$option.content}" class="col-lg-10">{$option.content}</label>
+                            <label for="{$key}" class="col-lg-10">{$option.title}</label>
                             <div class="col-lg-8">
-                                <input type="text" class="form-control required {$option.rule}" id="{$option.sid}"
-                                    name="{$option.sid}">
+                                <input type="text" class="form-control required {$option.rule}" id="{$key}"
+                                    name="{$key}">
                             </div>
                         </div>
                         {else /}
                         <div class="form-group">
-                            <label for="{$option.content}" class="col-lg-10">{$option.content}</label>
+                            <label for="{$key}" class="col-lg-10">{$option.title}</label>
                             <div class="col-lg-4">
-                                <select class="form-control" required="true" name="{$option.sid}">
+                                <select class="form-control" required="true" name="{$key}">
                                     <option value="">--请选择--</option>
-                                    {volist name="option.child" id="vo"}
-                                    <option value="{$vo.content}">{$vo.content}</option>
+                                    {volist name="option.options" id="vo"}
+                                    <option value="{$vo}">{$vo}</option>
                                     {/volist}
                                 </select>
                             </div>

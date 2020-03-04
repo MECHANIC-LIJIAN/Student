@@ -3,12 +3,14 @@
 {block name="page-breadcrumb"}
 <li class="active">表单列表</li>
 {/block}
+
 {block name="page-main"}
 <div class="row">
     <div class="col-lg-12">
         <div class="widget">
             <div class="widget-header bg-themeprimary">
-                <i class="fa fa-arrow-left widget-icon" onClick="window.location.href='{:url(\'admin/Home/index\')}';"/></i>
+                <i class="fa fa-arrow-left widget-icon"
+                    onClick="window.location.href='{:url(\'admin/Home/index\')}';" /></i>
                 <span class="widget-caption">表单列表</span>
             </div>
             <div class="widget-body">
@@ -27,12 +29,14 @@
                         <tbody>
                             {volist name="templates" id="vo"}
                             <tr>
-                                <td><a href="{:url('admin/Template/index',['id'=>$vo.tid])}" style="font-size:14px">{$vo.tname}</a> </td>
+                                <td><a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
+                                        style="font-size:14px">{$vo.tname}</a> </td>
                                 {if session('admin.is_super')==1}<td>{$vo.user}</td>{/if}
                                 <td>{$vo.count}</td>
                                 {if $vo.status==1}
                                 <td>
-                                    <span class="tempalte-status badge badge-pill badge-success"status="{$vo.status}">进行中</span>
+                                    <span class="tempalte-status badge badge-pill badge-success"
+                                        status="{$vo.status}">进行中</span>
                                 </td>
                                 <td>
                                     <a href="#" class="tempalte-status btn btn-warning btn-xs control-tempalte"
@@ -53,13 +57,13 @@
                                 {/if}
                                 <td>
                                     <a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
-                                        class="btn btn-xs btn-success"><span
-                                            class="fa fa-table"></span>数据</a>
+                                        class="btn btn-xs btn-success"><span class="fa fa-table"></span>数据</a>
                                 </td>
                                 <td>
-                                    <a class="copy btn btn-xs btn-info" dataid="{$vo.shareUrl}"><span class="fa fa-share"></span>分享</a>
+                                    <a class="copy btn btn-xs btn-info" dataid="{$vo.shareUrl}"><span
+                                            class="fa fa-share"></span>分享</a>
                                     <a href="{$vo.shareUrl}" target="_blank" class="btn btn-xs btn-default"><span
-                                            class="fa fa-eye"></span>查看表单</a>
+                                            class="fa fa-eye"></span>表单</a>
                                 </td>
                                 <td>{$vo.create_time|date='Y年m月d日 H:i'}</td>
                             </tr>
@@ -79,7 +83,7 @@
 
     $(".del-tempalte").click(function () {
         var id = $(this).attr('dataid');
-        confirm('确定删除吗？','删除表单',"{:url('admin/Templates/del')}",{id: id})
+        confirm('确定删除吗？', '删除表单', "{:url('admin/Templates/del')}", { id: id })
     })
 
     $(".control-tempalte").click(function () {
@@ -92,7 +96,7 @@
             msg = "确定开始吗？"
             opt = "start"
         }
-        confirm(msg,'表单管理确认',"{:url('admin/Templates/control')}",{id: id,opt:opt})
+        confirm(msg, '表单管理确认', "{:url('admin/Templates/control')}", { id: id, opt: opt })
     })
 
     $(".copy").click(function () {
