@@ -81,7 +81,7 @@ class Templates extends Model
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            // return $e->getMessage();
+            return $e->getMessage();
             return '提交失败！';
         }
         return 1;
