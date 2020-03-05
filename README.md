@@ -1,5 +1,5 @@
 
-基于ThinkPHP 5.1开发的学生信息手机系统
+基于ThinkPHP 5.1开发的学生信息收集系统
 > ThinkPHP5的运行环境要求PHP5.6以上。
 
 
