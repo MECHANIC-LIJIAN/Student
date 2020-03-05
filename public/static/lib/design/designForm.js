@@ -24,8 +24,6 @@ $("#addSelect").click(function() {
   $(".deleteRow").addClass("hidden");
   var option_id = "option_" + id;
   $("#tableD").append(getSelect(option_id));
-  addPrimaryKey(option_id, "字段" + id);
-
   id++;
 
   $(".confirm").click(function() {
