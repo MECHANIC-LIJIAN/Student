@@ -20,35 +20,40 @@ class Templates extends Model
      */
     public function ifUseData($template, $keyContent)
     {
-        $mydata = Db::name('my_data_option')
-            ->where([
-                'my_data_id' => $template['myData'],
-                'content' => $keyContent,
-            ])
-            ->find();
-        // $redisKey = $template['id'] . "_tInfo";
-        // $redis = new Redis();
-        // //判断是否过期
-        // $redis_status = $redis->exists($redisKey);
-        // if ($redis_status == false) {
-        //     //缓存失效，重新存入
-        //     //查询数据
-        //     $mydata = Db::name('my_data_option')
-        //         ->where([
-        //             'my_data_id' => $template['myData'],
-        //             'content' => $keyContent,
-        //         ])
-        //         ->find();
-        //     //转换成字符串，有利于存储
-        //     $redisInfo = serialize($mydata);
-        //     //存入缓存
-        //     $redis->set($redisKey, $redisInfo);
-        //     //设置缓存周期，60秒
-        //     $redis->expire($redisKey, 60);
-        // }
-        // //获取缓存
-        // $mydata = unserialize($redis->get($redisKey));
-        if (!$mydata) {
+        // $mydata = Db::name('my_data_option')
+        //     ->where([
+        //         'my_data_id' => $template['myData'],
+        //         'content' => $keyContent,
+        //     ])
+        //     ->field('my_data_id,content')
+        //     ->find();
+        $redisKey = $template['id'] . "_my_data";
+        $redis = new Redis();
+        //判断是否过期
+        $redis_status = $redis->exists($redisKey);
+        if ($redis_status == false) {
+            //缓存失效，重新存入
+            //查询数据
+            $mydata = Db::name('my_data_option')
+                ->where([
+                    'my_data_id' => $template['myData'],
+                ])
+                ->field('my_data_id,content')
+                ->select();
+            $myDatas=array_column($mydata, 'content');
+            //转换成字符串，有利于存储
+            $redisInfo = serialize($myDatas);
+            //存入缓存
+            $redis->set($redisKey, $redisInfo);
+            //设置缓存周期，60秒
+            $redis->expire($redisKey, 60);
+        }
+        //获取缓存
+        $myDatas = unserialize($redis->get($redisKey));
+
+        $res=array_search($keyContent,$myDatas);
+        if (!$res) {
+            
             return "系统中未匹配到:" . $template['options'][$template['primaryKey']]['title'] . "=" . $keyContent;
         }
         return 1;
@@ -102,7 +107,7 @@ class Templates extends Model
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            return $e->getMessage();
+            // return $e->getMessage();
             return '提交失败！';
         }
         return 1;

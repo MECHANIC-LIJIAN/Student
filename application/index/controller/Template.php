@@ -49,7 +49,7 @@ class Template extends Controller
     {
         if (request()->isAjax()) {
 
-            $template = json_decode(cookie('template'),true);
+            $template = cookie('template');
             $templateField = $template['fields'];
 
             #接受页面参数
@@ -59,6 +59,7 @@ class Template extends Controller
 
             $data['content'] = json_encode($params);
             $data['tid'] = $template['tid'];
+            
             #判断是否有主键
             if (!empty($template['primaryKey'])) {
                 #找出唯一字段的值
