@@ -2,6 +2,8 @@
 
 namespace app\admin\controller;
 
+use think\cache\driver\Redis;
+
 class Templates extends Base
 {
 
@@ -16,18 +18,33 @@ class Templates extends Base
         if (session('admin.is_super') != 1) {
             $where = ['uid' => session('admin.id')];
         }
-        $templates = model('Templates')
-            ->where($where)
-            ->field('id,tid,uid,tname,count,myData,primaryKey,create_time,status')
-            ->with('getUser')
-            ->order(['status' => 'asc', 'update_time' => 'desc'])
-            ->select();
-
-        foreach ($templates as $value) {
-            $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
-            // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
+        $redisKey=session('admin.id')."_templateList";
+        $redis = new Redis();
+        //判断是否过期
+        $redis_status = $redis->exists($redisKey);
+        if ($redis_status == false) {
+            //缓存失效，重新存入
+            //查询数据
+            $templates = model('Templates')
+                ->where($where)
+                ->field('id,tid,uid,tname,count,myData,primaryKey,create_time,status')
+                ->with('getUser')
+                ->order(['status' => 'asc', 'update_time' => 'desc'])
+                ->select();
+            foreach ($templates as $value) {
+                $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
+                $value['username'] = $value['getUser']['username'];
+                // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
+            }
+            //转换成字符串，有利于存储
+            $redisInfo = serialize($templates);
+            //存入缓存
+            $redis->set($redisKey, $redisInfo);
+            //设置缓存周期，30秒
+            $redis->expire($redisKey,30);
         }
-        // dump($templates);
+        //获取缓存
+        $templates = unserialize($redis->get($redisKey));
         $this->assign('templates', $templates);
         return view();
     }

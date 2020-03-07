@@ -2,6 +2,7 @@
 
 namespace app\index\model;
 
+use think\cache\driver\Redis;
 use think\Db;
 use think\Model;
 use think\model\concern\SoftDelete;
@@ -9,7 +10,6 @@ use think\model\concern\SoftDelete;
 class Templates extends Model
 {
     use SoftDelete;
-
 
     /**
      * 判断数据是否在自定义数据集中
@@ -26,7 +26,28 @@ class Templates extends Model
                 'content' => $keyContent,
             ])
             ->find();
-            
+        // $redisKey = $template['id'] . "_tInfo";
+        // $redis = new Redis();
+        // //判断是否过期
+        // $redis_status = $redis->exists($redisKey);
+        // if ($redis_status == false) {
+        //     //缓存失效，重新存入
+        //     //查询数据
+        //     $mydata = Db::name('my_data_option')
+        //         ->where([
+        //             'my_data_id' => $template['myData'],
+        //             'content' => $keyContent,
+        //         ])
+        //         ->find();
+        //     //转换成字符串，有利于存储
+        //     $redisInfo = serialize($mydata);
+        //     //存入缓存
+        //     $redis->set($redisKey, $redisInfo);
+        //     //设置缓存周期，60秒
+        //     $redis->expire($redisKey, 60);
+        // }
+        // //获取缓存
+        // $mydata = unserialize($redis->get($redisKey));
         if (!$mydata) {
             return "系统中未匹配到:" . $template['options'][$template['primaryKey']]['title'] . "=" . $keyContent;
         }
@@ -43,12 +64,12 @@ class Templates extends Model
      */
     public function ifExist($template, $keyContent)
     {
-        $keySid=$template['primaryKey'];
+        $keySid = $template['primaryKey'];
         $res = model('TemplatesDatas')
             ->json(['cotent'])
             ->where([
                 'tid' => $template['tid'],
-                "content->$keySid" => $keyContent
+                "content->$keySid" => $keyContent,
             ])
             ->field('id,tid,content')
             ->find();
@@ -77,7 +98,7 @@ class Templates extends Model
                 ->where('tid', $template['tid'])
                 ->setInc('count');
             // 提交事务
-           Db::commit();
+            Db::commit();
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();

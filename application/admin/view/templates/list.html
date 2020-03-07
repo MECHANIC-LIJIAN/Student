@@ -31,7 +31,7 @@
                             <tr>
                                 <td><a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
                                         style="font-size:14px">{$vo.tname}</a> </td>
-                                {if session('admin.is_super')==1}<td>{$vo.getuser.username}</td>{/if}
+                                {if session('admin.is_super')==1}<td>{$vo.username}</td>{/if}
                                 <td>{$vo.count}</td>
                                 {if $vo.status==1}
                                 <td>

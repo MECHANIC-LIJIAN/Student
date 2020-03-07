@@ -34,7 +34,7 @@ class Template extends Base
             $tmp = [];
             $tmp['field'] ='content.'. $key;
             $tmp['title'] = $value['title'];
-            if ($key==$template['primaryKey']) {
+            if (!empty($template['primaryKey'])&&$key==$template['primaryKey']) {
                 $tmp['sortable'] = true;
             }
             

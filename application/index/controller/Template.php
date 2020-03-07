@@ -3,7 +3,7 @@
 namespace app\index\controller;
 
 use think\Controller;
-
+use think\cache\driver\Redis;
 class Template extends Controller
 {
 
@@ -11,20 +11,35 @@ class Template extends Controller
     {
 
         $id = input('id');
-        $template = model("Templates")
-            ->where(['tid' => $id])
-            ->field('tid,tname,primaryKey,status,myData,options')
-            ->find()
-            ->toArray();
 
+        $redisKey = $id;
+        $redis = new Redis();
+        //判断是否过期
+        $redis_status = $redis->exists($redisKey);
+        if ($redis_status == false) {
+            //缓存失效，重新存入
+            //查询数据
+            $template = model("Templates")
+                ->where(['tid' => $id])
+                ->field('tid,tname,primaryKey,status,myData,options')
+                ->find()
+                ->toArray();
+            //转换成字符串，有利于存储
+            $redisInfo = serialize($template);
+            //存入缓存
+            $redis->set($redisKey, $redisInfo);
+            //设置缓存周期，60秒
+            $redis->expire($redisKey, 60);
+        }
+        //获取缓存
+        $template = unserialize($redis->get($redisKey));
         if (!$template || $template['status'] != 1) {
             return $this->fetch('template', ['hello' => '该表单已关闭或未创建']);
         }
 
         $template['options'] = json_decode($template['options'], true);
-
         $template['fields'] = array_keys($template['options']);
-        // dump($template);
+        
         cookie('template', $template);
         cookie('ifCheck', 0);
         return $this->fetch('template', ['optionList' => $template['options'], 'tname' => $template['tname']]);
@@ -34,15 +49,13 @@ class Template extends Controller
     {
         if (request()->isAjax()) {
 
-            $template = cookie('template');
+            $template = json_decode(cookie('template'),true);
             $templateField = $template['fields'];
 
             #接受页面参数
             foreach ($templateField as $key => $value) {
                 $params[$value] = input("post.$value");
             }
-
-
 
             $data['content'] = json_encode($params);
             $data['tid'] = $template['tid'];
@@ -80,7 +93,6 @@ class Template extends Controller
             }
 
             #该页面第一次提交
-
             #保存新数据
             $res = model('Templates')->saveData($template, $data);
             if ($res == 1) {
