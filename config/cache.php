@@ -36,6 +36,5 @@ return [
         'type'   => 'redis',
         // 服务器地址
         'host'       => '127.0.0.1',
-        'expire'=>1
     ],     
 ];
