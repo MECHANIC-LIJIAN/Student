@@ -57,6 +57,17 @@
         #subForm label.error {
             color: red;
         }
+
+        .redInfo {
+            position: relative;
+            top: 2px;
+            font-weight: bold;
+            font-size: 16px;
+            color:red
+        }
+        .form-control{
+            height: 40px;
+        }
     </style>
 </head>
 
@@ -74,20 +85,19 @@
                     {volist name="optionList" id="vo" key="k"}
                     {eq name="$vo.options|count" value="0"}
                     <div class="form-group">
-                        <label style="font-size: 16px;" for="{$key}" class="col-lg-10">
-                            <font color="red" style="position:relative; top:5px;font-weight:bold;font-size:16px">*
+                        <label for="{$key}" class="col-lg-10">
+                            <font class="redInfo">*
                             </font>{$k}.{$vo.title}
                         </label>
                         <div class="col-lg-10">
-                            <input type="text" class="form-control required {$vo.rule}" style="height: 40px;"
-                                id="{$key}" name="{$key}">
+                            <input type="text" class="form-control required {$vo.rule}" id="{$key}" name="{$key}">
                         </div>
                     </div>
                     {else /}
                     {elt name="$vo.options|count" value="4"}
                     <div class="form-group">
-                        <label style="font-size: 16px;" for="{$key}" class="col-lg-10">
-                            <font color="red" style="position:relative; top:5px;font-weight:bold;font-size:16px">*
+                        <label for="{$key}" class="col-lg-10">
+                            <font class="redInfo">*
                             </font>{$k}.{$vo.title}
                         </label>
                         <div class="col-lg-10">
@@ -102,11 +112,11 @@
                     </div>
                     {else /}
                     <div class="form-group">
-                        <label style="font-size: 16px;" for="{$key}" class="col-lg-10">
-                            <font color="red" style="position:relative; top:5px;font-weight:bold;font-size:16px">*
+                        <label for="{$key}" class="col-lg-10">
+                            <font class="redInfo">*
                             </font>{$k}.{$vo.title}
                         </label>
-                        <div class="col-lg-8">
+                        <div class="col-lg-10">
                             <select class="form-control" required="true" name="{$key}">
                                 <option value="">--请选择--</option>
                                 {volist name="vo.options" id="voo"}

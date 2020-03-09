@@ -80,7 +80,7 @@ class Template extends Controller
                     $res = model('TemplatesDatas')->allowField(true)->save($data, ['id' => cookie('dataid')]);
                     if ($res) {
                         cookie('ifCheck', null);
-                        cookie('content',$keyContent.',感谢您在'.$template['tname'].'的提交');
+                        cookie('content','感谢您在'.$template['tname'].'的提交');
                         $this->success('数据更新成功！', url('index/index/index'));
                     } else {
                         $this->error('数据更新失败！');
@@ -102,7 +102,7 @@ class Template extends Controller
             $res = model('Templates')->saveData($template, $data);
             if ($res == 1) {
                 cookie('ifCheck', null);
-                cookie('content',$keyContent.',感谢您在'.$template['tname'].'的提交');
+                cookie('content','感谢您在'.$template['tname'].'的提交');
                 $this->success('提交成功！', url('index/index/index'));
             } else {
                 $this->error($res);
