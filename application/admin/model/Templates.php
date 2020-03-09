@@ -14,9 +14,9 @@ class Templates extends Model
 {
     use SoftDelete;
 
-    public function datas()
+    public function getMyData()
     {
-        return $this->hasMany('TemplatesDatas', 'tid', 'tid')->field('id,tid');
+        return $this->hasOne('MyData', 'id', 'myData')->field('id,title');
     }
     public function getUser()
     {

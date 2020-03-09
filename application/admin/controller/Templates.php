@@ -20,42 +20,20 @@ class Templates extends Base
         $templates = model('Templates')
             ->where($where)
             ->field('id,tid,uid,tname,count,myData,primaryKey,create_time,status')
-            ->with('getUser')
+            ->with('getUser,getMyData')
             ->order(['status' => 'asc', 'update_time' => 'desc'])
-            ->select();
+            ->select()
+            ->toArray();
+        $templateList=[];
         foreach ($templates as $value) {
-            $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
-            $value['username'] = $value['getUser']['username'];
+            $tmp=$value;
+            $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
+            $tmp['username'] = $tmp['get_user']['username'];
+            $tmp['mydata'] = $tmp['get_my_data']['title'];
             // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
+            $templateList[]=$tmp;
         }
-        // $redisKey=session('admin.id')."_templateList";
-        // $redis = new Redis();
-        // //判断是否过期
-        // $redis_status = $redis->exists($redisKey);
-        // if ($redis_status == false) {
-        //     //缓存失效，重新存入
-        //     //查询数据
-        //     $templates = model('Templates')
-        //         ->where($where)
-        //         ->field('id,tid,uid,tname,count,myData,primaryKey,create_time,status')
-        //         ->with('getUser')
-        //         ->order(['status' => 'asc', 'update_time' => 'desc'])
-        //         ->select();
-        //     foreach ($templates as $value) {
-        //         $value['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
-        //         $value['username'] = $value['getUser']['username'];
-        //         // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
-        //     }
-        //     //转换成字符串，有利于存储
-        //     $redisInfo = serialize($templates);
-        //     //存入缓存
-        //     $redis->set($redisKey, $redisInfo);
-        //     //设置缓存周期，30秒
-        //     $redis->expire($redisKey,30);
-        // }
-        //获取缓存
-        // $templates = unserialize($redis->get($redisKey));
-        $this->assign('templates', $templates);
+        $this->assign('templates', $templateList);
         return view();
     }
 

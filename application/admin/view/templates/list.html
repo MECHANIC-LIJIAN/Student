@@ -21,6 +21,7 @@
                                 <th>表单名</th>
                                 {if session('admin.is_super')==1} <th>用户名</th>{/if}
                                 <th>记录数</th>
+                                <th>使用的数据集</th>
                                 <th>状态</th>
                                 <th colspan="3">操作</th>
                                 <th>创建时间</th>
@@ -33,6 +34,7 @@
                                         style="font-size:14px">{$vo.tname}</a> </td>
                                 {if session('admin.is_super')==1}<td>{$vo.username}</td>{/if}
                                 <td>{$vo.count}</td>
+                                <td>{$vo.mydata}</td>
                                 {if $vo.status==1}
                                 <td>
                                     <span class="tempalte-status badge badge-pill badge-success"
