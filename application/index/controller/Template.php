@@ -34,7 +34,7 @@ class Template extends Controller
         //获取缓存
         $template = unserialize($redis->get($redisKey));
         if (!$template || $template['status'] != 1) {
-            return $this->fetch('template', ['hello' => '该表单已关闭或未创建']);
+            return $this->fetch('template', ['info' => '该表单已关闭或未创建']);
         }
 
         $template['options'] = json_decode($template['options'], true);
