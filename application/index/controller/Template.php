@@ -68,7 +68,6 @@ class Template extends Controller
                 #判断是否有参考数据集并且数据是否在其中
                 if (!empty($template['myData'])) {
                     $res = model('Templates')->ifUseData($template, $keyContent);
-                    return $res;
                     if ($res != 1) {
                         return $this->error($res);
                     }
