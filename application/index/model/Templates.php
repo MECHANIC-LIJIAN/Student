@@ -51,9 +51,8 @@ class Templates extends Model
         //获取缓存
         $myDatas = unserialize($redis->get($redisKey));
 
-        $res=array_search($keyContent,$myDatas);
+        $res=in_array($keyContent,$myDatas);
         if (!$res) {
-            
             return "系统中未匹配到:" . $template['options'][$template['primaryKey']]['title'] . "=" . $keyContent;
         }
         return 1;
