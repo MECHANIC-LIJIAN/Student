@@ -95,7 +95,7 @@ class MyData extends Controller
     {
         $id = input('id');
         $dataInfo = model('MyData')
-            ->with('options')
+            ->with('getDatas')
             ->field('uid,title,id,count')
             ->find($id);
 
@@ -129,11 +129,11 @@ class MyData extends Controller
             $id = input('post.id');
             $dataInfo = model('MyData')
                 ->where(['id' => $id])
-                ->with('options')
+                ->with('delDatas')
                 ->field('id')
                 ->find();
                 
-            $result = $dataInfo->together('options')->delete();
+            $result = $dataInfo->together('delDatas')->delete();
             if ($result) {
                 $this->success('删除成功', url('admin/MyData/index'));
             } else {

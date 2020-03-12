@@ -10,7 +10,12 @@ class MyData extends Model
 {
     use SoftDelete;
 
-    public function options()
+    public function getDatas()
+    {
+        return $this->hasMany('MyDataOption')->field('content,my_data_id,id')->limit(20);
+    }
+
+    public function delDatas()
     {
         return $this->hasMany('MyDataOption')->field('content,my_data_id,id');
     }
