@@ -16,7 +16,7 @@ class Aes extends Controller
     {
         $key = "1234567887654321";//秘钥必须为：8/16/32位
         $iv = "1234567887654321";
-        $base64_str = base64_encode(json_encode($data));
+        $base64_str = base64_encode(json_encode($string));
         $encrypted = openssl_encrypt($base64_str, "aes-128-cbc", $key, OPENSSL_ZERO_PADDING, $iv);
         return base64_encode($encrypted);
     }

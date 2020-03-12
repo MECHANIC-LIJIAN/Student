@@ -24,6 +24,7 @@ class Templates extends Base
             ->order(['status' => 'asc', 'create_time' => 'desc'])
             ->select()
             ->toArray();
+
         $templateList=[];
         foreach ($templates as $value) {
             $tmp=$value;
@@ -33,6 +34,7 @@ class Templates extends Base
             // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
             $templateList[]=$tmp;
         }
+
         $this->assign('templates', $templateList);
         return view();
     }
@@ -58,8 +60,11 @@ class Templates extends Base
     public function del()
     {
         if (request()->isAjax()) {
+
             $tInfo = model('Templates')->with('datas')->find(input('post.id'));
+            
             $result = $tInfo->together('datas')->delete();
+            
             if ($result == 1) {
                 $this->success('表单删除成功', 'admin/Templates/list');
             } else {

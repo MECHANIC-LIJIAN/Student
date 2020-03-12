@@ -13,7 +13,7 @@ class Template extends Base
         
         $template = model('Templates')
             ->where(['tid' => $tId])
-            ->field('tid,tname,primaryKey,myData,options')
+            ->field('id,tid,tname,primaryKey,myData,options')
             // ->json(['options'])
             ->find();
 
@@ -28,8 +28,8 @@ class Template extends Base
         ];
 
         $template['options'] = json_decode($template['options'], true);
+        
         #查询字段
-
         foreach ($template['options'] as $key => $value) {
             $tmp = [];
             $tmp['field'] ='content.'. $key;
@@ -37,12 +37,9 @@ class Template extends Base
             if (!empty($template['primaryKey'])&&$key==$template['primaryKey']) {
                 $tmp['sortable'] = true;
             }
-            
             $fields[] = $tmp;
         }
-        unset($template['options']);
 
-        session('tInfo', $template);
         $fields[] = [
             'field' => 'create_time',
             'title' => '首次提交时间',
@@ -53,8 +50,13 @@ class Template extends Base
             'title' => '最后提交时间',
             'sortable' => true,
         ];
-
+        
         $fields = json_encode($fields);
+
+        unset($template['options']);
+
+        session('tInfo', $template);
+
         #构造分享链接
         $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
 
@@ -75,11 +77,11 @@ class Template extends Base
     {
         if (request()->isAjax()) {
             
-            $tId = session('tInfo.tid');
+            $tId = session('tInfo.id');
             $ids = explode(',', input('ids'));
             sort($ids, SORT_NUMERIC);
             $result = model('TemplatesDatas')->destroy($ids);
-            $t = model("Templates")->where('tid', $tId)->field('count')->find();
+            $t = model("Templates")->where('id', $tId)->field('count')->find();
             $t->count = $t->count - count($ids);
             $result = $t->save();
             if ($result) {
@@ -97,8 +99,9 @@ class Template extends Base
     public function dataList()
     {
         if (request()->isAjax()) {
-            $tId = session('tInfo.tid');
-            $primaryKey=session('tInfo.primaryKey');
+            $template=session('tInfo');
+            $tId = $template['id'];
+            $primaryKey=$template['primaryKey'];
             $offset = input('post.offset');
             $limit = input('post.limit');
             $order = input('post.order');
@@ -137,10 +140,10 @@ class Template extends Base
                     ->order($orders)
                     ->page($page, $limit)
                     ->withAttr([
-                        'create_time' => function ($value, $data) {
+                        'create_time' => function ($value) {
                             return date("Y-m-d H:i", $value);
                         },
-                        'update_time' => function ($value, $data) {
+                        'update_time' => function ($value) {
                             return date("Y-m-d H:i", $value);
                         },
                     ])
@@ -151,10 +154,10 @@ class Template extends Base
                     ->json(['content'])
                     ->field($fields)
                     ->withAttr([
-                        'create_time' => function ($value, $data) {
+                        'create_time' => function ($value) {
                             return date("Y-m-d H:i", $value);
                         },
-                        'update_time' => function ($value, $data) {
+                        'update_time' => function ($value) {
                             return date("Y-m-d H:i", $value);
                         },
                     ])

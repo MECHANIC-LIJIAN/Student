@@ -21,23 +21,24 @@ class Template extends Controller
             //查询数据
             $template = model("Templates")
                 ->where(['tid' => $id])
-                ->field('tid,tname,primaryKey,status,myData,options')
-                ->find()
-                ->toArray();
+                ->field('id,tid,tname,primaryKey,status,myData,options')
+                ->find();
             //转换成字符串，有利于存储
             $redisInfo = serialize($template);
             //存入缓存
             $redis->set($redisKey, $redisInfo);
             //设置缓存周期，60秒
-            $redis->expire($redisKey, 60);
+            $redis->expire($redisKey, 10);
         }
         //获取缓存
         $template = unserialize($redis->get($redisKey));
 
+        
         if (!$template || $template['status'] != 1) {
             return $this->fetch('template', ['info' => '该表单已关闭或未创建']);
         }
 
+       
         $template['options'] = json_decode($template['options'], true);
         $template['fields'] = array_keys($template['options']);
         
@@ -52,16 +53,16 @@ class Template extends Controller
     {
         if (request()->isAjax()) {
 
-            $template = cookie('template');
+            $template = json_decode(cookie('template'),true);
             $templateField = $template['fields'];
 
             #接受页面参数
-            foreach ($templateField as $key => $value) {
+            foreach ($templateField as $value) {
                 $params[$value] = input("post.$value");
             }
 
             $data['content'] = json_encode($params);
-            $data['tid'] = $template['tid'];
+            $data['tid'] = $template['id'];
             
             #判断是否有主键
             if (!empty($template['primaryKey'])) {

@@ -66,7 +66,7 @@ class Templates extends Model
         $res = model('TemplatesDatas')
             ->json(['cotent'])
             ->where([
-                'tid' => $template['tid'],
+                'tid' => $template['id'],
                 "content->$keySid" => $keyContent,
             ])
             ->field('id,tid,content')

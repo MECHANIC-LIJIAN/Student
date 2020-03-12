@@ -14,10 +14,17 @@ class Templates extends Model
 {
     use SoftDelete;
 
+    public function datas()
+    {
+        return $this->hasMany('TemplatesDatas', 'tid', 'id');
+    }
+
     public function getMyData()
     {
         return $this->hasOne('MyData', 'id', 'myData')->field('id,title');
     }
+
+
     public function getUser()
     {
         return $this->belongsTo('Admin', 'uid', 'id')->field('id,username');
