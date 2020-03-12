@@ -128,11 +128,11 @@ class MyData extends Controller
         if (request()->isAjax()) {
             $id = input('post.id');
             $dataInfo = model('MyData')
+                ->where(['id' => $id])
                 ->with('options')
                 ->field('id')
-                ->where(['id' => $id])
                 ->find();
-
+                
             $result = $dataInfo->together('options')->delete();
             if ($result) {
                 $this->success('删除成功', url('admin/MyData/index'));
