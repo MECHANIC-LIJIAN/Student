@@ -21,7 +21,7 @@ class Templates extends Base
             ->where($where)
             ->field('id,tid,uid,tname,count,myData,primaryKey,create_time,status')
             ->with('getUser,getMyData')
-            ->order(['status' => 'asc', 'update_time' => 'desc'])
+            ->order(['status' => 'asc', 'create_time' => 'desc'])
             ->select()
             ->toArray();
         $templateList=[];

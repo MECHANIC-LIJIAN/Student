@@ -20,27 +20,21 @@ class Templates extends Model
      */
     public function ifUseData($template, $keyContent)
     {
-        // $mydata = Db::name('my_data_option')
-        //     ->where([
-        //         'my_data_id' => $template['myData'],
-        //         'content' => $keyContent,
-        //     ])
-        //     ->field('my_data_id,content')
-        //     ->find();
-        $redisKey = $template['id'] . "_my_data";
+        $redisKey = "my_data_". $template['myData'];
         $redis = new Redis();
         //判断是否过期
         $redis_status = $redis->exists($redisKey);
         if ($redis_status == false) {
             //缓存失效，重新存入
             //查询数据
-            $mydata = Db::name('my_data_option')
+            $myDatas = Db::name('my_data_option')
                 ->where([
                     'my_data_id' => $template['myData'],
                 ])
                 ->field('my_data_id,content')
                 ->select();
-            $myDatas=array_column($mydata, 'content');
+            
+            $myDatas=array_column($myDatas, 'content');
             //转换成字符串，有利于存储
             $redisInfo = serialize($myDatas);
             //存入缓存
@@ -50,7 +44,7 @@ class Templates extends Model
         }
         //获取缓存
         $myDatas = unserialize($redis->get($redisKey));
-
+        
         $res=in_array($keyContent,$myDatas);
         if (!$res) {
             return "系统中未匹配到:" . $template['options'][$template['primaryKey']]['title'] . "=" . $keyContent;
