@@ -40,6 +40,7 @@ class Templates extends Model
 
         //获取文件后缀
         $suffix = explode(".", $fileInfo['name'])[1];
+        
         //判断哪种类型
         if ($suffix == "xlsx") {
             $reader = new Xlsx();
@@ -47,8 +48,8 @@ class Templates extends Model
             $reader = new Xls();
         }
 
-        $reader->setReadDataOnly(true);
-        $excel = $reader->load($fileInfo['tmp_name'], $encode = 'utf-8');
+        // $reader->setReadDataOnly(true);
+        $excel = $reader->load($fileInfo['tmp_name']);
 
         //读取活动表
         $sheet = $excel->getActiveSheet();
