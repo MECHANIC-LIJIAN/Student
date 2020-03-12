@@ -18,7 +18,7 @@
                 <div class="alert alert-info" style="font-size: 16px;">显示数据集的前20条</div>
                 <div class="table-responsive">
                    <table class="table table-bordered">
-                    {volist name="dataInfo.options" id="vo"}
+                    {volist name="dataInfo.getDatas" id="vo"}
                     <tr>
                         <td>{$vo.content}</td>
                     </tr>
