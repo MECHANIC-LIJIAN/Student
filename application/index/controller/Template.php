@@ -46,6 +46,7 @@ class Template extends Controller
         cookie('ifCheck', 0);
         cookie('content',"");
 
+        dump($template);
         return $this->fetch('template', ['optionList' => $template['options'], 'tname' => $template['tname']]);
     }
 
