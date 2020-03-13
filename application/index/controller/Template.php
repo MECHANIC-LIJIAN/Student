@@ -12,30 +12,26 @@ class Template extends Controller
 
         $id = input('id');
 
-        // $redisKey = $id;
-        // $redis = new Redis();
-        // //判断是否过期
-        // $redis_status = $redis->exists($redisKey);
-        // if ($redis_status == false) {
-        //     //缓存失效，重新存入
-        //     //查询数据
-        //     $template = model("Templates")
-        //         ->where(['tid' => $id])
-        //         ->field('id,tid,tname,primaryKey,status,myData,options')
-        //         ->find();
-        //     //转换成字符串，有利于存储
-        //     $redisInfo = serialize($template);
-        //     //存入缓存
-        //     $redis->set($redisKey, $redisInfo);
-        //     //设置缓存周期，60秒
-        //     $redis->expire($redisKey, 10);
-        // }
-        // //获取缓存
-        // $template = unserialize($redis->get($redisKey));
-        $template = model("Templates")
-        ->where(['tid' => $id])
-        ->field('id,tid,tname,primaryKey,status,myData,options')
-        ->find();
+        $redisKey = $id;
+        $redis = new Redis();
+        //判断是否过期
+        $redis_status = $redis->exists($redisKey);
+        if ($redis_status == false) {
+            //缓存失效，重新存入
+            //查询数据
+            $template = model("Templates")
+                ->where(['tid' => $id])
+                ->field('id,tid,tname,primaryKey,status,myData,options')
+                ->find();
+            //转换成字符串，有利于存储
+            $redisInfo = serialize($template);
+            //存入缓存
+            $redis->set($redisKey, $redisInfo);
+            //设置缓存周期，60秒
+            $redis->expire($redisKey, 10);
+        }
+        //获取缓存
+        $template = unserialize($redis->get($redisKey));
         
         if (!$template || $template['status'] != 1) {
             return $this->fetch('template', ['info' => '该表单已关闭或未创建']);
@@ -48,8 +44,7 @@ class Template extends Controller
         session('template', $template);
         cookie('ifCheck', 0);
         cookie('content',"");
-
-        dump($template);
+        
         return $this->fetch('template', ['optionList' => $template['options'], 'tname' => $template['tname']]);
     }
 
