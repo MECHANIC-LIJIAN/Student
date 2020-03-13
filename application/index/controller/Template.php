@@ -38,21 +38,22 @@ class Template extends Controller
         }
 
        
-        $template['options'] = json_decode($template['options'], true);
-        $template['fields'] = array_keys($template['options']);
+        $optionList = json_decode($template['options'], true);
+        $template['fields'] = array_keys($optionList);
         
-        session('template', $template);
+        unset($template['options']);
+        cookie('template', $template);
         cookie('ifCheck', 0);
         cookie('content',"");
         
-        return $this->fetch('template', ['optionList' => $template['options'], 'tname' => $template['tname']]);
+        return $this->fetch('template', ['optionList' => $optionList, 'tname' => $template['tname']]);
     }
 
     public function collect()
     {
         if (request()->isAjax()) {
 
-            $template = json_decode(session('template'),true);
+            $template = json_decode(cookie('template'),true);
             $templateField = $template['fields'];
 
             #接受页面参数
