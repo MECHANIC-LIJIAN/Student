@@ -41,8 +41,10 @@ class Template extends Controller
             return $this->fetch('template', ['info' => '该表单已关闭或未创建']);
         }
 
-        $template['fields'] = array_keys(json_decode($template['options'], true));
-        unset($template['options'] );
+       
+        $template['options'] = json_decode($template['options'], true);
+        $template['fields'] = array_keys($template['options']);
+        
         cookie('template', $template);
         cookie('ifCheck', 0);
         cookie('content',"");
