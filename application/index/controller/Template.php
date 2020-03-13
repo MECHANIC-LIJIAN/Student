@@ -45,7 +45,7 @@ class Template extends Controller
         $template['options'] = json_decode($template['options'], true);
         $template['fields'] = array_keys($template['options']);
         
-        cookie('template', $template);
+        session('template', $template);
         cookie('ifCheck', 0);
         cookie('content',"");
 
@@ -57,7 +57,7 @@ class Template extends Controller
     {
         if (request()->isAjax()) {
 
-            $template = json_decode(cookie('template'),true);
+            $template = json_decode(session('template'),true);
             $templateField = $template['fields'];
 
             #接受页面参数
