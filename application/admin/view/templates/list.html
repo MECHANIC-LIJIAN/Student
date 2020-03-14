@@ -33,7 +33,7 @@
                                 <td><a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
                                         style="font-size:14px">{$vo.tname}</a> </td>
                                 {if session('admin.is_super')==1}<td>{$vo.username}</td>{/if}
-                                <td>{$vo.count}</td>
+                                <td>{$vo.datas_count}</td>
                                 <td>{$vo.mydata}</td>
                                 {if $vo.status==1}
                                 <td>
@@ -68,7 +68,7 @@
                                             class="fa fa-eye"></span>表单</a>
                                 </td>
                                 <td>{$vo.create_time|date='Y年m月d日 H:i'}</td>
-                                
+
                             </tr>
                             {/volist}
 

@@ -2,6 +2,7 @@
 
 namespace app\admin\model;
 
+use myredis\Redis;
 use Overtrue\Pinyin\Pinyin;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
@@ -14,17 +15,19 @@ class Templates extends Model
 {
     use SoftDelete;
 
+    #关联模板数据
     public function datas()
     {
-        return $this->hasMany('TemplatesDatas', 'tid', 'id');
+        return $this->hasMany('TemplatesDatas', 'tid', 'id')->field('tid');
     }
 
+    #关联自定义数据集
     public function getMyData()
     {
         return $this->hasOne('MyData', 'id', 'myData')->field('id,title');
     }
 
-
+    #关联用户信息
     public function getUser()
     {
         return $this->belongsTo('Admin', 'uid', 'id')->field('id,username');
@@ -47,7 +50,7 @@ class Templates extends Model
 
         //获取文件后缀
         $suffix = explode(".", $fileInfo['name'])[1];
-        
+
         //判断哪种类型
         if ($suffix == "xlsx") {
             $reader = new Xlsx();
@@ -76,28 +79,13 @@ class Templates extends Model
             }
             for ($rowIndex = 1; $rowIndex <= $row_num; $rowIndex++) {
                 $rowCell = $sheet->getCellByColumnAndRow($colIndex, $rowIndex)->getValue();
-                
-                if ($rowCell!==NULL) {
+
+                if ($rowCell !== null) {
                     $excelData[$colIndex][$rowIndex] = $rowCell;
-                } 
+                }
             }
         }
-        // return $excelData;
 
-        // #获取数组形式的原始数据并存到session
-        // for ($colIndex = 'A'; $colIndex <= $col_num; $colIndex++) {
-        //     if ($sheet->getCell($colIndex . 1)->getValue() == "") {
-        //         return "不能有空字段,请重新选择文件";
-        //     }
-        //     for ($rowIndex = 1; $rowIndex <= $row_num; $rowIndex++) {
-        //         $rowCell = $sheet->getCell($colIndex . $rowIndex)->getValue();
-        //         if ($rowCell != null) {
-        //             $excelData[$colIndex][$rowIndex] = $rowCell;
-        //         } else {
-        //             break;
-        //         }
-        //     }
-        // }
         #存储数据，第二步使用
         session('excelData', $excelData);
         return 1;
@@ -113,7 +101,7 @@ class Templates extends Model
     {
         #读数据
         $excelData = session('excelData');
-        
+
         $optionList = [];
         $tFields = [];
         for ($col = 1; $col <= count($excelData); $col++) {
@@ -224,12 +212,12 @@ class Templates extends Model
 
         $tInfo['options'] = $tDdata;
 
-        // return $tInfo;
         return $this->saveData($tInfo);
     }
 
     private function saveData($tInfo)
     {
+
         Db::startTrans();
         try {
             $tInfo['create_time'] = time();
@@ -243,6 +231,50 @@ class Templates extends Model
             // return $e->getMessage();
             return "初始化失败";
         }
+        $redis = new Redis();
+        $redisKey = 'templatelist_' . session('admin.id');
+        $redis->del($redisKey);
+        $this->getTemplates();
         return 1;
+    }
+
+    public function getTemplates()
+    {
+        $where = [];
+        if (session('admin.is_super') != 1) {
+            $where = ['uid' => session('admin.id')];
+        }
+
+        $redis = new Redis();
+        $redisKey = 'templatelist_' . session('admin.id');
+        //判断是否过期
+        $redis_status = $redis->exists($redisKey);
+        if ($redis_status == false) {
+            //缓存失效，重新存入
+            //查询数据
+            $templates = model('Templates')
+                ->where($where)
+                ->field('id,tid,uid,tname,myData,primaryKey,create_time,status')
+                ->withCount('datas')
+                ->with('getUser,getMyData')
+                ->order(['status' => 'asc', 'create_time' => 'desc'])
+                ->select()
+                ->toArray();
+
+            foreach ($templates as $value) {
+                $tmp = $value;
+                $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
+                $tmp['username'] = $tmp['get_user']['username'];
+                $tmp['mydata'] = $tmp['get_my_data']['title'];
+                // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
+                $redis->sAdd($redisKey, json_encode($tmp));
+            }
+
+            $redis->expire($redisKey,60);
+        }
+
+        $templates=$redis->sMembers($redisKey);
+
+        return $templates;
     }
 }

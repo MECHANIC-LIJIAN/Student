@@ -12,27 +12,11 @@ class Templates extends Base
      */
     function list() {
 
-        $where = [];
-        if (session('admin.is_super') != 1) {
-            $where = ['uid' => session('admin.id')];
-        }
+        $templates = model('Templates')->getTemplates();
 
-        $templates = model('Templates')
-            ->where($where)
-            ->field('id,tid,uid,tname,count,myData,primaryKey,create_time,status')
-            ->with('getUser,getMyData')
-            ->order(['status' => 'asc', 'create_time' => 'desc'])
-            ->select()
-            ->toArray();
-
-        $templateList=[];
+        $templateList = [];
         foreach ($templates as $value) {
-            $tmp=$value;
-            $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
-            $tmp['username'] = $tmp['get_user']['username'];
-            $tmp['mydata'] = $tmp['get_my_data']['title'];
-            // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
-            $templateList[]=$tmp;
+            $templateList[] = json_decode($value, true);
         }
 
         $this->assign('templates', $templateList);
@@ -62,9 +46,9 @@ class Templates extends Base
         if (request()->isAjax()) {
 
             $tInfo = model('Templates')->with('datas')->find(input('post.id'));
-            
+
             $result = $tInfo->together('datas')->delete();
-            
+
             if ($result == 1) {
                 $this->success('表单删除成功', 'admin/Templates/list');
             } else {

@@ -81,22 +81,6 @@ class Templates extends Model
 
     }
 
-    public function datasToMysql()
-    {
-        $redis = new Redis();
-        $redisKey = 'datalists';
-        if ($redis->scard($redisKey) > 10) {
-            $datas = $redis->sMembers($redisKey);
-        }
-
-        $redis->del($redisKey);
-        $datasToMysql = [];
-        foreach ($datas as $value) {
-            $datasToMysql[] = json_decode($value, true);
-        }
-
-        model("TemplatesDatas")->saveAll($datasToMysql);
-    }
 
     /**
      * 保存新数据
