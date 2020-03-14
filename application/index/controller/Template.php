@@ -2,14 +2,29 @@
 
 namespace app\index\controller;
 
+use myredis\Redis;
 use think\Controller;
-use think\cache\driver\Redis;
+
 class Template extends Controller
-{
+{    
+    public function datasToMysql()
+    {
+        $redis = new Redis();
+        $redisKey = 'datalists';
+        while(true){
+            $datas = $redis->sMembers($redisKey);
+            $redis->del($redisKey);
+            $datasToMysql = [];
+            foreach ($datas as $value) {
+                $datasToMysql[] = json_decode($value, true);
+            }
+            model("TemplatesDatas")->saveAll($datasToMysql);
+            sleep(3);
+        }
+    }
 
     public function readTemplate()
     {
-
         $id = input('id');
 
         $redisKey = $id;
@@ -28,24 +43,23 @@ class Template extends Controller
             //存入缓存
             $redis->set($redisKey, $redisInfo);
             //设置缓存周期，60秒
-            $redis->expire($redisKey, 10);
+            $redis->expire($redisKey, 60);
         }
         //获取缓存
         $template = unserialize($redis->get($redisKey));
-        
+
         if (!$template || $template['status'] != 1) {
             return $this->fetch('template', ['info' => '该表单已关闭或未创建']);
         }
 
-       
         $optionList = json_decode($template['options'], true);
         $template['fields'] = array_keys($optionList);
-        
+
         unset($template['options']);
         cookie('template', $template);
         cookie('ifCheck', 0);
-        cookie('content',"");
-        
+        cookie('content', "");
+
         return $this->fetch('template', ['optionList' => $optionList, 'tname' => $template['tname']]);
     }
 
@@ -53,7 +67,7 @@ class Template extends Controller
     {
         if (request()->isAjax()) {
 
-            $template = json_decode(cookie('template'),true);
+            $template = json_decode(cookie('template'), true);
             $templateField = $template['fields'];
 
             #接受页面参数
@@ -63,7 +77,7 @@ class Template extends Controller
 
             $data['content'] = json_encode($params);
             $data['tid'] = $template['id'];
-            
+
             #判断是否有主键
             if (!empty($template['primaryKey'])) {
                 #找出唯一字段的值
@@ -81,7 +95,7 @@ class Template extends Controller
                     $res = model('TemplatesDatas')->allowField(true)->save($data, ['id' => cookie('dataid')]);
                     if ($res) {
                         cookie('ifCheck', null);
-                        cookie('content','感谢您在'.$template['tname'].'的提交');
+                        cookie('content', '感谢您在' . $template['tname'] . '的提交');
                         $this->success('数据更新成功！', url('index/index/index'));
                     } else {
                         $this->error('数据更新失败！');
@@ -103,7 +117,7 @@ class Template extends Controller
             $res = model('Templates')->saveData($template, $data);
             if ($res == 1) {
                 cookie('ifCheck', null);
-                cookie('content','感谢您在'.$template['tname'].'的提交');
+                cookie('content', '感谢您在' . $template['tname'] . '的提交');
                 $this->success('提交成功！', url('index/index/index'));
             } else {
                 $this->error($res);

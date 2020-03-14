@@ -2,7 +2,7 @@
 
 namespace app\index\model;
 
-use think\cache\driver\Redis;
+use myredis\Redis;
 use think\Db;
 use think\Model;
 use think\model\concern\SoftDelete;
@@ -80,6 +80,24 @@ class Templates extends Model
         return 0;
 
     }
+
+    public function datasToMysql()
+    {
+        $redis = new Redis();
+        $redisKey = 'datalists';
+        if ($redis->scard($redisKey) > 10) {
+            $datas = $redis->sMembers($redisKey);
+        }
+
+        $redis->del($redisKey);
+        $datasToMysql = [];
+        foreach ($datas as $value) {
+            $datasToMysql[] = json_decode($value, true);
+        }
+
+        model("TemplatesDatas")->saveAll($datasToMysql);
+    }
+
     /**
      * 保存新数据
      *
@@ -87,37 +105,48 @@ class Templates extends Model
      */
     public function saveData($template, $data)
     {
-        $dataKey=$template['tid'].'_datas';
+    //     Db::startTrans();
+    //     try {
+    //         model('TemplatesDatas')->save($data);
+    //         #记录数加1
+    //         model('templates')
+    //             ->where('tid', $template['tid'])
+    //             ->setInc('count');
+    //         // 提交事务
+    //         Db::commit();
+    //     } catch (\Exception $e) {
+    //         // 回滚事务
+    //         Db::rollback();
+    //         // return $e->getMessage();
+    //         return '提交失败！';
+    //     }
+    //     return 1;
+        $dataKey = 'datalists';
 
         $redis = new Redis();
 
-        //判断是否过期
-        $redis_status = $redis->exists($dataKey);
-        if ($redis_status == false) {
-            //缓存失效，重新存入
-            $redis->set($dataKey, $data, 60);
-        }
-        //获取缓存
-        $datas = $redis->get($dataKey);
-        $datas[]=$data;
-        $redis->set($dataKey, $datas,60);
+        $res = $redis->sAdd($dataKey, json_encode($data));
 
-        // 启动事务
-        Db::startTrans();
-        try {
-            model('TemplatesDatas')->save($data);
-            #记录数加1
-            model('templates')
-                ->where('tid', $template['tid'])
-                ->setInc('count');
-            // 提交事务
-            Db::commit();
-        } catch (\Exception $e) {
-            // 回滚事务
-            Db::rollback();
-            // return $e->getMessage();
-            return '提交失败！';
+        if ($res == 1) {
+            return 1;
+        } else {
+            // 启动事务
+            Db::startTrans();
+            try {
+                model('TemplatesDatas')->save($data);
+                #记录数加1
+                model('templates')
+                    ->where('tid', $template['tid'])
+                    ->setInc('count');
+                // 提交事务
+                Db::commit();
+            } catch (\Exception $e) {
+                // 回滚事务
+                Db::rollback();
+                // return $e->getMessage();
+                return '提交失败！';
+            }
+            return 1;
         }
-        return 1;
     }
 }
