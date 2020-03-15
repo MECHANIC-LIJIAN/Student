@@ -5,6 +5,7 @@ namespace app\index\controller;
 use myredis\Redis;
 use think\Controller;
 use think\Db;
+use think\facade\Log;
 
 class Template extends Controller
 {
@@ -17,11 +18,11 @@ class Template extends Controller
         debug('test');
         $redis = new Redis();
         $redisKey = 'testdatalists';
-        $testDatas = model("TemplatesDatas")
+        $testDatas = Db::name("TemplatesDatas")
+        ->whereNull('delete_time')
             ->field('id', true)
             ->limit($limit)
-            ->select()
-            ->toArray();
+            ->select();
         $redis->del($redisKey);
 
         foreach ($testDatas as $value) {
@@ -59,10 +60,10 @@ class Template extends Controller
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
+            Log::write($e->getMessage(),'error');
         }
         debug('end');
         dump(debug('begin', 'end') . 's');
-        dump(debug('begin', 'end', 'm') . 'kb');
     }
 
     public function datasToMysql()
