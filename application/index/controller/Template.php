@@ -18,7 +18,7 @@ class Template extends Controller
         $redis = new Redis();
         $redisKey = 'testdatalists';
         $testDatas = Db::name("TemplatesDatas")
-            ->where('delete_time','<>',null)
+            ->whereNotNull('delete_time')
             ->field('id', true)
             ->limit($limit)
             ->select();
