@@ -56,10 +56,10 @@ class Redis
         $this->host = $this->config['host'];
         $this->redis->connect($this->host, $this->port, $this->attr['timeout']);
 
-        if ($this->config['auth']) {
-            $this->auth($this->config['auth']);
-            $this->auth = $this->config['auth'];
-        }
+        // if ($this->config['auth']) {
+        //     $this->auth($this->config['auth']);
+        //     $this->auth = $this->config['auth'];
+        // }
 
         $this->expireTime = time() + $this->attr['timeout'];
     }

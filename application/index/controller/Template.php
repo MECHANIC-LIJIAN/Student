@@ -17,18 +17,21 @@ class Template extends Controller
 
         debug('test');
         $redis = new Redis();
-        $redisKey = 'testdatalists';
-        $testDatas = Db::name("TemplatesDatas")
-        ->whereNull('delete_time')
-            ->field('id', true)
-            ->limit($limit)
-            ->select();
+        $redisKey = 'datalists';
+        
         $redis->del($redisKey);
+        $testDatas = Db::name("TemplatesDatas")
+            ->whereNull('delete_time')
+            ->limit($limit)
+            ->field('id',true)
+            ->select();
 
-        foreach ($testDatas as $value) {
-            $redis->lPush($redisKey, json_encode($value));
+        foreach ($testDatas as &$value) {
+            $value['update_time']=time();
+            $value['create_time']=time();
+            $redis->sAdd($redisKey, json_encode($value));
         }
-        dump($redis->lRange($redisKey, 0, 1));
+        dump($redis->sMembers($redisKey));
         echo debug('test', 'testend');
     }
     public function saveTestdatas()
@@ -36,31 +39,31 @@ class Template extends Controller
         dump("--------------------------------------");
         debug('begin');
         $redis = new Redis();
-        $redisKey = 'testdatalists';
-        $datas = $redis->lRange($redisKey, 0, -1);
+        $redisKey = 'datalists';
+        $datas = $redis->sMembers($redisKey);
 
         foreach ($datas as &$value) {
             $value = json_decode($value, true);
         }
-        dump($datas[0]);
+        dump($datas);
         debug('end');
         dump(debug('begin', 'end') . 's');
         dump(debug('begin', 'end', 'm') . 'kb');
 
-        
         dump("--------------------------------------");
         dump("db to mysql");
         debug('begin');
-        // 启动事务
+        #启动事务
         Db::startTrans();
         try {
-            Db::name('TemplatesDatas')->data($datas)->limit(100)->insertAll();
+            Db::name('TemplatesDatas')->limit(100)->insertAll($datas);
             // 提交事务
             Db::commit();
+            $redis->del($redisKey);
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            Log::write($e->getMessage(),'error');
+            Log::write($e->getMessage(), 'error');
         }
         debug('end');
         dump(debug('begin', 'end') . 's');
@@ -72,12 +75,21 @@ class Template extends Controller
         $redisKey = 'datalists';
         while (true) {
             $datas = $redis->sMembers($redisKey);
-            $redis->del($redisKey);
-            $datasToMysql = [];
-            foreach ($datas as $value) {
-                $datasToMysql[] = json_decode($value, true);
+            foreach ($datas as &$value) {
+                $value = json_decode($value, true);
             }
-            model("TemplatesDatas")->saveAll($datasToMysql);
+            // 启动事务
+            Db::startTrans();
+            try {
+                Db::name('TemplatesDatas')->limit(100)->insertAll($datas);
+                // 提交事务
+                Db::commit();
+                $redis->del($redisKey);
+            } catch (\Exception $e) {
+                // 回滚事务
+                Db::rollback();
+                Log::write($e->getMessage(), 'error');
+            }
             sleep(3);
         }
     }
