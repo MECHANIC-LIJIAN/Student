@@ -17,11 +17,11 @@ class Template extends Controller
         debug('test');
         $redis = new Redis();
         $redisKey = 'testdatalists';
-        $testDatas = Db::name("TemplatesDatas")
-            ->whereNotNull('delete_time')
+        $testDatas = model("TemplatesDatas")
             ->field('id', true)
             ->limit($limit)
-            ->select();
+            ->select()
+            ->toArray();
         $redis->del($redisKey);
 
         foreach ($testDatas as $value) {
