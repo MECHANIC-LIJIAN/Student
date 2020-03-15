@@ -18,7 +18,6 @@ class Template extends Controller
         $redis = new Redis();
         $redisKey = 'testdatalists';
         $testDatas = Db::name("TemplatesDatas")
-            ->where('id', '>', 100000)
             ->field('id', true)
             ->limit($limit)
             ->select();
