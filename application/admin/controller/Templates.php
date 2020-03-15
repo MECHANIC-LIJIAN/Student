@@ -12,11 +12,28 @@ class Templates extends Base
      */
     function list() {
 
-        $templates = model('Templates')->getTemplates();
+        $where = [];
+        if (session('admin.is_super') != 1) {
+            $where = ['uid' => session('admin.id')];
+        }
 
+        $templates = model('Templates')
+            ->where($where)
+            ->field('id,tid,uid,tname,myData,primaryKey,create_time,status')
+            // ->withCount('datas')
+            ->with('getUser,getMyData')
+            ->order(['status' => 'asc', 'create_time' => 'desc'])
+            ->select()
+            ->toArray();
         $templateList = [];
+        
         foreach ($templates as $value) {
-            $templateList[] = json_decode($value, true);
+            $tmp = $value;
+            $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
+            $tmp['username'] = $tmp['get_user']['username'];
+            $tmp['mydata'] = $tmp['get_my_data']['title'];
+            // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
+            $templateList[] = $tmp;
         }
 
         $this->assign('templates', $templateList);

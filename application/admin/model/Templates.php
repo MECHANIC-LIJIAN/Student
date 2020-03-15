@@ -231,10 +231,10 @@ class Templates extends Model
             // return $e->getMessage();
             return "初始化失败";
         }
-        $redis = new Redis();
-        $redisKey = 'templatelist_' . session('admin.id');
-        $redis->del($redisKey);
-        $this->getTemplates();
+        // $redis = new Redis();
+        // $redisKey = 'templatelist_' . session('admin.id');
+        // $redis->del($redisKey);
+        // $this->getTemplates();
         return 1;
     }
 

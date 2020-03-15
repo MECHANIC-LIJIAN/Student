@@ -4,14 +4,72 @@ namespace app\index\controller;
 
 use myredis\Redis;
 use think\Controller;
+use think\Db;
 
 class Template extends Controller
-{    
+{
+
+    public function getTestdatas()
+    {
+
+        $limit = input('limit', 1000);
+
+        debug('test');
+        $redis = new Redis();
+        $redisKey = 'testdatalists';
+        $testDatas = Db::name("TemplatesDatas")
+            ->where('id', '>', 100000)
+            ->field('id', true)
+            ->limit($limit)
+            ->select();
+        $redis->del($redisKey);
+
+        foreach ($testDatas as $value) {
+            $redis->lPush($redisKey, json_encode($value));
+        }
+        dump($redis->lRange($redisKey, 0, 1));
+        echo debug('test', 'testend');
+    }
+    public function saveTestdatas()
+    {
+        dump("--------------------------------------");
+        debug('begin');
+        $redis = new Redis();
+        $redisKey = 'testdatalists';
+        $datas = $redis->lRange($redisKey, 0, -1);
+
+        foreach ($datas as &$value) {
+            $value = json_decode($value, true);
+        }
+        dump($datas[0]);
+        debug('end');
+        dump(debug('begin', 'end') . 's');
+        dump(debug('begin', 'end', 'm') . 'kb');
+
+        
+        dump("--------------------------------------");
+        dump("db to mysql");
+        debug('begin');
+        // 启动事务
+        Db::startTrans();
+        try {
+            Db::name('TemplatesDatas')->data($datas)->limit(100)->insertAll();
+            // 提交事务
+            Db::commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            Db::rollback();
+        }
+        debug('end');
+        dump(debug('begin', 'end') . 's');
+        dump(debug('begin', 'end', 'm') . 'kb');
+    }
+
     public function datasToMysql()
     {
         $redis = new Redis();
         $redisKey = 'datalists';
-        while(true){
+        while (true) {
             $datas = $redis->sMembers($redisKey);
             $redis->del($redisKey);
             $datasToMysql = [];
