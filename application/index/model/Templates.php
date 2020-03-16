@@ -109,7 +109,7 @@ class Templates extends Model
 
         $redis = new Redis();
 
-        $res = $redis->sAdd($dataKey, json_encode($data));
+        $res = $redis->lPush($dataKey, json_encode($data));
 
         if ($res == 1) {
             return 1;

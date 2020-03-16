@@ -29,9 +29,9 @@ class Template extends Controller
         foreach ($testDatas as &$value) {
             $value['update_time']=time();
             $value['create_time']=time();
-            $redis->sAdd($redisKey, json_encode($value));
+            $redis->lPush($redisKey, json_encode($value));
         }
-        dump($redis->sMembers($redisKey));
+        dump($redis->lRange($redisKey,0,-1));
         echo debug('test', 'testend');
     }
     public function saveTestdatas()
@@ -40,7 +40,7 @@ class Template extends Controller
         debug('begin');
         $redis = new Redis();
         $redisKey = 'datalists';
-        $datas = $redis->sMembers($redisKey);
+        $datas = $redis->lRange($redisKey,0,-1);
 
         foreach ($datas as &$value) {
             $value = json_decode($value, true);
@@ -74,14 +74,14 @@ class Template extends Controller
         $redis = new Redis();
         $redisKey = 'datalists';
         while (true) {
-            $datas = $redis->sMembers($redisKey);
+            $datas = $redis->lRange($redisKey,0,-1);
             foreach ($datas as &$value) {
                 $value = json_decode($value, true);
             }
             // 启动事务
             Db::startTrans();
             try {
-                Db::name('TemplatesDatas')->limit(100)->insertAll($datas);
+                Db::name('TemplatesDatas')->data($datas)->limit(100)->insertAll();
                 // 提交事务
                 Db::commit();
                 $redis->del($redisKey);
@@ -147,6 +147,8 @@ class Template extends Controller
             }
 
             $data['content'] = json_encode($params);
+            $data['create_time'] = time();
+            $data['update_time'] = time();
             $data['tid'] = $template['id'];
 
             #判断是否有主键
