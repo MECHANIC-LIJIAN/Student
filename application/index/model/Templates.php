@@ -4,6 +4,7 @@ namespace app\index\model;
 
 use myredis\Redis;
 use think\Db;
+use think\facade\Log;
 use think\Model;
 use think\model\concern\SoftDelete;
 
@@ -81,7 +82,6 @@ class Templates extends Model
 
     }
 
-
     /**
      * 保存新数据
      *
@@ -89,31 +89,18 @@ class Templates extends Model
      */
     public function saveData($template, $data)
     {
-    //     Db::startTrans();
-    //     try {
-    //         model('TemplatesDatas')->save($data);
-    //         #记录数加1
-    //         model('templates')
-    //             ->where('tid', $template['tid'])
-    //             ->setInc('count');
-    //         // 提交事务
-    //         Db::commit();
-    //     } catch (\Exception $e) {
-    //         // 回滚事务
-    //         Db::rollback();
-    //         // return $e->getMessage();
-    //         return '提交失败！';
-    //     }
-    //     return 1;
         $dataKey = 'datalists';
 
         $redis = new Redis();
 
-        $res = $redis->lPush($dataKey, json_encode($data));
+        $oLen = $redis->lLen($dataKey);
 
-        if ($res == 1) {
+        $nLen = $redis->lPush($dataKey, serialize($data));
+
+        if ($nLen !== $oLen) {
             return 1;
         } else {
+            Log::warning("--未使用redis");
             // 启动事务
             Db::startTrans();
             try {
@@ -128,6 +115,7 @@ class Templates extends Model
                 // 回滚事务
                 Db::rollback();
                 // return $e->getMessage();
+                Log::error($e->getMessage());
                 return '提交失败！';
             }
             return 1;

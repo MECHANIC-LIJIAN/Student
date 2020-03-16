@@ -19,33 +19,37 @@ class Template extends Controller
         $redis = new Redis();
         $redisKey = 'datalists';
         
-        $redis->del($redisKey);
-        $testDatas = Db::name("TemplatesDatas")
-            ->whereNull('delete_time')
-            ->limit($limit)
-            ->field('id',true)
-            ->select();
+        // $redis->del($redisKey);
+        // $testDatas = Db::name("TemplatesDatas")
+        //     ->whereNull('delete_time')
+        //     ->limit($limit)
+        //     ->field('id',true)
+        //     ->select();
 
-        foreach ($testDatas as &$value) {
-            $value['update_time']=time();
-            $value['create_time']=time();
-            $redis->lPush($redisKey, json_encode($value));
-        }
-        dump($redis->lRange($redisKey,0,-1));
+        // foreach ($testDatas as &$value) {
+        //     $value['update_time']=time();
+        //     $value['create_time']=time();
+        //     $redis->lPush($redisKey, json_encode($value));
+        // }
+        dump($redis->lLen($redisKey));
         echo debug('test', 'testend');
     }
     public function saveTestdatas()
     {
+        
         dump("--------------------------------------");
         debug('begin');
         $redis = new Redis();
         $redisKey = 'datalists';
         $datas = $redis->lRange($redisKey,0,-1);
-
+        dump($redis->lLen($redisKey));
         foreach ($datas as &$value) {
-            $value = json_decode($value, true);
+            $value = unserialize($value);
+            if (empty($value['tid'])) {
+                dump($value);
+            }
         }
-        dump($datas);
+        
         debug('end');
         dump(debug('begin', 'end') . 's');
         dump(debug('begin', 'end', 'm') . 'kb');
@@ -53,6 +57,7 @@ class Template extends Controller
         dump("--------------------------------------");
         dump("db to mysql");
         debug('begin');
+        
         #启动事务
         Db::startTrans();
         try {
@@ -63,10 +68,12 @@ class Template extends Controller
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
+            dump($e->getMessage());
             Log::write($e->getMessage(), 'error');
         }
         debug('end');
         dump(debug('begin', 'end') . 's');
+        dump(debug('begin', 'end', 'm') . 'kb');
     }
 
     public function datasToMysql()
@@ -76,7 +83,7 @@ class Template extends Controller
         while (true) {
             $datas = $redis->lRange($redisKey,0,-1);
             foreach ($datas as &$value) {
-                $value = json_decode($value, true);
+                $value = unserialize($value);
             }
             // 启动事务
             Db::startTrans();
@@ -98,11 +105,10 @@ class Template extends Controller
     {
         $id = input('id');
 
-        $redisKey = $id;
+        $redisKey = 'template_'.$id;
         $redis = new Redis();
         //判断是否过期
-        $redis_status = $redis->exists($redisKey);
-        if ($redis_status == false) {
+        if ($redis->exists($redisKey)==0) {
             //缓存失效，重新存入
             //查询数据
             $template = model("Templates")
@@ -114,7 +120,7 @@ class Template extends Controller
             //存入缓存
             $redis->set($redisKey, $redisInfo);
             //设置缓存周期，60秒
-            $redis->expire($redisKey, 60);
+            $redis->expire($redisKey, 60*30);
         }
         //获取缓存
         $template = unserialize($redis->get($redisKey));
@@ -136,11 +142,13 @@ class Template extends Controller
 
     public function collect()
     {
-        if (request()->isAjax()) {
-
+        
+        if (1) {
+            
             $template = json_decode(cookie('template'), true);
             $templateField = $template['fields'];
 
+            $data['tid'] = $template['id'];
             #接受页面参数
             foreach ($templateField as $value) {
                 $params[$value] = input("post.$value");
@@ -149,7 +157,6 @@ class Template extends Controller
             $data['content'] = json_encode($params);
             $data['create_time'] = time();
             $data['update_time'] = time();
-            $data['tid'] = $template['id'];
 
             #判断是否有主键
             if (!empty($template['primaryKey'])) {
