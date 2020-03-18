@@ -32,9 +32,8 @@
                             <tr>
                                 <td><a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
                                         style="font-size:14px">{$vo.tname}</a> </td>
-                                {if session('admin.is_super')==1}<td>{$vo.username}</td>{/if}
-                                <!-- <td>{$vo.datas_count}</td> -->
-                                <td>{$vo.mydata}</td>
+                                {if session('admin.is_super')==1}<td>{present name="$vo.username"}{$vo.username}{/present}</td>{/if}
+                                <td>{present name="$vo.mydata"}{$vo.mydata}{/present}</td>
                                 {if $vo.status==1}
                                 <td>
                                     <span class="tempalte-status badge badge-pill badge-success"

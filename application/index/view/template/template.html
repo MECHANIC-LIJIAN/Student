@@ -83,7 +83,7 @@
                     <legend style="text-align: center;font-size:28px;">{$tname}</legend>
                     <!-- 输出input -->
                     {volist name="optionList" id="vo" key="k"}
-                        {eq name="$vo.options|count" value="0"}
+                        {notpresent name="$vo.options"}
                             <div class="form-group">
                                 <label for="{$key}" class="col-lg-10">
                                     {neq name="$vo.rule" value="text"}
@@ -129,7 +129,7 @@
                                     </div>
                                 </div>
                             {/elt}
-                        {/eq}
+                        {/notpresent}
                     {/volist}
                     <div class="form-group">
                         <input type="button" style="height: 40px;" class="btn btn-info form-control" id="submitOpt"

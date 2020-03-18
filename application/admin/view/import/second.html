@@ -126,23 +126,25 @@
                         </caption>
                         <tbody>
                             {volist name="optionList" id='option'}
-                            {if count($option.options)==0}
-                            <tr>
-                                <td><label for="{$option.content}"
-                                        class="col-lg-10 control-label">{$option.title}</label>
-                                </td>
-                                <td><input type="text" class="form-control" name="{$key}"></td>
-                            </tr>
-                            {else /}
-                            <tr>
-                                <td><label for="{$option.title}" class="col-lg-10 control-label">{$option.title}</label>
-                                </td>
-                                <td><select class="form-control">
-                                        {volist name="option.options" id="vo"}
-                                        <option name="{$key}">{$vo}</option>
-                                        {/volist}
-                                    </select></td>
-                            </tr>{/if}{/volist}
+                                {notpresent  name="$option.options"}
+                                    <tr>
+                                        <td><label for="{$key}"
+                                                class="col-lg-10 control-label">{$option.title}</label>
+                                        </td>
+                                        <td><input type="text" class="form-control" name="{$key}"></td>
+                                    </tr>
+                                {else /}
+                                    <tr>
+                                        <td><label for="{$key}" class="col-lg-10 control-label">{$option.title}</label>
+                                        </td>
+                                        <td><select class="form-control">
+                                                {volist name="option.options" id="vo"}
+                                                <option name="{$key}">{$vo}</option>
+                                                {/volist}
+                                            </select></td>
+                                    </tr>
+                                {/notpresent}
+                            {/volist}
                         </tbody>
                     </table>
                 </div>

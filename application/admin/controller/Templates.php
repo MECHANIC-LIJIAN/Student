@@ -27,11 +27,14 @@ class Templates extends Base
             ->toArray();
         $templateList = [];
         
+        
         foreach ($templates as $value) {
             $tmp = $value;
             $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
             $tmp['username'] = $tmp['get_user']['username'];
-            $tmp['mydata'] = $tmp['get_my_data']['title'];
+            if ($value['myData']!=null) {
+                $tmp['mydata'] = $tmp['get_my_data']['title'];
+            }
             // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
             $templateList[] = $tmp;
         }
