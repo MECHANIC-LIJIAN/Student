@@ -143,7 +143,7 @@ class Template extends Controller
     public function collect()
     {
         
-        if (1) {
+        if (request()->isAjax()) {
             
             $template = json_decode(cookie('template'), true);
             $templateField = $template['fields'];
