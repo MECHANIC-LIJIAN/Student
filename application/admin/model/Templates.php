@@ -228,7 +228,6 @@ class Templates extends Model
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            // return $e->getMessage();
             return "初始化失败";
         }
         // $redis = new Redis();

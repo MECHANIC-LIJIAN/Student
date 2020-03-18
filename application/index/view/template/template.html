@@ -83,50 +83,53 @@
                     <legend style="text-align: center;font-size:28px;">{$tname}</legend>
                     <!-- 输出input -->
                     {volist name="optionList" id="vo" key="k"}
-                    {eq name="$vo.options|count" value="0"}
-                    <div class="form-group">
-                        <label for="{$key}" class="col-lg-10">
-                            <font class="redInfo">*
-                            </font>{$k}.{$vo.title}
-                        </label>
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control  {$vo.rule}" id="{$key}" name="{$key}">
-                        </div>
-                    </div>
-                    {else /}
-                    {elt name="$vo.options|count" value="4"}
-                    <div class="form-group">
-                        <label for="{$key}" class="col-lg-10">
-                            <font class="redInfo">*
-                            </font>{$k}.{$vo.title}
-                        </label>
-                        <div class="col-lg-10">
-                            <ul class="list-group">
-                                {foreach name="vo.options" item="voo" key="kk"}
-                                <label style="width:100%;" class="list-group-item">
-                                    <input type="radio" name="{$key}" value="{$voo}"> {$voo}
+                        {eq name="$vo.options|count" value="0"}
+                            <div class="form-group">
+                                <label for="{$key}" class="col-lg-10">
+                                    {neq name="$vo.rule" value="text"}
+                                        <font class="redInfo">*
+                                        </font>
+                                    {/neq}
+                                    {$k}.&nbsp;&nbsp;{$vo.title}
                                 </label>
-                                {/foreach}
-                            </ul>
-                        </div>
-                    </div>
-                    {else /}
-                    <div class="form-group">
-                        <label for="{$key}" class="col-lg-10">
-                            <font class="redInfo">*
-                            </font>{$k}.{$vo.title}
-                        </label>
-                        <div class="col-lg-10">
-                            <select class="form-control" required="true" name="{$key}">
-                                <option value="">--请选择--</option>
-                                {volist name="vo.options" id="voo"}
-                                <option value="{$voo}">{$voo}</option>
-                                {/volist}
-                            </select>
-                        </div>
-                    </div>
-                    {/elt}
-                    {/eq}
+                                <div class="col-lg-10">
+                                    <input type="text" class="form-control  {$vo.rule|split}" id="{$key}" name="{$key}">
+                                </div>
+                            </div>
+                        {else /}
+                            {elt name="$vo.options|count" value="4"}
+                                <div class="form-group">
+                                    <label for="{$key}" class="col-lg-10">
+                                        <font class="redInfo">*
+                                        </font>{$k}.{$vo.title}
+                                    </label>
+                                    <div class="col-lg-10">
+                                        <ul class="list-group">
+                                            {foreach name="vo.options" item="voo" key="kk"}
+                                            <label style="width:100%;" class="list-group-item">
+                                                <input type="radio" name="{$key}" value="{$voo}" checked="true"> {$voo}
+                                            </label>
+                                            {/foreach}
+                                        </ul>
+                                    </div>
+                                </div>
+                            {else /}
+                                <div class="form-group">
+                                    <label for="{$key}" class="col-lg-10">
+                                        <font class="redInfo">*
+                                        </font>{$k}.{$vo.title}
+                                    </label>
+                                    <div class="col-lg-10">
+                                        <select class="form-control" required="true" name="{$key}">
+                                            <option value="">--请选择--</option>
+                                            {volist name="vo.options" id="voo"}
+                                            <option value="{$voo}">{$voo}</option>
+                                            {/volist}
+                                        </select>
+                                    </div>
+                                </div>
+                            {/elt}
+                        {/eq}
                     {/volist}
                     <div class="form-group">
                         <input type="button" style="height: 40px;" class="btn btn-info form-control" id="submitOpt"

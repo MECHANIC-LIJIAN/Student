@@ -70,7 +70,7 @@ function getInput(option_id) {
     ele +
     '<td><select class="form-control" name="' +
     option_id +
-    '_rule"><option value="text"">普通文本</option><option value="phone">手机号</option><option value="email">邮箱</option><option value="number">数字</option>';
+    '_rule"><option value="text|required"">普通文本</option><option value="phone|required">手机号</option><option value="email|required">邮箱</option><option value="number|required">数字</option><option value="text">非必填项</option>';
   ele = ele + "</select></td>";
   ele =
     ele +

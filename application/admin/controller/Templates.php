@@ -1,7 +1,7 @@
 <?php
 
 namespace app\admin\controller;
-
+use myredis\Redis;
 class Templates extends Base
 {
 
@@ -62,10 +62,12 @@ class Templates extends Base
     {
         if (request()->isAjax()) {
 
-            $tInfo = model('Templates')->with('datas')->find(input('post.id'));
+            $tInfo = model('Templates')->with('datas')->field('id,tid')->find(input('post.id'));
 
             $result = $tInfo->together('datas')->delete();
-
+            $redisKey = 'template_'.$tInfo['tid'];
+            $redis = new Redis();
+            $redis->del($redisKey);
             if ($result == 1) {
                 $this->success('表单删除成功', 'admin/Templates/list');
             } else {

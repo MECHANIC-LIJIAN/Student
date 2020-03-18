@@ -158,40 +158,6 @@
                     </div>
 
                     <div class="col-lg-3">
-                        <!-- <div class="panel panel-default" style="margin-top: 60px;">
-                            <div class="panel-body">
-                                <h5>请选择唯一标识字段</h5>
-                                <select class="select" name="primaryKey" id="primaryKey">
-                                </select>
-                                <div class="useData">
-                                    <h5>是否使用自定义数据集</h5>
-                                    <label>
-                                        <input type="radio" name="ifUseData" class="i-radio" value="1">
-                                        <span class="s-radio"></span>使用
-                                    </label>
-
-                                    <label>
-                                        <input type="radio" name="ifUseData" class="i-radio" value="0" checked>
-                                        <span class="s-radio"></span>不使用
-                                    </label>
-                                </div>
-                                <div class="hidden myData">
-                                    <h5>请选择数据集</h5>
-                                    {neq name="Think.session.myData|count" value="0"}
-                                    <select class="select" name="primaryKeyData" id="primaryKeyData">
-                                        {volist name="Think.session.myData" id="vo"}
-                                        <option value="{$vo.id}">{$vo.title}</option>
-                                        {/volist}
-                                    </select>
-                                    {else /}
-                                    <p class="alert alert-warning">您还没有数据集，请新建数据集</p>
-                                    {/neq}
-                                </div>
-                                <button class="btn btn-success initTemplate" type="button"
-                                    style="margin-top:20px;"><span class="fa fa-table"></span>
-                                    初始化表单</button>
-                            </div>
-                        </div> -->
                         <form class="form-box">
                             <div class="well">
                                 <div>
@@ -210,9 +176,7 @@
                                 <div class="hidden myKey">
                                     <h5>请选择唯一标识字段</h5>
                                     <select class="select" name="primaryKey" id="primaryKey">
-                                        {volist name="optionList" id='option'}
-                                        <option value="{$key}">{$option.title}</option>
-                                        {/volist}
+                                     
                                     </select>
                                 </div>
                             </div>

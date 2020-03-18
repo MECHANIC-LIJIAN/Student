@@ -69,3 +69,9 @@ function mailto($email, $content)
         exception($mail->ErrorInfo, 1001);
     }
 }
+
+
+function split($string){
+    
+    return implode(' ',explode('|',$string));
+}
