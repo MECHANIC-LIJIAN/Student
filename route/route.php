@@ -78,5 +78,13 @@ Route::group(
 
         Route::rule('system', 'admin/System/index', 'GET|POST');
 
+
+
+
+        Route::group('cov',function(){
+
+            Route::get('index','admin/Cov/index');
+            
+        });
     }
 );
