@@ -84,6 +84,7 @@ Route::group(
         Route::group('cov',function(){
 
             Route::get('index','admin/Cov/index');
+            Route::get('single/[:id]','admin/Cov/single');
             
         });
     }
