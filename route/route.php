@@ -12,6 +12,12 @@
 use think\facade\Route;
 // Route::rule('saveTestdatas', 'index/Template/saveTestdatas', 'GET|POST');
 // Route::rule('getTestdatas', 'index/Template/getTestdatas', 'GET|POST');
+
+
+
+Route::get('index','admin/Cov/index');
+Route::get('ip','index/Ip/index');
+
 Route::rule('datasToMysql', 'index/Template/datasToMysql', 'GET|POST');
 Route::rule('fill/:id', 'index/Template/readTemplate', 'GET|POST');
 Route::rule('/', 'index/index/index', 'GET|POST');
@@ -77,15 +83,5 @@ Route::group(
         Route::rule('adminDel', 'admin/Admin/del', 'GET|POST');
 
         Route::rule('system', 'admin/System/index', 'GET|POST');
-
-
-
-
-        Route::group('cov',function(){
-
-            Route::get('index','admin/Cov/index');
-            Route::get('single/[:id]','admin/Cov/single');
-            
-        });
     }
 );
