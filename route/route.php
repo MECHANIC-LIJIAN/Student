@@ -16,7 +16,7 @@ use think\facade\Route;
 
 
 Route::get('index','admin/Cov/index');
-Route::get('ip','index/Ip/index');
+// Route::get('ip','index/Ip/index');
 
 Route::rule('datasToMysql', 'index/Template/datasToMysql', 'GET|POST');
 Route::rule('fill/:id', 'index/Template/readTemplate', 'GET|POST');
