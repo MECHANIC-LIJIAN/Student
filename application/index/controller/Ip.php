@@ -9,7 +9,7 @@ class Ip extends Controller
     public function index()
     {
         $map = new Map();
-        $data = $map->locationByIP('120.216.132.137');
+        $data = $map->locationByIP(request()->ip());
         return json($data);
     }
 }
