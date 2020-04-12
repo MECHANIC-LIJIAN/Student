@@ -49,6 +49,7 @@ class Index extends Base
                 'conpass' => md5(input('post.conpass')),
                 'email' => input('post.email'),
                 'last_time' => time(),
+                'group_ids'=>['8']//默认普通用户组
             ];
             $result = model('Admin')->register($data);
             if ($result == 1) {

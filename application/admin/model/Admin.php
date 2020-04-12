@@ -116,16 +116,14 @@ class Admin extends Model
     public function edit($data)
     {
 
-        
         $validate = new \app\admin\validate\Admin();
         if (!$validate->scene('edit')->check($data)) {
             return $validate->getError();
         }
 
-        
-        $pass=$this->getFieldById($data['id'], 'password');
-        if($data['password']!==$pass){
-            $data['password']=md5($data['password']);
+        $pass = $this->getFieldById($data['id'], 'password');
+        if ($data['password'] !== $pass) {
+            $data['password'] = md5($data['password']);
         }
 
         // 启动事务
@@ -138,7 +136,7 @@ class Admin extends Model
                     'email' => $data['email'],
                 ]);
 
-            Db::name('AuthGroupAccess')->where(['uid'=>$data['id']])->delete();
+            Db::name('AuthGroupAccess')->where(['uid' => $data['id']])->delete();
             $uid = $data['id'];
             $group = [];
             foreach (explode(',', $data['group_ids']) as $k => $v) {
@@ -153,7 +151,7 @@ class Admin extends Model
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            return $e->getMessage();
+            // return $e->getMessage();
             return '修改失败！';
         }
 
@@ -167,7 +165,32 @@ class Admin extends Model
         if (!$validate->scene('register')->check($data)) {
             return $validate->getError();
         }
-        $result = $this->allowField(true)->save($data);
+
+        // 启动事务
+        Db::startTrans();
+        try {
+            $result = $this->allowField(true)->save($data);
+            $uid = $this->id;
+            if ($result) {
+                if (!empty($data['group_ids'])) {
+                    $group = [];
+                    foreach (explode(',', $data['group_ids']) as $k => $v) {
+                        $group[] = ['uid' => $uid,
+                            'group_id' => $v,
+                        ];
+                    }
+                    // halt($group);
+                    Db::name('AuthGroupAccess')->insertAll($group);
+                }
+            }
+            // 提交事务
+            Db::commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            Db::rollback();
+            // return $e->getMessage();
+            return '提交失败！';
+        }
         if ($result) {
             $user = new Admin();
             $keydate = time();
