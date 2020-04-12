@@ -2,16 +2,19 @@
 
 namespace app\admin\controller;
 
+use think\auth\Auth;
+use think\Db;
+
 class Admin extends Base
 {
+
     /**
      * 管理员列表
      *
      * @return void
      */
     function list() {
-        
-        $admins = model('Admin')->order(['is_super' => 'asc', 'status' => 'desc'])->paginate(10);
+        $admins = model('Admin')->order(['status' => 'desc'])->paginate(10);
         $this->assign('admins', $admins);
         return view();
     }
@@ -29,6 +32,7 @@ class Admin extends Base
                 'password' => md5(input('post.password')),
                 'conpass' => md5(input('post.conpass')),
                 'email' => input('post.email'),
+                'group_ids' => input('post.group_ids'),
                 'status' => 1,
                 'last_time' => time(),
             ];
@@ -39,6 +43,12 @@ class Admin extends Base
                 $this->error($result);
             }
         }
+        $groups = model('AuthGroup')->select();
+        $assign = array(
+            'groups' => $groups,
+        );
+
+        $this->assign($assign);
         return view();
     }
 
@@ -72,12 +82,11 @@ class Admin extends Base
             $data = [
                 'id' => input('post.id'),
                 'username' => input('post.username'),
-                'password' => md5(input('post.password')),
-                'conpass' => md5(input('post.conpass')),
+                'password' => input('post.password'),
                 'email' => input('post.email'),
-                'status' => input('post.status'),
+                'group_ids'=>input('post.group_ids'),
             ];
-            // dump($data);
+            // halt($data);
             $result = model('Admin')->edit($data);
             if ($result == 1) {
                 $this->success('管理员信息编辑成功!', 'admin/Admin/list');
@@ -85,14 +94,27 @@ class Admin extends Base
                 $this->error($result);
             }
         }
-        $adminInfo = model('Admin')->find(input('id'));
+
+        $uid=input('id');
+        
+        $auth=new Auth();
+        $adminInfo =model('Admin')->field(['id,username,password,email,create_time'])->find($uid);
+        
+        $allGroups=Db::name('AuthGroup')->field(['id,title'])->select();
+
+        $groups=Db::name('AuthGroupAccess')->where(['uid' => $uid])->column('group_id');
+
+        // halt($auth->getGroups($uid));
         if ($adminInfo) {
             $viewData = [
                 'adminInfo' => $adminInfo,
+                'groups' => $groups,
+                'all_group'=>$allGroups
             ];
+            // halt($groups);
             $this->assign($viewData);
             return view();
-        }else {
+        } else {
             $this->error('用户不存在');
         }
 

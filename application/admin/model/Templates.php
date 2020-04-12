@@ -18,7 +18,7 @@ class Templates extends Model
     #关联模板数据
     public function datas()
     {
-        return $this->hasMany('TemplatesDatas', 'tid', 'id')->field('tid');
+        return $this->hasMany('TemplatesDatas', 'tid', 'id')->field('tid,id');
     }
 
     #关联自定义数据集

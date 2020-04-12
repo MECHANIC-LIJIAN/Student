@@ -2,17 +2,24 @@
 
 namespace app\admin\controller;
 
+
 class Index extends Base
 {
-    /**
-     * 重复登录过滤
-     */
     public function initialize()
     {
+
         if (session('?admin.id')) {
             $this->redirect('admin/home/index');
         }
     }
+
+
+    public function index()
+    {
+        return view();
+    }
+
+    
     //后台登录
     public function login()
     {
@@ -32,7 +39,6 @@ class Index extends Base
         return view();
     }
 
-   
     //后台注册
     public function register()
     {

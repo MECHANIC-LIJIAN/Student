@@ -5,6 +5,15 @@
 <script src="__LIB__/layer/layer.js"></script>
 <script src="__LIB__/layer_mobile/layer.js"></script>
 <script>
+
+    $('.menu-dropdown').click(function(){
+        $('.submenu').each(function(index,element){
+            element.style.display='none'
+        })
+        $(this).next().slideDown(500);
+    })
+
+
     /**
      * 复制内容到粘贴板
      * content : 需要复制的内容

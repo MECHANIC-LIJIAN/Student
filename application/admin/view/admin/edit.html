@@ -16,10 +16,28 @@
             <div class="widget-body">
                 <form class="form-horizontal">
                     <div class="form-group">
-                        <input type="hidden" id="id" name="id" value="{$adminInfo.id}" />
-                        <label for="username" class="col-lg-2 control-label no-padding-right">用户账号</label>
+                        <label for="group_ids" class="col-lg-2 control-label no-padding-right">所属用户组</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" id="username" name="username" placeholder="用户账号"
+                            {volist name="all_group" id="v"}
+                            {$groups}
+                            {if condition="in_array($v['id'],$groups)"}
+                            {$v['title']}
+                            <input class="" type="checkbox" name="group_id" checked="checked" value="{$v['id']}">
+                            &emsp;
+                            {else /}
+                            {$v['title']}
+                            <input class="" type="checkbox" name="group_id" value="{$v['id']}">
+                            &emsp;
+                            {/if}
+                            {/volist}
+                            <input type="hidden" id="group_ids" name="group_ids">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" id="id" name="id" value="{$adminInfo.id}" />
+                        <label for="username" class="col-lg-2 control-label no-padding-right">用户名</label>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="用户名"
                                 value="{$adminInfo.username}" />
                         </div>
                     </div>
@@ -49,6 +67,7 @@
                             <button type="submit" class="btn btn-primary" name="adminEdit" id="adminEdit">保存修改</button>
                         </div>
                     </div>
+
                 </form>
             </div>
         </div>
@@ -60,6 +79,7 @@
     $(function () {
 
         $("#adminEdit").click(function () {
+            $("#group_ids").val($('input[type=checkbox]:checked').map(function () { return this.value }).get().join(','))
             $.ajax({
                 url: "{:url('admin/Admin/Edit')}",
                 type: 'post',

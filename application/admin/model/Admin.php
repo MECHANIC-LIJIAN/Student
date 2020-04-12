@@ -2,6 +2,7 @@
 
 namespace app\admin\model;
 
+use think\Db;
 use think\Model;
 use think\model\concern\SoftDelete;
 
@@ -77,12 +78,33 @@ class Admin extends Model
         if (!$validate->scene('add')->check($data)) {
             return $validate->getError();
         }
-        $result = $this->allowField(true)->save($data);
-        if ($result) {
-            return 1;
-        } else {
+
+        // 启动事务
+        Db::startTrans();
+        try {
+            $result = $this->allowField(true)->save($data);
+            $uid = $this->id;
+            if ($result) {
+                if (!empty($data['group_ids'])) {
+                    $group = [];
+                    foreach (explode(',', $data['group_ids']) as $k => $v) {
+                        $group[] = ['uid' => $uid,
+                            'group_id' => $v,
+                        ];
+                    }
+                    // halt($group);
+                    Db::name('AuthGroupAccess')->insertAll($group);
+                }
+            }
+            // 提交事务
+            Db::commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            Db::rollback();
+            // return $e->getMessage();
             return '添加失败！';
         }
+        return 1;
     }
 
     /**
@@ -93,22 +115,49 @@ class Admin extends Model
      */
     public function edit($data)
     {
-        // dump($data);
+
+        
         $validate = new \app\admin\validate\Admin();
         if (!$validate->scene('edit')->check($data)) {
             return $validate->getError();
         }
-        $result = $this->where('id', $data['id'])
-            ->update([
-                'username' => $data['username'],
-                'password' => $data['password'],
-                'email' => $data['email'],
-            ]);
-        if ($result !== false) {
-            return 1;
-        } else {
+
+        
+        $pass=$this->getFieldById($data['id'], 'password');
+        if($data['password']!==$pass){
+            $data['password']=md5($data['password']);
+        }
+
+        // 启动事务
+        Db::startTrans();
+        try {
+            $result = $this->where('id', $data['id'])
+                ->update([
+                    'username' => $data['username'],
+                    'password' => $data['password'],
+                    'email' => $data['email'],
+                ]);
+
+            Db::name('AuthGroupAccess')->where(['uid'=>$data['id']])->delete();
+            $uid = $data['id'];
+            $group = [];
+            foreach (explode(',', $data['group_ids']) as $k => $v) {
+                $group[] = ['uid' => $uid,
+                    'group_id' => $v,
+                ];
+            }
+            // halt($group);
+            Db::name('AuthGroupAccess')->insertAll($group);
+            // 提交事务
+            Db::commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            Db::rollback();
+            return $e->getMessage();
             return '修改失败！';
         }
+
+        return 1;
     }
 
     //注册账户

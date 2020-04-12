@@ -22,11 +22,28 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="sort" class="col-lg-2 control-label no-padding-right">邮箱</label>
+                        <label for="group_ids" class="col-lg-2 control-label no-padding-right">所属用户组</label>
+                        <div class="col-lg-6">
+                            {volist name="groups" id="v"}
+                            {$v['title']}
+                            <input class="" type="checkbox" name="group_id" value="{$v['id']}">
+                            &emsp;
+                            {/volist}
+                            <input type="hidden" id="group_ids" name="group_ids">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="col-lg-2 control-label no-padding-right">邮箱</label>
                         <div class="col-lg-6">
                             <input type="email" class="form-control" id="email" name="email" placeholder="邮箱" />
                         </div>
                     </div>
+                    <!-- <div class="form-group">
+                        <label for="phone" class="col-lg-2 control-label no-padding-right">手机</label>
+                        <div class="col-lg-6">
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="手机" />
+                        </div>
+                    </div> -->
                     <div class="form-group">
                         <label for="password" class="col-lg-2 control-label no-padding-right">用户密码</label>
                         <div class="col-lg-6">
@@ -58,6 +75,7 @@
     $(function () {
 
         $("#adminAdd").click(function () {
+            $("#group_ids").val($('input[type=checkbox]:checked').map(function () { return this.value }).get().join(','))
             $.ajax({
                 url: "{:url('admin/Admin/add')}",
                 type: 'post',

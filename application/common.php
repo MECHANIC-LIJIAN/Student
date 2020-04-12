@@ -18,13 +18,13 @@
  * @param $p_id     int    父级元素的id 实际上传递元素的主键
  * @return array
  */
-function getOptionList($data, $pid, $id, $p_id = '0')
+function getTree($data, $pid='pid', $id='id', $p_id = 0)
 {
     $tmp = array();
     foreach ($data as $key => $value) {
-        if ($value[$pid] == $p_id) {
-            $value['child'] = getOptionList($data, $pid, $id, $value[$id]);
-            $tmp[] = $value;
+        if ($value[$pid] === $p_id) {
+            $value['child'] = getTree($data, $pid, $id, $value[$id]);
+            $tmp[]  = $value;
         }
     }
     return $tmp;

@@ -126,7 +126,7 @@ class Template extends Base
             $map[] = ['tid', '=', $tId];
             #模糊搜索
             if ($search != "") {
-                $map[] = ["content->$primaryKey", 'like', "%$search%"];
+                $map[] = ["content", 'like', "%$search%"];
             }
 
             #判断是否为导出

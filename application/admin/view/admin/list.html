@@ -12,12 +12,9 @@
                 <i class="fa fa-arrow-left widget-icon"
                     onClick="window.location.href='{:url(\'admin/Home/index\')}';" /></i>
                 <span class="widget-caption">用户列表</span>
-                <div class="widget-buttons">
-                    {$admins|raw}
-                </div>
             </div>
             <div class="widget-body">
-
+                {$admins|raw}
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered text-nowrap">
                         <thead>
@@ -26,7 +23,6 @@
                                 <th>用户名</th>
                                 <th>邮箱</th>
                                 <th>状态</th>
-                                <th>权限</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -38,16 +34,18 @@
                                 <td>{$vo.username} </td>
                                 <td>{$vo.email}</td>
                                 <td>{if $vo.status==1}正常{else /}<p style="color:red;">禁用</p>{/if}</td>
-                                <td>{if $vo.is_super==1}超级用户{else /}普通用户{/if}</td>
-                                <td>{if session('admin.is_super')==1} {if $vo.status==1}
+                                <td>
+                                    {if $vo.status==1}
                                     <a href="#" class="admin-status btn btn-darkorange btn-xs" dataid="{$vo.id}"
-                                        status="{$vo.status}">禁用</a> {else /}
+                                        status="{$vo.status}">禁用</a>
+                                    {else /}
                                     <a href="#" class="admin-status btn btn-success btn-xs" dataid="{$vo.id}"
-                                        status="{$vo.status}">启用</a> {/if}
+                                        status="{$vo.status}">启用</a>
+                                    {/if}
                                     <a href=" {:url( 'admin/Admin/edit',[ 'id'=>$vo.id])}"
                                         class="btn btn-azure btn-xs">编辑</a>
                                     <a href="#" class="btn btn-danger btn-xs admin-del" dataid="{$vo.id}">删除</a>
-                                    {/if}
+
                                 </td>
                             </tr>
                             {/volist}

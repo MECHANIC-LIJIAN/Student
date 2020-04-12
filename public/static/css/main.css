@@ -5,7 +5,7 @@
   .widget-header {
     display: none;
   }
-  .form-control{
+  .form-control {
     margin-top: 20px;
   }
 }
@@ -48,14 +48,13 @@
   font-size: 16px;
   word-break: break-all;
 }
-.fun_grid>span {
+.fun_grid > span {
   width: 64px;
   height: 64px;
   display: block;
   text-align: justify;
   text-align-last: justify;
 }
-  
 
 a {
   text-decoration: none !important;

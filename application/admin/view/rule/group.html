@@ -1,0 +1,183 @@
+{extend name="public/admin_base"}
+
+{block name="title"}用户组管理{/block}
+{block name="page-main"}
+<div class="row">
+	<div class="col-lg-12">
+		<div class="widget">
+			<div class="widget-header">
+				<i class="fa fa-arrow-left widget-icon"
+					onClick="window.location.href='{:url(\'admin/Home/index\')}';" /></i>
+				<span class="widget-caption">用户组列表</span>
+			</div>
+			<div class="widget-body">
+				<div class="tabbable">
+					<ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+						<li class="active">
+							<a href="#home" data-toggle="tab">用户组列表</a>
+						</li>
+						<li>
+							<a href="javascript:;" onclick="add()">添加用户组</a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th>用户组名</th>
+								<th>操作</th>
+							</tr>
+							{volist name="data" id="v"}
+							<tr>
+								<td>{$v['title']}</td>
+								<td>
+									<a href="javascript:;" ruleId="{$v['id']}" ruleTitle="{$v['title']}"
+										onclick="edit(this)">修改</a> |
+									<a href="#" dataid="{$v['id']}" class="deleteThis">删除</a>
+									|
+									<a href="{:url('admin/rule/rule_group',array('id'=>$v['id']))}">分配权限</a> |
+									<a href="{:url('admin/rule/check_user',array('group_id'=>$v['id']))}">添加成员</a>
+								</td>
+							</tr>
+							{/volist}
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- 添加菜单模态框开始 -->
+			<div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+				aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+								&times;
+							</button>
+							<h4 class="modal-title" id="myModalLabel">
+								添加用户组
+							</h4>
+						</div>
+						<div class="modal-body">
+							<form id="group-add-form" class="form-inline">
+								<table class="table table-striped table-bordered table-hover table-condensed">
+									<tr>
+										<th width="15%">用户组名：</th>
+										<td>
+											<input class="input-medium" type="text" id="group-title" name="title">
+										</td>
+									</tr>
+									<tr>
+										<th></th>
+										<td>
+											<input class="btn btn-success" type="button" id="add-group" value="添加">
+										</td>
+									</tr>
+								</table>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 添加菜单模态框结束 -->
+
+			<!-- 修改菜单模态框开始 -->
+			<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+				aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+								&times;
+							</button>
+							<h4 class="modal-title" id="myModalLabel">
+								修改规则
+							</h4>
+						</div>
+						<div class="modal-body">
+							<form id="group-edit-form" class="form-inline">
+								<input type="hidden" name="id">
+								<table class="table table-striped table-bordered table-hover table-condensed">
+									<tr>
+										<th width="12%">规则名：</th>
+										<td>
+											<input class="input-medium" type="text" id="edit-group-title" name="title">
+										</td>
+									</tr>
+									<tr>
+										<th></th>
+										<td>
+											<input class="btn btn-success" type="button" id="edit-group" value="修改">
+										</td>
+									</tr>
+								</table>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 修改菜单模态框结束 -->
+{/block}
+{block name="page-js"}
+<script>
+	// 添加菜单
+	function add() {
+		$("input[name='title']").val('');
+		$('#bjy-add').modal('show');
+	}
+
+	// 修改菜单
+	function edit(obj) {
+		var ruleId = $(obj).attr('ruleId');
+		var ruletitle = $(obj).attr('ruletitle');
+		$("input[name='id']").val(ruleId);
+		$("input[name='title']").val(ruletitle);
+		$('#bjy-edit').modal('show');
+	}
+
+
+
+	$("#add-group").click(function () {
+		$.ajax({
+			url: "{:url('admin/rule/add_group')}",
+			type: 'post',
+			data: {
+				title: $("#group-title").val()
+			},
+			dataType: 'json',
+			success: function (data) {
+				if (data.code == 1) {
+					showMsgAndHref(data)
+				} else {
+					showErrorMsg(data.msg)
+				}
+			}
+		});
+	})
+
+	$("#edit-group").click(function () {
+		$.ajax({
+			url: "{:url('admin/rule/edit_group')}",
+			type: 'post',
+			data: $("#group-edit-form").serialize(),
+			dataType: 'json',
+			success: function (data) {
+				if (data.code == 1) {
+					showMsgAndHref(data)
+				} else {
+					showErrorMsg(data.msg)
+				}
+			}
+		});
+	})
+
+
+	$(".deleteThis").click(function () {
+		data = {
+			id: $(this).attr('dataid')
+		}
+		confirm('确定删除吗?', '删除确认', "{:url('admin/rule/delete_group')}", data)
+	})
+</script>
+{/block}

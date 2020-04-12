@@ -2,9 +2,6 @@
 
 namespace app\admin\controller;
 
-use think\Request;
-use think\Session;
-
 class Home extends Base
 {
     public function index()

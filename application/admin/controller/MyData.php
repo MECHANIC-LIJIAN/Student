@@ -2,10 +2,10 @@
 
 namespace app\admin\controller;
 
-use think\Controller;
+
 use think\Request;
 
-class MyData extends Controller
+class MyData extends Base
 {
     /**
      * 显示数据集列表

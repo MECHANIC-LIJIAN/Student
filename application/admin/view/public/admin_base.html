@@ -11,10 +11,18 @@
     <link href="__CSS__/font-awesome.min.css" rel="stylesheet" />
     <link id="beyond-link" href="__CSS__/beyond.min.css" rel="stylesheet" type="text/css" />
     <link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
-    {block name="page-style"}
     <style>
-    
-</style>
+        input[type=checkbox],
+        input[type=radio] {
+            opacity:unset;
+            position:unset;
+        }
+
+        a:hover{
+            cursor:pointer; 
+        }
+    </style>
+    {block name="page-style"}
     {/block}
 </head>
 
@@ -91,7 +99,8 @@
                         {if $Request.controller!="Home"}
                         <li><i class="fa fa-arrow-left" onClick="javascript:window.history.back(-1)" /></i></li>
                         {/if}
-                        <li><i class="fa fa-home" onClick="window.location.href='{:url(\'admin/Home/index\')}';"></i>控制面板</li>
+                        <li><i class="fa fa-home"
+                                onClick="window.location.href='{:url(\'admin/Home/index\')}';"></i>控制面板</li>
                         {block name="page-breadcrumb"}{/block}
                     </ul>
                 </div>
