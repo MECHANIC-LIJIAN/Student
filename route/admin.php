@@ -51,13 +51,6 @@ Route::group(
             Route::rule('del_data', 'admin/MyData/delete', 'POST')->ext('do');
         });
 
-
-        #Cov
-        Route::group('cov', function () {
-            Route::get('index','admin/Cov/index');
-            Route::rule('single', 'admin/Cov/single', 'GET|POST');
-        });
-
         #用户
         Route::rule('adminList', 'admin/Admin/list', 'GET');
         Route::rule('adminAdd', 'admin/Admin/add', 'GET|POST');

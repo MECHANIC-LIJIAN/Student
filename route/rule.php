@@ -10,7 +10,6 @@ Route::group(
         Route::rule('edit', 'admin/rule/edit', "POST");
         Route::rule('delete', 'admin/rule/delete', "POST");
 
-
         Route::rule('group', 'admin/rule/group', "GET|POST");
         Route::rule('add_group', 'admin/rule/add_group', "POST"); 
         Route::rule('edit_group', 'admin/rule/edit_group', "POST");
@@ -24,7 +23,5 @@ Route::group(
         Route::rule('admin_user_list', 'admin/rule/admin_user_list', "GET|POST");
         Route::rule('add_admin', 'admin/rule/add_admin', "GET|POST");
         Route::rule('edit_admin', 'admin/rule/edit_group', "GET|POST");
-
-
     }
 );
