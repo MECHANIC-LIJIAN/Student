@@ -41,7 +41,7 @@ class Base extends Controller
         $rule_name = $request->module() . '/' . $request->controller() . '/' . $request->action();
         $this->uid = $userRow['id'];
 
-        if ($userRow['id'] > 10) {
+        if ($userRow['id'] > 0) {
             if (in_array(strtolower($rule_name), $exception_arth_list)) {
                 $result = true;
             } else {

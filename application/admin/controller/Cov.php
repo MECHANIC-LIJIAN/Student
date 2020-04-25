@@ -15,9 +15,8 @@ class Cov extends Base
     {
 
         $reportList = Db::name('cov')->field('id,title,status,date')->order('date','desc')->select();
-        $reportDate = array_column($reportList, 'date');
-
-        if (in_array(2, $this->groupIds)) {
+        
+        if (in_array(9, $this->groupIds)) {
             return view('index', ['datas' => $reportList]);
         } else {
             $reportedDate = Db::name('cov_reports')->where(['uid' => $this->uid])->field('date')->column('date');

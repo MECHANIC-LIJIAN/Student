@@ -15,7 +15,7 @@
                         <thead>
                             <tr>
                                 <th>标题</th>
-                                <th>状态</th>
+                                <!-- <th>状态</th> -->
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -23,7 +23,7 @@
                             {volist name="datas" id="vo"}
                             <tr>
                                 <td>{$vo.title} </td>
-                                <td>{if $vo.status==1}正常{else /}<p style="color:red;">禁用</p>{/if}</td>
+                                <!-- <td>{if $vo.status==1}正常{else /}<p style="color:red;">禁用</p>{/if}</td> -->
                                 <td>
                                     <a href="{:url('admin/Cov/perDayReports',['date'=>$vo.date,'sid'=>15])}"
                                         class="btn btn-success btn-xs">查看</a>
