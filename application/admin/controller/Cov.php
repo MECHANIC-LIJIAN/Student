@@ -26,7 +26,7 @@ class Cov extends Base
                     $reportList[$k]['ifReport'] = 1;
                 }
             }
-            dump($reportList);
+            
             return view('index_b', ['datas' => $reportList]);
         }
 

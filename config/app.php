@@ -19,9 +19,9 @@ return [
     // 应用地址
     'app_host'               => '60.205.179.34:8080',
     // 应用调试模式
-    'app_debug'              => false,
+    'app_debug'              => env('app_debug', false),
     // 应用Trace
-    'app_trace'              => false,
+    'app_trace'              =>  env('app_trace', false),
     // 是否支持多模块
     'app_multi_module'       => true,
     // 入口自动绑定模块
