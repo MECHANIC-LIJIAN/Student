@@ -1,0 +1,35 @@
+{extend name="public/admin_base"}
+
+{block name="page-main"}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="widget">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+                <li class="active">
+                    <a href="#index" data-toggle="tab">报告列表</a>
+                </li>
+            </ul>
+            <div class="widget-body tab-content">
+                <div id="index" class="table-responsive tab-pane fade in active">
+                    <table class="table table-hover table-bordered text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>标题</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {volist name="datas" id="vo"}
+                            <tr>
+                                <td>{$vo.title} </td>
+                                <td>{if $vo.ifReport==1}已提交{else /}<a href="{:url('admin/cov/reporter',['date'=>$vo.date])}" >去提交</a>{/if}</td>
+                            </tr>
+                            {/volist}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

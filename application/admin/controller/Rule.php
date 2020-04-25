@@ -63,7 +63,7 @@ class Rule extends Base
             $this->error($validate->getError());
         }
         // halt($data);
-        $result = model('AuthRule')->isUpdate(true)->editData($map,$data);
+        $result = model('AuthRule')->isUpdate(true)->editData($map, $data);
         if ($result) {
             $this->success('修改成功', url('Admin/Rule/index'));
         } else {
@@ -237,13 +237,16 @@ class Rule extends Base
             'group_id' => $data['group_id'],
         );
         $res = model('AuthGroupAccess')->where($map)->find();
-        
+
         if ($res === null) {
             unset($data['username']);
-            $res2=Db::name('AuthGroupAccess')->insert($data);
+            $res2 = Db::name('AuthGroupAccess')->insert($data);
         }
-        
-        $this->success('操作成功', url('Admin/Rule/check_user', array('group_id' => $data['group_id'], 'username' => $data['username'])));
+        if ($res2) {
+            $this->success('操作成功', url('Admin/Rule/check_user', array('group_id' => $data['group_id'], 'username' => $data['username'])));
+        } else {
+            $this->error('操作失败');
+        }
     }
 
     /**

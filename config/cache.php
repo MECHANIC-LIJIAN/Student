@@ -29,7 +29,7 @@ return [
         'type'   => 'file',
         // 设置不同的缓存保存目录
         'path'   => '../runtime/file/',
-    ],  
+    ],
     // redis缓存
     'redis'   =>  [
         // 驱动方式

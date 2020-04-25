@@ -23,5 +23,5 @@ return [
     'type'           => 'redis',
     // 是否自动开启 SESSION
     'auto_start'     => true,
-    'expire'=>604800
+    'expire'=>60*60*24
 ];

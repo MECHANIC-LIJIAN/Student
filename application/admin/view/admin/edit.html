@@ -87,12 +87,7 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.code == 1) {
-                        layer.msg(data.msg, {
-                            icon: 6,
-                            time: 2000
-                        }, function () {
-                            location.href = data.url;
-                        });
+                        showMsgAndHref(data)
                     } else {
                         layer.open({
                             title: '修改失败',

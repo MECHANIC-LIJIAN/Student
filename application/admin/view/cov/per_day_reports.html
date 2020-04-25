@@ -1,0 +1,93 @@
+{extend name="public/admin_base"}
+
+{block name="page-main"}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="widget">
+            <div class="widget-header">
+                <span class="widget-caption">{$title}</span>
+            </div>
+            <div class="widget-body">
+                <div class="table-responsive">
+                    {$datas|raw}
+                    <table class="table table-hover table-bordered text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>报告人</th>
+                                <th>情况单</th>
+                                <th>电话截图</th>
+                            </tr>
+                        </thead>
+                        <style>
+                            .report_pic {
+                                width: 150px;
+
+                            }
+
+                            /*使图片在浏览器中居中显示*/
+                            .bigImg {
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                /*图片向左移动自身宽度的50%, 向上移动自身高度的50%。*/
+                                transform: translate(-50%, -50%);
+                            }
+
+                            /*遮罩层*/
+                            .opacityBottom {
+                                width: 100%;
+                                height: 100%;
+                                position: fixed;
+                                background: rgba(0, 0, 0, 0.8);
+                                z-index: 1000;
+                                top: 0;
+                                left: 0;
+                            }
+                        </style>
+                        <tbody>
+                            {volist name="datas"" id="vo"}
+                            <tr>
+                                <td style="width: 50px;">{$vo.uid} </td>
+                                <td style="width: 30%;"><img class="report_pic" src="/{$vo.report_pic_path}" alt=""
+                                        srcset=""></td>
+                                <td>
+                                    {volist name="$vo.phone_pic_path" id="vvo"}
+                                    <img class="report_pic" src="/{$vvo}" alt="" srcset="">
+                                    {/volist}
+                                </td>
+                            </tr>
+                            {/volist}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+    {block name="page-js"}
+    <script type="text/javascript">
+        $('img').click(function () {
+            //获取图片路径
+            var imgsrc = $(this).attr("src");
+            var opacityBottom = '<div class="opacityBottom" style = "display:none"><img class="bigImg" src="' + imgsrc + '"></div>';
+            $(document.body).append(opacityBottom);
+            toBigImg();//变大函数
+
+        });
+
+        function toBigImg() {
+            $(".opacityBottom").addClass("opacityBottom");//添加遮罩层
+            $(".opacityBottom").show();
+            $("html,body").addClass("none-scroll");//下层不可滑动
+            $(".bigImg").addClass("bigImg");//添加图片样式
+            $(".opacityBottom").click(function () {
+                //点击关闭
+                $("html,body").removeClass("none-scroll");
+                $(".opacityBottom").remove();
+            });
+        }
+    </script>
+
+    {/block}

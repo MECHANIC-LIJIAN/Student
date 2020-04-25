@@ -33,9 +33,5 @@ class Rule extends Validate
     {
         return $this->only(['username', 'password', 'conpass', 'email']);
     }
-    //重置密码场景验证
-    public function sceneReset()
-    {
-        return $this->only(['code', 'password', 'conpass', 'email'])->remove('email', 'unique');
-    }
+
 }

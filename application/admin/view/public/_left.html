@@ -1,114 +1,114 @@
 <!-- Page Sidebar -->
 <div class="page-sidebar" id="sidebar">
     <ul class="nav sidebar-menu">
-        {if condition="session('admin.id')>5"}
-        {volist name="authList" id="vo"}
-        {if $vo.id==1}
-        <li>
-            <a href="{:url('admin/Home/index')}">
-                <i class="menu-icon fa fa-home"></i>
-                <span class="menu-text">后台首页</span>
-            </a>
-        </li>
+        {if condition="session('admin.id')>0"}
+            {volist name="authList" id="vo"}
+                {if $vo.id==1}
+                <li>
+                    <a href="{:url('admin/Home/index')}">
+                        <i class="menu-icon fa fa-home"></i>
+                        <span class="menu-text">后台首页</span>
+                    </a>
+                </li>
+                {else /}
+                <li {if $Think.get.sid==$vo.id} class="open"{/if}>
+                    <a class="menu-dropdown">
+                        <i class="menu-icon fa {$vo.icon}"></i>
+                        <span class="menu-text">{$vo.title}</span>
+                        <i class="menu-expand"></i>
+                    </a>
+                    <ul class="submenu" style="display: none;">
+                        {volist name="$vo.child" id="vv"}
+                        <li>
+                            <a href="{:url($vv.name,['sid'=>$vo.id])}">
+                                <span class="menu-text">{$vv.title}</span>
+                            </a>
+                        </li>
+                        {/volist}
+                    </ul>
+                </li>
+                {/if}
+            {/volist}
         {else /}
-        <li>
-            <a class="menu-dropdown">
-                <i class="menu-icon fa {$vo.icon}"></i>
-                <span class="menu-text">{$vo.title}</span>
-                <i class="menu-expand"></i>
-            </a>
-            <ul class="submenu" style="display: none;">
-                {volist name="$vo.child" id="vv"}
-                <li>
-                    <a href="{:url($vv.name)}">
-                        <span class="menu-text">{$vv.title}</span>
-                    </a>
-                </li>
-                {/volist}
-            </ul>
-        </li>
-        {/if}
-        {/volist}
-        {else /}
-        <li>
-            <a href="{:url('admin/Home/index')}">
-                <i class="menu-icon fa fa-home"></i>
-                <span class="menu-text">后台首页</span>
-            </a>
-        </li>
-        <li>
-            <a class="menu-dropdown">
-                <i class="menu-icon fa fa-list-alt"></i>
-                <span class="menu-text">表单管理</span>
-                <i class="menu-expand"></i>
-            </a>
-            <ul class="submenu" style="display: none;">
-                <li>
-                    <a href="{:url('admin/Templates/list')}">
-                        <span class="menu-text">表单列表</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{:url('admin/Templates/add')}">
-                        <span class="menu-text">添加表单</span>
-                    </a>
+            <li>
+                <a href="{:url('admin/Home/index')}">
+                    <i class="menu-icon fa fa-home"></i>
+                    <span class="menu-text">后台首页</span>
+                </a>
+            </li>
+            <li>
+                <a class="menu-dropdown">
+                    <i class="menu-icon fa fa-list-alt"></i>
+                    <span class="menu-text">表单管理</span>
+                    <i class="menu-expand"></i>
+                </a>
+                <ul class="submenu" style="display: none;">
+                    <li>
+                        <a href="{:url('admin/Templates/list')}">
+                            <span class="menu-text">表单列表</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{:url('admin/Templates/add')}">
+                            <span class="menu-text">添加表单</span>
+                        </a>
 
-                </li>
-            </ul>
-        </li>
-        <li>
-            <a class="menu-dropdown">
-                <i class="menu-icon fa fa-database"></i>
-                <span class="menu-text">我的数据集</span>
-                <i class="menu-expand"></i>
-            </a>
-            <ul class="submenu" style="display: none;">
-                <li>
-                    <a href="{:url('admin/MyData/index')}">
-                        <span class="menu-text">数据集列表</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <a class="menu-dropdown">
-                <i class="menu-icon fa"></i>
-                <span class="menu-text">Cov2020</span>
-                <i class="menu-expand"></i>
-            </a>
-            <ul class="submenu" style="display: none;">
-                <li>
-                    <a href="{:url('admin/Cov/index')}">
-                        <span class="menu-text">工作台</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <a class="menu-dropdown">
-                <i class="menu-icon fa fa-users"></i>
-                <span class="menu-text">权限管理</span>
-                <i class="menu-expand"></i>
-            </a>
-            <ul class="submenu" style="display: none;">
-                <li>
-                    <a href="{:url('admin/Rule/index')}">
-                        <span class="menu-text">权限列表</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{:url('admin/Rule/group')}">
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a class="menu-dropdown">
+                    <i class="menu-icon fa fa-database"></i>
+                    <span class="menu-text">我的数据集</span>
+                    <i class="menu-expand"></i>
+                </a>
+                <ul class="submenu" style="display: none;">
+                    <li>
+                        <a href="{:url('admin/MyData/index')}">
+                            <span class="menu-text">数据集列表</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a class="menu-dropdown">
+                    <i class="menu-icon fa"></i>
+                    <span class="menu-text">Cov2020</span>
+                    <i class="menu-expand"></i>
+                </a>
+                <ul class="submenu" style="display: none;">
+                    <li>
+                        <a href="{:url('admin/Cov/index')}">
+                            <span class="menu-text">工作台</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a class="menu-dropdown">
+                    <i class="menu-icon fa fa-users"></i>
+                    <span class="menu-text">权限管理</span>
+                    <i class="menu-expand"></i>
+                </a>
+                <ul class="submenu" style="display: none;">
+                    <li>
+                        <a href="{:url('admin/Rule/index')}">
+                            <span class="menu-text">权限列表</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{:url('admin/Rule/group')}">
 
-                        <span class="menu-text">用户组管理</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{:url('admin/Admin/list')}">
-                        <span class="menu-text">用户列表</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
+                            <span class="menu-text">用户组管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{:url('admin/Admin/list')}">
+                            <span class="menu-text">用户列表</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
         {/if}
     </ul>
 </div>

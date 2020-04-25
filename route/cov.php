@@ -6,8 +6,10 @@ use think\facade\Route;
 Route::group(
     'admin/cov',
     function () {
-        Route::get('index', 'index');
-        Route::rule('single', 'single', 'GET|POST');
-        Route::post('cov_ajax_upload', 'ajaxUpload');
+        Route::get('index', 'admin/cov/index');
+        Route::rule('reporter/[:date]', 'admin/cov/reporter','GET|POST');
+        Route::rule('newreport', 'admin/cov/newreport','GET|POST');
+        Route::rule('per_day_reports/:date', 'admin/cov/perDayReports','GET|POST');
+        Route::post('cov_ajax_upload', 'admin/cov/ajaxUpload');
     }
-)->prefix('admin/cov/');
+);

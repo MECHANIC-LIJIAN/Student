@@ -8,20 +8,16 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="widget">
-			<div class="widget-header">
-                <i class="fa fa-arrow-left widget-icon"
-                    onClick="window.location.href='{:url(\'admin/Home/index\')}';" /></i>
-                <span class="widget-caption">权限列表</span>
-            </div>
+			<ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+				<li class="active">
+					<a href="#home" data-toggle="tab">权限列表</a>
+				</li>
+				<li>
+					<a href="javascript:;" onclick="add()">添加权限</a>
+				</li>
+			</ul>
 			<div class="widget-body">
-				<ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
-					<li class="active">
-						<a href="#home" data-toggle="tab">权限列表</a>
-					</li>
-					<li>
-						<a href="javascript:;" onclick="add()">添加权限</a>
-					</li>
-				</ul>
+				
 				<div class="tab-content">
 					<table class="table table-striped table-bordered table-hover table-condensed">
 						<tr>
@@ -148,6 +144,12 @@
 									<td>
 										<input class="input-medium" type="text" name="name"> 输入模块/控制器/方法即可 例如
 										Admin/Rule/index
+									</td>
+								</tr>
+								<tr>
+									<th>图标：</th>
+									<td>
+										<input class="input-medium" type="text" name="icon">
 									</td>
 								</tr>
 								<tr>
