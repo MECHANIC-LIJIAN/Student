@@ -8,3 +8,4 @@ thinkphp
 public/uploads/
 public/pma/
 config/app.php
+config/database.php
