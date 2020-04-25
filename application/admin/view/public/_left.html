@@ -1,7 +1,7 @@
 <!-- Page Sidebar -->
 <div class="page-sidebar" id="sidebar">
     <ul class="nav sidebar-menu">
-        {if condition="session('admin.id')>0"}
+        {if condition="session('admin.id')>10"}
             {volist name="authList" id="vo"}
                 {if $vo.id==1}
                 <li>
