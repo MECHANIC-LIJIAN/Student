@@ -34,11 +34,11 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <div class="form-group text-align-right" style="margin-top: 20px;">
-                    <a href="{:url('admin/Cov/newReport')}"><button type="button" class="btn btn-info">
-                            添加今日报告
-                        </button></a>
+                    <button type="button" id="newReport" class="btn btn-info">
+                        添加今日报告
+                    </button>
                 </div>
             </div>
         </div>
@@ -75,5 +75,23 @@
         });
         return false;
     });
+
+    $("#newReport").click(function () {
+        $.ajax({
+            url: "{:url('admin/Cov/newReport')}",
+            type: 'post',
+            data: {
+                "{$token}":''
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.code == 1) {
+                    showMsg(data.msg)
+                } else {
+                    showErrorMsg(data.msg)
+                }
+            }
+        });
+    })
 </script>
 {/block}

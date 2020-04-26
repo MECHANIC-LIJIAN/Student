@@ -59,6 +59,11 @@
                             {/volist}
                         </tbody>
                     </table>
+                    <div class="form-group text-align-right" style="margin-top: 20px;">
+                        <a href="{:url('admin/Cov/downPerDayReports',['date'=>$date])}"><button type="button" id="downReport" class="btn btn-info">
+                            下载今日报告
+                        </button></a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -66,28 +71,31 @@
 </div>
 {/block}
 
-    {block name="page-js"}
-    <script type="text/javascript">
-        $('img').click(function () {
-            //获取图片路径
-            var imgsrc = $(this).attr("src");
-            var opacityBottom = '<div class="opacityBottom" style = "display:none"><img class="bigImg" src="' + imgsrc + '"></div>';
-            $(document.body).append(opacityBottom);
-            toBigImg();//变大函数
+{block name="page-js"}
 
+<script type="text/javascript">
+
+
+    $('img').click(function () {
+        //获取图片路径
+        var imgsrc = $(this).attr("src");
+        var opacityBottom = '<div class="opacityBottom" style = "display:none"><img class="bigImg" src="' + imgsrc + '"></div>';
+        $(document.body).append(opacityBottom);
+        toBigImg();//变大函数
+
+    });
+
+    function toBigImg() {
+        $(".opacityBottom").addClass("opacityBottom");//添加遮罩层
+        $(".opacityBottom").show();
+        $("html,body").addClass("none-scroll");//下层不可滑动
+        $(".bigImg").addClass("bigImg");//添加图片样式
+        $(".opacityBottom").click(function () {
+            //点击关闭
+            $("html,body").removeClass("none-scroll");
+            $(".opacityBottom").remove();
         });
+    }
+</script>
 
-        function toBigImg() {
-            $(".opacityBottom").addClass("opacityBottom");//添加遮罩层
-            $(".opacityBottom").show();
-            $("html,body").addClass("none-scroll");//下层不可滑动
-            $(".bigImg").addClass("bigImg");//添加图片样式
-            $(".opacityBottom").click(function () {
-                //点击关闭
-                $("html,body").removeClass("none-scroll");
-                $(".opacityBottom").remove();
-            });
-        }
-    </script>
-
-    {/block}
+{/block}

@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use app\admin\model\Cov as ModelCov;
 use app\admin\model\CovReports;
 use think\Db;
+use ZipArchive;
 
 class Cov extends Base
 {
@@ -14,8 +15,11 @@ class Cov extends Base
     public function index()
     {
 
-        $reportList = Db::name('cov')->field('id,title,status,date')->order('date','desc')->select();
-        
+        $reportList = Db::name('cov')->field('id,title,status,date')->order('date', 'desc')->select();
+
+        $this->assign([
+            'token' => time(),
+        ]);
         if (in_array(9, $this->groupIds)) {
             return view('index', ['datas' => $reportList]);
         } else {
@@ -25,7 +29,7 @@ class Cov extends Base
                     $reportList[$k]['ifReport'] = 1;
                 }
             }
-            
+
             return view('index_b', ['datas' => $reportList]);
         }
 
@@ -67,21 +71,20 @@ class Cov extends Base
     public function perDayReports()
     {
 
-        $list = model('cov_reports')->where(['date'=>input('date')])->field('id,uid,date,report_pic_path,phone_pic_path')->paginate(5);
+        $list = model('cov_reports')->where(['date' => input('date')])->field('id,uid,date,report_pic_path,phone_pic_path')->paginate(5);
 
-        $title=Db::name('cov')->getFieldByDate(input('date'),'title');
-        foreach($list as $k => $v){
-           $v['phone_pic_path']=explode('|',trim($v['phone_pic_path'],"|"));
+        $oneReport = Db::name('cov')->where(['date' => input('date')])->field('title,date')->find();
+        foreach ($list as $k => $v) {
+            $v['phone_pic_path'] = explode('|', trim($v['phone_pic_path'], "|"));
         }
         $this->assign([
             'datas' => $list,
-            'title'=>$title
+            'title' => $oneReport['title'],
+            'date' => $oneReport['date'],
         ]);
-        
+
         return view();
     }
-
-
 
     /**
      * 上报页面
@@ -96,7 +99,7 @@ class Cov extends Base
             $covReports = new CovReports();
             $res = $covReports->allowField(true)->save($reportDatas);
             if ($res) {
-                $this->success('提交成功',url('admin/cov/index'));
+                $this->success('提交成功', url('admin/cov/index'));
             } else {
                 $this->error('提交失败');
             }
@@ -105,10 +108,10 @@ class Cov extends Base
         $reportDatas = [
             'uid' => $this->uid,
             'date' => input('date'),
-            'pic_date'=>date("m.d",input('date'))
+            'pic_date' => date("m.d", input('date')),
         ];
         cookie('reportDatas', $reportDatas);
-        
+
         $this->assign([
             'token' => time(),
         ]);
@@ -129,7 +132,7 @@ class Cov extends Base
 
         if ($type === 's') {
             $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . '1.png';
-            $info = $files->validate(['size' => 1920 * 1920, 'ext' => 'jpg,png'])->move('uploads/cov/2020/' . $reportDatas['pic_date'] , $imgName, true);
+            $info = $files->validate(['size' => 1920 * 1920, 'ext' => 'jpg,png'])->move('uploads/cov/2020/' . $reportDatas['pic_date'], $imgName, true);
 
             if (!$info) {
                 $this->error('上传失败');
@@ -159,5 +162,41 @@ class Cov extends Base
 
         // 成功上传后 获取上传信息
         $this->success('上传成功');
+    }
+
+    public function downPerDayReports()
+    {
+
+        $date = date("m.d", input('date'));
+        $path = '/home/li/opt/nginx/html/student/public/uploads/cov/2020/';
+        $zipFile = $date . '.zip';
+        $picPath = $path . $date;
+
+        $zip = new ZipArchive();
+        $overwrite = false;
+        if ($zip->open($path . $zipFile, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
+            return "无法下载";
+        }
+        $handler = opendir($picPath); //打开当前文件夹由$path指定。
+
+        while (($filename = readdir($handler)) !== false) {
+            if ($filename != "." && $filename != "..") { //文件夹文件名字为'.'和‘..'，不要对他们进行操作
+                //将文件加入zip对象
+                $zip->addFile($picPath . "/" . $filename, $filename);
+            }
+        }
+        closedir($path);
+        $zip->close();
+        $filename = $path . $zipFile;
+        header("Cache-Control: public");
+        header("Content-Description: File Transfer");
+        header('Content-disposition: attachment; filename=' . basename($filename)); //文件名
+        header("Content-Type: application/zip"); //zip格式的
+        header("Content-Transfer-Encoding: binary"); //告诉浏览器，这是二进制文件
+        header('Content-Length: ' . filesize($filename)); //告诉浏览器，文件大小
+        ob_clean();
+        flush();
+        @readfile($filename);
+
     }
 }

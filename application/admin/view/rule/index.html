@@ -30,7 +30,7 @@
 							<td>{$vo['title']}</td>
 							<td>{$vo['name']}</td>
 							<td>
-								<a href="javascript:;" ruleId="{$vo['id']}" onclick="add_child(this)">添加子权限</a> |
+								<a href="javascript:;" ruleId="{$vo['id']}" level="{$vo['level']}" onclick="add_child(this)">添加子权限</a> |
 								<a href="javascript:;" ruleId="{$vo['id']}" ruleName="{$vo['name']}"
 									ruleTitle="{$vo['title']}" onclick="edit(this)">修改</a> |
 								<a dataid="{$vo.id}" class="deleteThis">删除</a>
@@ -41,25 +41,25 @@
 							<td>|—— {$vo2['title']}</td>
 							<td>{$vo2['name']}</td>
 							<td>
-								<a href="javascript:;" ruleId="{$vo2['id']}" onclick="add_child(this)">|—— 添加子权限</a> |
+								<a href="javascript:;" ruleId="{$vo2['id']}" level="{$vo2['level']}"  onclick="add_child(this)">|—— 添加子权限</a> |
 								<a href="javascript:;" ruleId="{$vo2['id']}" ruleName="{$vo2['name']}"
 									ruleTitle="{$vo2['title']}" onclick="edit(this)">修改</a> |
 
 								<a dataid="{$vo2.id}" class="deleteThis">删除</a>
 							</td>
 						</tr>
-						{volist name="vo2.child" id="vo3"}
-						<tr>
-							<td>|&nbsp;&nbsp;&nbsp;&nbsp;|—— {$vo3['title']}</td>
-							<td>{$vo3['name']}</td>
-							<td>|———
-								<a href="javascript:;" ruleId="{$vo3['id']}" ruleName="{$vo3['name']}"
-									ruleTitle="{$vo3['title']}" onclick="edit(this)">修改</a> |
+							{volist name="vo2.child" id="vo3"}
+							<tr>
+								<td>|&nbsp;&nbsp;&nbsp;&nbsp;|—— {$vo3['title']}</td>
+								<td>{$vo3['name']}</td>
+								<td>|———
+									<a href="javascript:;" ruleId="{$vo3['id']}" ruleName="{$vo3['name']}"
+										ruleTitle="{$vo3['title']}" onclick="edit(this)">修改</a> |
 
-								<a dataid="{$vo3.id}" class="deleteThis">删除</a>
-							</td>
-						</tr>
-						{/volist}
+									<a dataid="{$vo3.id}" class="deleteThis">删除</a>
+								</td>
+							</tr>
+							{/volist}
 						{/volist}
 						{/volist}
 					</table>
@@ -100,6 +100,12 @@
 									<th>图标：</th>
 									<td>
 										<input class="input-medium" type="text" name="icon">
+									</td>
+								</tr>
+								<tr>
+									<th>等级:</th>
+									<td>
+										<input disabled class="input-medium" type="text" name="level">
 									</td>
 								</tr>
 								<tr>
@@ -173,15 +179,22 @@
 		function add() {
 			$("input[name='title'],input[name='name']").val('');
 			$("input[name='pid']").val(0);
+			$("input[name='level']").val(1);	
 			$('#bjy-add').modal('show');
 		}
 
 		// 添加子菜单
 		function add_child(obj) {
 			var ruleId = $(obj).attr('ruleId');
+			var level = $(obj).attr('level');
 			$("input[name='pid']").val(ruleId);
 			$("input[name='title']").val('');
 			$("input[name='name']").val('');
+			if(level==="1"){
+				$("input[name='level']").val(2);	
+			}else{
+				$("input[name='level']").val(3);	
+			}
 			$('#bjy-add').modal('show');
 		}
 
@@ -192,7 +205,7 @@
 			var ruleName = $(obj).attr('ruleName');
 			$("input[name='id']").val(ruleId);
 			$("input[name='title']").val(ruletitle);
-			$("input[name='name']").val(ruleName);
+			$("input[name='name']").val(ruleName);	
 			$('#bjy-edit').modal('show');
 		}
 

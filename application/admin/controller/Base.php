@@ -40,31 +40,35 @@ class Base extends Controller
         $request = Request::instance();
         $rule_name = $request->module() . '/' . $request->controller() . '/' . $request->action();
         $this->uid = $userRow['id'];
+        // $this->groupIds = $auth->getGroups($this->uid);
+        // dump($this->groupIds);
+        if (in_array(strtolower($rule_name), $exception_arth_list)) {
+            $result = true;
+        } else {
+            $result = $auth->check($rule_name, $this->uid);
+        }
 
-        if ($userRow['id'] > 0) {
-            if (in_array(strtolower($rule_name), $exception_arth_list)) {
-                $result = true;
-            } else {
-                $result = $auth->check($rule_name, $this->uid);
-            }
-
-            if (!$result) {
-                $this->error('您没有权限访问', url('admin/index/login'));
-            }
-            
-            if (request()->isGet()) {
+        // halt($auth->getAuthList($this->uid,$type=1));
+        if (!$result) {
+            $this->error('您没有权限访问');
+        }
+        
+        if (request()->isGet()) {
+            $authList=Session::get('_auth_list_'.$this->uid);
+            $this->groupIds =Session::get('_auth_groups_'.$this->uid);
+            // $authList=null;
+            if($authList===null||$authList===''){
                 $groupIds = Db::name('AuthGroupAccess')->whereUid('=', $userRow['id'])->column('group_id');
-                $this->groupIds=$groupIds;
-                $ruleIds = Db::name('AuthGroup')->whereId('in', $groupIds)->column('rules');
-    
-                $ruleIds = explode(',', implode(',', $ruleIds));
                 
-                $list = Db::name('AuthRule')->whereId('in', $ruleIds)->field(['id,name,title,pid,icon'])->select();
-                // dump($auth->getGroups($userRow['id']));
+                $ruleIds = Db::name('AuthGroup')->whereId('in', $groupIds)->column('rules');
+                $ruleIds = explode(',', implode(',', $ruleIds));
+                $list = Db::name('AuthRule')->whereId('in', $ruleIds)->where('level','<>',3)->field(['id,name,title,pid,icon'])->select();
                 $authList = getTree($list);
-                View::share(['authList' => $authList]);
+                // dump($authList);
+                Session::set('_auth_list_'.$this->uid,$authList);
+                Session::set('_auth_groups_'.$this->uid,$groupIds);
             }
-            
+            View::share(['authList' => $authList]);
         }
 
     }
