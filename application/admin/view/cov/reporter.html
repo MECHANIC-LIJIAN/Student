@@ -48,14 +48,15 @@
         language: 'zh', //设置语言
         uploadUrl: '{:url("admin/cov/ajaxUpload")}', //上传的地址
         allowedFileExtensions: ['jpg', 'gif', 'png'],//接收的文件后缀
-        uploadAsync: false,//异步上传
+        uploadAsync: true,
         browseClass: "btn btn-primary", //按钮样式
         removeFromPreviewOnError: true,//是否移除校验文件失败的文件
         overwriteInitial: false,  // 覆盖初始预览内容和标题设置
         dropZoneEnabled: false,//是否显示拖拽区域   
         showCancel: false, // 显示取消按钮
         showZoom: false,     // 显示预览按钮
-        showUpload: false,
+        
+        showUpload: true,
         showRemove: false,
         autoReplace: true,
         minImageWidth: 50, //图片的最小宽度
@@ -79,7 +80,17 @@
             showZoom: false,                                    // 显示预览按钮
             showDrag: false,                                        // 显示拖拽
         },
-    }).on("filebatchuploadsuccess", function (event, data, previewId, index) {
+    }).on('fileerror', function (event, data, msg) {
+        // 清除当前的预览图 ，并隐藏 【移除】 按钮
+        $(event.target)
+            .fileinput('clear')
+            .fileinput('unlock')
+        $(event.target)
+            .parent()
+            .siblings('.fileinput-remove')
+            .hide()
+            
+    }).on("fileuploaded", function (event, data, previewId, index) {
         var res = data.response
         if (res.code === 1) {
             showMsg(res.msg)
@@ -92,7 +103,7 @@
         theme: 'explorer-fa',
         dropZoneEnabled: false,//是否显示拖拽区域
         language: 'zh', //设置语言
-        uploadUrl:  '{:url("admin/cov/ajaxUpload")}', //上传的地址
+        uploadUrl: '{:url("admin/cov/ajaxUpload")}', //上传的地址
         allowedFileExtensions: ['jpg', 'gif', 'png'],//接收的文件后缀
         browseClass: "btn btn-primary", //按钮样式
         removeFromPreviewOnError: true,//是否移除校验文件失败的文件

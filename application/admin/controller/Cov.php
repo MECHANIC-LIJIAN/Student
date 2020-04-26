@@ -56,7 +56,7 @@ class Cov extends Base
         } else {
             $res = $cov->save($data);
             if ($res) {
-                $this->success('今日报告创建成功',url("admin/cov/index"));
+                $this->success('今日报告创建成功', url("admin/cov/index"));
             } else {
                 $this->error('创建失败');
             }
@@ -130,6 +130,9 @@ class Cov extends Base
         $files = request()->file('file_pic');
         $reportDatas = cookie('reportDatas');
 
+        if(!$files){
+            $this->error('上传失败');
+        }
         if ($type === 's') {
             $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . '1.png';
             $info = $files->validate(['size' => 1920 * 1920, 'ext' => 'jpg,png'])->move('uploads/cov/2020/' . $reportDatas['pic_date'], $imgName, true);
@@ -168,7 +171,7 @@ class Cov extends Base
     {
 
         $date = date("m.d", input('date'));
-        $path = env('ROOT_PATH').'public/uploads/cov/2020/';
+        $path = env('ROOT_PATH') . 'public/uploads/cov/2020/';
         $zipFile = $date . '.zip';
         $picPath = $path . $date;
 
