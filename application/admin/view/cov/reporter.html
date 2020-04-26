@@ -79,8 +79,6 @@
             showZoom: false,                                    // 显示预览按钮
             showDrag: false,                                        // 显示拖拽
         },
-    }).on("filebatchselected", function (event, files) {
-        $(this).fileinput("upload");
     }).on("filebatchuploadsuccess", function (event, data, previewId, index) {
         var res = data.response
         if (res.code === 1) {
