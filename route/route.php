@@ -14,7 +14,7 @@ use think\facade\Route;
 // Route::rule('getTestdatas', 'index/Template/getTestdatas', 'GET|POST');
 
 
-
+Route::rule('public/uploads', 'public/uploads', 'GET|POST');
 Route::rule('/', 'index/index/index', 'GET|POST');
 
 Route::rule('fill/:id', 'index/Template/readTemplate', 'GET|POST');
