@@ -27,7 +27,7 @@
                                 <td>
                                     <a href="{:url('admin/Cov/perDayReports',['date'=>$vo.date,'sid'=>15])}"
                                         class="btn btn-success btn-xs">查看</a>
-                                    <a href="#" class="btn btn-danger btn-xs report-del" dataid="{$vo.id}">删除</a>
+                                    <!-- <a href="#" class="btn btn-danger btn-xs report-del" dataid="{$vo.id}">删除</a> -->
                                 </td>
                             </tr>
                             {/volist}
@@ -86,7 +86,7 @@
             dataType: 'json',
             success: function (data) {
                 if (data.code == 1) {
-                    showMsg(data.msg)
+                    showMsgAndHref(data)
                 } else {
                     showErrorMsg(data.msg)
                 }

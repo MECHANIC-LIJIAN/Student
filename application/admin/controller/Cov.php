@@ -56,7 +56,7 @@ class Cov extends Base
         } else {
             $res = $cov->save($data);
             if ($res) {
-                $this->success('今日报告创建成功');
+                $this->success('今日报告创建成功',url("admin/cov/newReport"));
             } else {
                 $this->error('创建失败');
             }
