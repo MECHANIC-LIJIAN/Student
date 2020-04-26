@@ -168,7 +168,7 @@ class Cov extends Base
     {
 
         $date = date("m.d", input('date'));
-        $path = '/home/li/opt/nginx/html/student/public/uploads/cov/2020/';
+        $path = env('ROOT_PATH').'uploads/cov/2020/';
         $zipFile = $date . '.zip';
         $picPath = $path . $date;
 
