@@ -21,23 +21,29 @@
             <div class="header bg-themeprimary">
                 常用功能
             </div>
-                {volist name="authList" id="vo"}
-                {if $vo.id!=1}
-                <div class="row">
-                    <div class="col-lg-12">
-                        <legend style="font-size: 16px;">{$vo.title}</legend>
-                        {volist name="$vo.child" id="vv"}
-                        <a href="{:url($vv.name,['sid'=>$vo.id])}">
-                            <div class="col-xs-4 fun_grid">
+            {volist name="authList" id="vo"}
+            {if $vo.id!=1}
+            <div class="row">
+                <div class="col-lg-12">
+                    <legend style="font-size: 14px;">{$vo.title}</legend>
+                    {volist name="$vo.child" id="vv"}
+                    <a href="{:url($vv.name,['sid'=>$vo.id])}">
+                        <div class="col-xs-2 home-icon">
+                            <div class="home-icon-fa">
+                                <i style="color: rgba(89, 144, 216, 0.76);" class="fa {$vv.icon} fa-3x fa-fw" aria-hidden="true"></i>
+                            </div>
+                            <div class="home-icon-text">
                                 <span>{$vv.title}</span>
                             </div>
-                        </a>
-                        {/volist}
-                    </div>
+                        </div>
+                        <!-- <span>{$vv.title}</span> -->
+                    </a>
+                    {/volist}
                 </div>
-                {/if}
-                {/volist}
-                
+            </div>
+            {/if}
+            {/volist}
+
             <div class="footer"></div>
         </div>
         <!-- <table class="table table-hover table-bordered">
@@ -72,4 +78,17 @@
             </table> -->
     </div>
 </div>
+{/block}
+
+
+{block name="page-js"}
+<script language="javascript">
+    //防止页面后退
+    history.pushState(null, null, document.URL);
+    window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL);
+    });
+</script>
+
+
 {/block}

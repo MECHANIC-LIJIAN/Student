@@ -5,14 +5,14 @@
                 {if $vo.id==1}
                 <li>
                     <a href="{:url('admin/Home/index')}">
-                        <i class="menu-icon fa fa-home"></i>
+                        <i class="fa fa-home fa-lg fa-fw" aria-hidden="true"></i>
                         <span class="menu-text">后台首页</span>
                     </a>
                 </li>
                 {else /}
                 <li {if $Think.get.sid==$vo.id} class="open"{/if}>
                     <a class="menu-dropdown">
-                        <i class="menu-icon fa {$vo.icon}"></i>
+                        <i class="fa {$vo.icon} fa-lg fa-fw" aria-hidden="true"></i>
                         <span class="menu-text">{$vo.title}</span>
                         <i class="menu-expand"></i>
                     </a>

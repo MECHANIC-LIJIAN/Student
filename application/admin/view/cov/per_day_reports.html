@@ -21,11 +21,12 @@
                         <style>
                             .report_pic {
                                 width: 150px;
-
                             }
 
                             /*使图片在浏览器中居中显示*/
                             .bigImg {
+                                max-height: 80%;
+                                max-width: 90%;
                                 position: absolute;
                                 top: 50%;
                                 left: 50%;
@@ -45,14 +46,22 @@
                             }
                         </style>
                         <tbody>
-                            {volist name="datas"" id="vo"}
+                            {volist name="datas"" id="vo" empty="暂时没有数据"}
                             <tr>
-                                <td style="width: 50px;">{$vo.uid} </td>
-                                <td style="width: 30%;"><img class="report_pic" src="/{$vo.report_pic_path}" alt=""
-                                        srcset=""></td>
+                                <td style="width: 50px;">{$vo.get_profile.username} </td>
+
+                                <td style="width: 30%;">
+                                    
+                                    <a href="#" class="toBigPic" picPath="/{$vo.report_pic_path}">
+                                        <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                    </a>
+                                    <!-- <img class="report_pic" src="/{$vo.report_pic_path}" alt="" srcset=""></td> -->
                                 <td>
-                                    {volist name="$vo.phone_pic_path" id="vvo"}
-                                    <img class="report_pic" src="/{$vvo}" alt="" srcset="">
+                                    {volist name="$vo.phone_pic_path" id="vvo" key="k"}
+                                    <a href="#" class="toBigPic" picPath="/{$vvo}">
+                                        <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                    </a>
+                                    <!-- <img class="report_pic" src="/{$vvo}" alt="" srcset=""> -->
                                     {/volist}
                                 </td>
                             </tr>
@@ -60,9 +69,10 @@
                         </tbody>
                     </table>
                     <div class="form-group text-align-right" style="margin-top: 20px;">
-                        <a href="{:url('admin/Cov/downPerDayReports',['date'=>$date])}"><button type="button" id="downReport" class="btn btn-info">
-                            下载今日报告
-                        </button></a>
+                        <a href="{:url('admin/Cov/downPerDayReports',['date'=>$date])}"><button type="button"
+                                id="downReport" class="btn btn-info">
+                                下载今日报告
+                            </button></a>
                     </div>
                 </div>
             </div>
@@ -75,14 +85,19 @@
 
 <script type="text/javascript">
 
-
+    $('.toBigPic').click(function () {
+        //获取图片路径
+        var imgsrc = $(this).attr("picPath");
+        var opacityBottom = '<div class="opacityBottom" style = "display:none"><img class="bigImg" src="' + imgsrc + '"></div>';
+        $(document.body).append(opacityBottom);
+        toBigImg();//变大函数
+    });
     $('img').click(function () {
         //获取图片路径
         var imgsrc = $(this).attr("src");
         var opacityBottom = '<div class="opacityBottom" style = "display:none"><img class="bigImg" src="' + imgsrc + '"></div>';
         $(document.body).append(opacityBottom);
         toBigImg();//变大函数
-
     });
 
     function toBigImg() {

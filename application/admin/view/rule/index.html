@@ -1,8 +1,7 @@
 {extend name="public:admin_base"}
 {block name="title"}权限列表{/block}
 {block name="page-breadcrumb"}
-<li>权限管理</li>
-<li class="active">权限列表</li>
+<li class="active">权限管理</li>
 {/block}
 {block name="page-main"}
 <div class="row">
@@ -10,15 +9,14 @@
 		<div class="widget">
 			<ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
 				<li class="active">
-					<a href="#home" data-toggle="tab">权限列表</a>
+					<a href="#" data-toggle="tab">权限列表</a>
 				</li>
 				<li>
 					<a href="javascript:;" onclick="add()">添加权限</a>
 				</li>
 			</ul>
 			<div class="widget-body">
-				
-				<div class="tab-content">
+				<div class="table-responsive">
 					<table class="table table-striped table-bordered table-hover table-condensed">
 						<tr>
 							<th>权限名</th>
@@ -30,7 +28,8 @@
 							<td>{$vo['title']}</td>
 							<td>{$vo['name']}</td>
 							<td>
-								<a href="javascript:;" ruleId="{$vo['id']}" level="{$vo['level']}" onclick="add_child(this)">添加子权限</a> |
+								<a href="javascript:;" ruleId="{$vo['id']}" level="{$vo['level']}"
+									onclick="add_child(this)">添加子权限</a> |
 								<a href="javascript:;" ruleId="{$vo['id']}" ruleName="{$vo['name']}"
 									ruleTitle="{$vo['title']}" ruleIcon="{$vo['icon']}" onclick="edit(this)">修改</a> |
 								<a dataid="{$vo.id}" class="deleteThis">删除</a>
@@ -41,25 +40,26 @@
 							<td>|—— {$vo2['title']}</td>
 							<td>{$vo2['name']}</td>
 							<td>
-								<a href="javascript:;" ruleId="{$vo2['id']}" level="{$vo2['level']}"  onclick="add_child(this)">|—— 添加子权限</a> |
+								<a href="javascript:;" ruleId="{$vo2['id']}" level="{$vo2['level']}"
+									onclick="add_child(this)">|—— 添加子权限</a> |
 								<a href="javascript:;" ruleId="{$vo2['id']}" ruleName="{$vo2['name']}"
 									ruleTitle="{$vo2['title']}" ruleIcon="{$vo2['icon']}" onclick="edit(this)">修改</a> |
 
 								<a dataid="{$vo2.id}" class="deleteThis">删除</a>
 							</td>
 						</tr>
-							{volist name="vo2.child" id="vo3"}
-							<tr>
-								<td>|&nbsp;&nbsp;&nbsp;&nbsp;|—— {$vo3['title']}</td>
-								<td>{$vo3['name']}</td>
-								<td>|———
-									<a href="javascript:;" ruleId="{$vo3['id']}" ruleName="{$vo3['name']}"
-										ruleTitle="{$vo3['title']}" onclick="edit(this)">修改</a> |
+						{volist name="vo2.child" id="vo3"}
+						<tr>
+							<td>|&nbsp;&nbsp;&nbsp;&nbsp;|—— {$vo3['title']}</td>
+							<td>{$vo3['name']}</td>
+							<td>|———
+								<a href="javascript:;" ruleId="{$vo3['id']}" ruleName="{$vo3['name']}"
+									ruleTitle="{$vo3['title']}" onclick="edit(this)">修改</a> |
 
-									<a dataid="{$vo3.id}" class="deleteThis">删除</a>
-								</td>
-							</tr>
-							{/volist}
+								<a dataid="{$vo3.id}" class="deleteThis">删除</a>
+							</td>
+						</tr>
+						{/volist}
 						{/volist}
 						{/volist}
 					</table>
@@ -179,7 +179,7 @@
 		function add() {
 			$("input[name='title'],input[name='name']").val('');
 			$("input[name='pid']").val(0);
-			$("input[name='level']").val(1);	
+			$("input[name='level']").val(1);
 			$('#bjy-add').modal('show');
 		}
 
@@ -190,10 +190,10 @@
 			$("input[name='pid']").val(ruleId);
 			$("input[name='title']").val('');
 			$("input[name='name']").val('');
-			if(level==="1"){
-				$("input[name='level']").val(2);	
-			}else{
-				$("input[name='level']").val(3);	
+			if (level === "1") {
+				$("input[name='level']").val(2);
+			} else {
+				$("input[name='level']").val(3);
 			}
 			$('#bjy-add').modal('show');
 		}
@@ -206,8 +206,8 @@
 			var ruleIcon = $(obj).attr('ruleIcon');
 			$("input[name='id']").val(ruleId);
 			$("input[name='title']").val(ruletitle);
-			$("input[name='name']").val(ruleName);	
-			$("input[name='icon']").val(ruleIcon);	
+			$("input[name='name']").val(ruleName);
+			$("input[name='icon']").val(ruleIcon);
 			$('#bjy-edit').modal('show');
 		}
 

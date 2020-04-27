@@ -71,12 +71,16 @@ class Cov extends Base
     public function perDayReports()
     {
 
-        $list = model('cov_reports')->where(['date' => input('date')])->field('id,uid,date,report_pic_path,phone_pic_path')->paginate(5);
+        $list = model('cov_reports')->where(['date' => input('date')])->with('getProfile')->field('id,uid,date,report_pic_path,phone_pic_path')->paginate(5);
+
+        foreach ($list as $k => $v) {
+            $picList=explode('|', trim($v['phone_pic_path']));
+            array_pop($picList);
+            $v['phone_pic_path'] = $picList;
+        }
 
         $oneReport = Db::name('cov')->where(['date' => input('date')])->field('title,date')->find();
-        foreach ($list as $k => $v) {
-            $v['phone_pic_path'] = explode('|', trim($v['phone_pic_path'], "|"));
-        }
+
         $this->assign([
             'datas' => $list,
             'title' => $oneReport['title'],
@@ -130,7 +134,7 @@ class Cov extends Base
         $files = request()->file('file_pic');
         $reportDatas = cookie('reportDatas');
 
-        if(!$files){
+        if (!$files) {
             $this->error('上传失败');
         }
         if ($type === 's') {

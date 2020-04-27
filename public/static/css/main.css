@@ -58,6 +58,7 @@ legend{
 }
 
 a {
+  color: rgba(0, 0, 0, 0.603);
   text-decoration: none !important;
 }
 
@@ -79,7 +80,7 @@ a:hover {
 
 .login-area {
   color:black;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .login-area span {
@@ -91,4 +92,33 @@ a:hover {
 }
 .login-area a:hover {
   text-decoration: underline;
+}
+
+
+.home-icon{
+  width: 80px;
+  height: 80px;
+  font-size: 12px;
+  margin: 10px;
+  padding: 2px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 1px rgba(144, 144, 144, 0.4);
+}
+
+.home-icon div{
+  text-align: center;
+  width: 76px;
+}
+
+.home-icon-fa{
+  height: 56px;
+}
+.home-icon-fa i{
+  position: relative;
+  top:50%;
+  transform: translateY(-50%);
+}
+
+.home-icon-text{
+  height: 20px;
 }
