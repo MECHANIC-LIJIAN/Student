@@ -31,26 +31,27 @@
     -o-transform: scale(1.2);
   }
 }
+
+legend{
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
 .fun_grid {
   opacity: 0.8;
   color: aliceblue;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   margin: 10px;
-  line-height: 80px;
+  line-height: 18px;
   text-align: center;
   background: #2dc3e8 !important;
-  border: 2px cornflowerblue;
-  box-shadow: darkgrey 10px 10px 30px 5px;
+  box-shadow: rgba(169, 169, 169, 0.6) 0px 5px 10px 3px;
   border-radius: 5px;
-  padding: 2px;
   padding-left: 8px;
-  font-size: 16px;
+  font-size: 14px;
   word-break: break-all;
 }
 .fun_grid > span {
-  width: 64px;
-  height: 64px;
   display: block;
   text-align: justify;
   text-align-last: justify;

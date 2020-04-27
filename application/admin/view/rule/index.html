@@ -32,7 +32,7 @@
 							<td>
 								<a href="javascript:;" ruleId="{$vo['id']}" level="{$vo['level']}" onclick="add_child(this)">添加子权限</a> |
 								<a href="javascript:;" ruleId="{$vo['id']}" ruleName="{$vo['name']}"
-									ruleTitle="{$vo['title']}" onclick="edit(this)">修改</a> |
+									ruleTitle="{$vo['title']}" ruleIcon="{$vo['icon']}" onclick="edit(this)">修改</a> |
 								<a dataid="{$vo.id}" class="deleteThis">删除</a>
 							</td>
 						</tr>
@@ -43,7 +43,7 @@
 							<td>
 								<a href="javascript:;" ruleId="{$vo2['id']}" level="{$vo2['level']}"  onclick="add_child(this)">|—— 添加子权限</a> |
 								<a href="javascript:;" ruleId="{$vo2['id']}" ruleName="{$vo2['name']}"
-									ruleTitle="{$vo2['title']}" onclick="edit(this)">修改</a> |
+									ruleTitle="{$vo2['title']}" ruleIcon="{$vo2['icon']}" onclick="edit(this)">修改</a> |
 
 								<a dataid="{$vo2.id}" class="deleteThis">删除</a>
 							</td>
@@ -203,9 +203,11 @@
 			var ruleId = $(obj).attr('ruleId');
 			var ruletitle = $(obj).attr('ruletitle');
 			var ruleName = $(obj).attr('ruleName');
+			var ruleIcon = $(obj).attr('ruleIcon');
 			$("input[name='id']").val(ruleId);
 			$("input[name='title']").val(ruletitle);
 			$("input[name='name']").val(ruleName);	
+			$("input[name='icon']").val(ruleIcon);	
 			$('#bjy-edit').modal('show');
 		}
 

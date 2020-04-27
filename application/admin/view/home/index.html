@@ -2,7 +2,7 @@
 
 {block name="page-style"}
 <style>
-    
+
 </style>
 {/block}
 {block name="page-main"}
@@ -21,35 +21,22 @@
             <div class="header bg-themeprimary">
                 常用功能
             </div>
-            <div class="row">
-                <a href="{:url('admin/Templates/list')}">
-                    <div class="col-xs-1 fun_grid">
-                        <span>任务列表</span>
+                {volist name="authList" id="vo"}
+                {if $vo.id!=1}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <legend style="font-size: 16px;">{$vo.title}</legend>
+                        {volist name="$vo.child" id="vv"}
+                        <a href="{:url($vv.name,['sid'=>$vo.id])}">
+                            <div class="col-xs-4 fun_grid">
+                                <span>{$vv.title}</span>
+                            </div>
+                        </a>
+                        {/volist}
                     </div>
-                </a>
-                <a href="{:url('admin/Templates/add')}">
-                    <div class="col-xs-1 fun_grid">
-                        <span>添加任务</span>
-                    </div>
-                </a>
-                <a href="{:url('admin/MyData/index')}">
-                    <div class="col-xs-1 fun_grid">
-                        <span>我的数据</span>
-                    </div>
-                </a>
-                <a class="loginout">
-                    <div class="col-xs-1 fun_grid">
-                        <span>退出</span>
-                    </div>
-                </a>
-                {if session('admin.is_super')==1}
-                <a href="{:url('admin/Admin/list')}">
-                    <div class="col-xs-1 fun_grid">
-                        <span>用户列表</span>
-                    </div>
-                </a>
+                </div>
                 {/if}
-            </div>
+                {/volist}
             <div class="footer"></div>
         </div>
         <!-- <table class="table table-hover table-bordered">

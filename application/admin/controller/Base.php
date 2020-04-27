@@ -64,10 +64,11 @@ class Base extends Controller
                 $ruleIds = explode(',', implode(',', $ruleIds));
                 $list = Db::name('AuthRule')->whereId('in', $ruleIds)->where('level','<>',3)->field(['id,name,title,pid,icon'])->select();
                 $authList = getTree($list);
-                // dump($authList);
+             
                 Session::set('_auth_list_'.$this->uid,$authList);
                 Session::set('_auth_groups_'.$this->uid,$groupIds);
             }
+            //    dump($authList);
             View::share(['authList' => $authList]);
         }
 
