@@ -64,13 +64,21 @@ a {
 hr {
   border-top: 1px solid #e8e8e8;
 }
+input[type=checkbox],
+input[type=radio] {
+    opacity: unset;
+    position: unset;
+}
 
+a:hover {
+    cursor: pointer;
+}
 .displaynone {
   display: none !important;
 }
 
 .login-area {
-  color: white;
+  color:black;
   font-size: 16px;
 }
 
