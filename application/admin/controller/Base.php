@@ -18,6 +18,7 @@ class Base extends Controller
             'admin/home/index',
             'admin/index/login',
             'admin/home/logout',
+            'admin/home/help'
         ];
         // //获取到当前访问的页面
         // $module = request()->module(); //获取当前访问的模块

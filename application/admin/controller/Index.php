@@ -2,12 +2,12 @@
 
 namespace app\admin\controller;
 
+use think\Controller;
 
-class Index extends Base
+class Index extends Controller
 {
     public function initialize()
     {
-
         if (session('?admin.id')) {
             $this->redirect('admin/home/index');
         }
@@ -51,6 +51,7 @@ class Index extends Base
                 'last_time' => time(),
                 'group_ids'=>'8'//默认普通用户组
             ];
+            return $data;
             $result = model('Admin')->register($data);
             if ($result == 1) {
                 $this->success('注册成功', 'admin/Index/login');

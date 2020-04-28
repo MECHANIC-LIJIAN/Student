@@ -1,0 +1,31 @@
+   
+
+                                            
+  [think\exception\RouteNotFoundException]  
+  Route Not Found                           
+                                            
+
+
+Exception trace:
+ () at /home/li/opt/nginx/html/student/thinkphp/library/think/Route.php:897
+ think\Route->check() at /home/li/opt/nginx/html/student/thinkphp/library/think/App.php:604
+ think\App->routeCheck() at /home/li/opt/nginx/html/student/thinkphp/library/think/App.php:402
+ think\App->run() at /home/li/opt/nginx/html/student/public/index.php:21
+
+
+   
+
+                                            
+  [think\exception\RouteNotFoundException]  
+  Route Not Found                           
+                                            
+
+
+Exception trace:
+ () at /home/li/opt/nginx/html/student/thinkphp/library/think/Route.php:897
+ think\Route->check() at /home/li/opt/nginx/html/student/thinkphp/library/think/App.php:604
+ think\App->routeCheck() at /home/li/opt/nginx/html/student/thinkphp/library/think/App.php:402
+ think\App->run() at /home/li/opt/nginx/html/student/public/index.php:21
+
+
+   

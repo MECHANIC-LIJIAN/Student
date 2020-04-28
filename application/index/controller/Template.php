@@ -18,30 +18,31 @@ class Template extends Controller
         debug('test');
         $redis = new Redis();
         $redisKey = 'datalists';
-        
-        // $redis->del($redisKey);
-        // $testDatas = Db::name("TemplatesDatas")
-        //     ->whereNull('delete_time')
-        //     ->limit($limit)
-        //     ->field('id',true)
-        //     ->select();
 
-        // foreach ($testDatas as &$value) {
-        //     $value['update_time']=time();
-        //     $value['create_time']=time();
-        //     $redis->lPush($redisKey, json_encode($value));
-        // }
+        // $redis->del($redisKey);
+        $testDatas = Db::name("TemplatesDatas")
+            ->whereNull('delete_time')
+            ->limit($limit)
+            ->field('id', true)
+            ->select();
+
+        foreach ($testDatas as &$value) {
+            $value['update_time'] = time();
+            $value['create_time'] = time();
+            $nLen = $redis->lPush($redisKey, serialize($value));
+        }
+        dump($nLen . "条压入redis");
         dump($redis->lLen($redisKey));
         echo debug('test', 'testend');
     }
     public function saveTestdatas()
     {
-        
+
         dump("--------------------------------------");
         debug('begin');
         $redis = new Redis();
         $redisKey = 'datalists';
-        $datas = $redis->lRange($redisKey,0,-1);
+        $datas = $redis->lRange($redisKey, 0, -1);
         dump($redis->lLen($redisKey));
         foreach ($datas as &$value) {
             $value = unserialize($value);
@@ -49,7 +50,7 @@ class Template extends Controller
                 dump($value);
             }
         }
-        
+
         debug('end');
         dump(debug('begin', 'end') . 's');
         dump(debug('begin', 'end', 'm') . 'kb');
@@ -57,7 +58,7 @@ class Template extends Controller
         dump("--------------------------------------");
         dump("db to mysql");
         debug('begin');
-        
+
         #启动事务
         Db::startTrans();
         try {
@@ -81,7 +82,7 @@ class Template extends Controller
         $redis = new Redis();
         $redisKey = 'datalists';
         while (true) {
-            $datas = $redis->lRange($redisKey,0,-1);
+            $datas = $redis->lRange($redisKey, 0, -1);
             foreach ($datas as &$value) {
                 $value = unserialize($value);
             }
@@ -105,10 +106,10 @@ class Template extends Controller
     {
         $id = input('id');
 
-        $redisKey = 'template_'.$id;
+        $redisKey = 'template_' . $id;
         $redis = new Redis();
         //判断是否过期
-        if ($redis->exists($redisKey)==0) {
+        if ($redis->exists($redisKey) == 0) {
             //缓存失效，重新存入
             //查询数据
             $template = model("Templates")
@@ -120,7 +121,7 @@ class Template extends Controller
             //存入缓存
             $redis->set($redisKey, $redisInfo);
             //设置缓存周期，60秒
-            $redis->expire($redisKey, 60*30);
+            $redis->expire($redisKey, 60 * 30);
         }
         //获取缓存
         $template = unserialize($redis->get($redisKey));
@@ -142,9 +143,9 @@ class Template extends Controller
 
     public function collect()
     {
-        
+
         if (request()->isAjax()) {
-            
+
             $template = json_decode(cookie('template'), true);
             $templateField = $template['fields'];
 

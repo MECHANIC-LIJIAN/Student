@@ -93,11 +93,9 @@ class Templates extends Model
 
         $redis = new Redis();
 
-        $oLen = $redis->lLen($dataKey);
-
         $nLen = $redis->lPush($dataKey, serialize($data));
 
-        if ($nLen !== $oLen) {
+        if ($nLen > 0) {
             return 1;
         } else {
             Log::warning("--未使用redis");

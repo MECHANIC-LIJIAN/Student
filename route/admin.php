@@ -9,8 +9,10 @@ Route::group(
     function () {
         Route::rule('/', 'admin/Home/index', 'GET|POST');
         Route::rule('index', 'admin/Home/index', 'GET|POST');
-        Route::rule('login', 'admin/Index/login', 'GET|POST');
+        Route::rule('help', 'admin/Home/help', 'GET|POST');
         Route::rule('logout', 'admin/Home/logout', 'POST');
+
+        Route::rule('login', 'admin/Index/login', 'GET|POST');
         Route::rule('register', 'admin/Index/register', 'GET|POST');
         Route::rule('checkid/', 'admin/Index/checkid/', 'GET|POST');
         Route::rule('forget', 'admin/Index/forget', 'GET|POST');

@@ -9,6 +9,11 @@ class Home extends Base
         return view();
     }
 
+    public function help()
+    {
+        return view();
+    }
+
     /**
      * 退出操作
      *

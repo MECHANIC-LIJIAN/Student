@@ -65,7 +65,7 @@ function mailto($email, $content)
 
         return $mail->send();
     } catch (Exception $e) {
-        exception($mail->ErrorInfo, 1001);
+        return exception($mail->ErrorInfo, 1001);
     }
 }
 

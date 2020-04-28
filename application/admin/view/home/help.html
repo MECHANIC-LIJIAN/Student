@@ -1,0 +1,132 @@
+{extend name="public/admin_base"}
+
+{block name="page-style"}
+<link rel="stylesheet" href="__CSS__/help.css">
+{/block}
+{block name="page-main"}
+<div class="widget">
+    <div class="widget-header bg-themeprimary"></div>
+    <div class="widget-body">
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>开始使用</strong></li>
+                <li><a href="#welcome" class=" ">欢迎</a></li>
+                <li><a href="#createForm" class=" ">创建表单</a></li>
+                <li><a href="#myData" class=" ">我的数据集</a></li>
+                <li><a href="#createData" class=" ">创建数据集</a></li>
+                <li class="separator"></li>
+                <li><strong>收集数据</strong></li>
+                <li><a href="#shareForm" class=" ">分享表单</a></li>
+                <li><a href="#exportData" class=" ">导出表单数据</a></li>
+                <li><a href="#searchData" class=" ">搜索表单数据</a></li>
+                <li><a href="#deleteData" class=" ">删除表单数据</a></li>
+            </ul>
+            <div class="docs-content">
+                <h2> 开始使用</h2>
+
+                <hr>
+                <h3 id="welcome"> 欢迎</h3>
+                <p> 你在为收集数据苦恼吗? </p>
+                <p> 你在为打开很多excel苦恼吗? </p>
+                <p> 我们实现了一个类似微信表单的表单收集系统,虽然简单,功能强大,特色功能如下:</p>
+                <ul>
+                    <li>可以通过excel导入一次性生成表单</li>
+                    <li>支持超长表单</li>
+                    <li>可以为表单指定自定义数据集,保证数据的唯一标识</li>
+                    <li>指定唯一标识,数据可以重复提交,结果不重复</li>
+                </ul>
+
+                <hr>
+                <h3 id="createForm"> 创建表单</h3>
+                <ul>
+                    <li>
+                        <h4>手动创建</h4>
+                        <p>
+                            在&nbsp;<a href="{:url('admin/templates/add')}">新建表单</a>&nbsp;页面点击<a
+                                href="">手动创建</a>,可以选择添加<strong>文本框</strong>或者<strong>下拉菜单</strong>,并且<strong>文本框</strong>支持自定义数据类型,目前支持普通文本、邮箱、数字、手机号或者非必填
+                        </p>
+                    </li>
+
+                    <li>
+                        <h4>Excel导入</h4>
+                        <p>
+                            在&nbsp;<a href="{:url('admin/templates/add')}">新建表单</a>&nbsp;页面点击<a
+                                href="">文件导入</a>,填写好表单名，选择包含表单字段的excel文件，文件上传后会自动生成表单，进入到表单预览页面，目前不支持改变字段类型，默认普通文本；所有字段都是<strong>必填项</strong>
+                        </p>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">excel文件说明</h4>
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item">1、excel文件第一行为字段名</li>
+                                <li class="list-group-item">2、第二行起为空时生成文本框，有待选文字时生成下拉菜单</li>
+                                <li class="list-group-item">3、不能有空行和列</li>
+                                <li class="list-group-item">
+                                    <img src="__IMG__/example-1.jpg" style="height:100px" title="excel文件示例"
+                                        alt="excel文件示例">
+                                    <img src="__IMG__/example-2.jpg" style="height:250px;margin-left: 20px;"
+                                        title="生成表单示例" alt="生成表单示例">
+                                </li>
+                            </ul>
+
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>唯一标识字段</h4>
+                        <p>作为表单数据的唯一标识字段，值是唯一的，后续提交时，可以覆盖已存在唯一字段值的记录，并且记录最近更新的时间
+                        </p>
+                    </li>
+                </ul>
+
+                <hr>
+                <h3 id="myData"> 我的数据集</h3>
+                <p>
+                    通过这个功能，能够创建自定义数据集，作为表单唯一字段的对照数据，唯一标识字段不在数据集中的无法提交;在创建表单时可以为唯一标识字段指定
+                </p>
+
+                <hr>
+                <h3 id="createData"> 创建数据集</h3>
+                <p> 同样提供文本和文件导入两种方式</p>
+                <ul>
+                    <li>
+                        <h4>文本创建</h4>
+                        <p>
+                            在&nbsp;<a href="{:url('admin/MyData/create')}">新建数据集</a>&nbsp;页面可以粘贴数据到文本框，一行一条
+                        </p>
+                    </li>
+                    <li>
+                        <h4>excel导入</h4>
+                        <p>
+                            在&nbsp;<a href="{:url('admin/MyData/create')}">新建数据集</a>&nbsp;页面可以选择包含数据集的Excel文件，同样一行一条
+                        </p>
+                    </li>
+                </ul>
+
+                <hr>
+                <h3 id="shareForm">分享表单</h3>
+                <p>
+                    在表单列表或者单个表单的数据展示页面点击<strong>分享<span class="fa fa-share"></span></strong>按钮，将表单链接分享出去
+                </p>
+
+                <hr>
+                <h3 id="searchData">搜索表单数据</h3>
+                <p>
+                    在单个表单的数据展示页面可以在搜索框输入要搜索的数据，支持模糊搜索
+                </p>
+
+                <hr>
+                <h3 id="exportData">导出表单数据</h3>
+                <p>
+                    在单个表单的数据展示页面点击右上角<strong>导出</strong> <i
+                        class="glyphicon glyphicon-export icon-share"></i>按钮，导出表单数据,默认导出全部数据，有<strong>.csv</strong>和<strong>.xlsx</strong>两种格式
+                </p>
+                <h3 id="deleteData">删除表单数据</h3>
+                <p>
+                    在单个表单的数据展示页面可以勾选需要删除的记录，点击删除按钮，支持批量删除
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
