@@ -19,7 +19,7 @@ class Rule extends Base
      */
     public function index()
     {
-        $data = model('AuthRule')->field('id,title,name,pid,level,icon')->select()->toArray();
+        $data = Db::name('AuthRule')->field('id,title,name,pid,level,icon,sort')->order('sort','asc')->select();
         $data = getTree($data);
         $assign = [
             'data' => $data,

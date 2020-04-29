@@ -63,7 +63,7 @@ class Base extends Controller
                 
                 $ruleIds = Db::name('AuthGroup')->whereId('in', $groupIds)->column('rules');
                 $ruleIds = explode(',', implode(',', $ruleIds));
-                $list = Db::name('AuthRule')->whereId('in', $ruleIds)->where('level','<>',3)->field(['id,name,title,pid,icon'])->select();
+                $list = Db::name('AuthRule')->whereId('in', $ruleIds)->where('level','<>',3)->field(['id,name,title,pid,icon,sort'])->order('sort','asc')->select();
                 $authList = getTree($list);
              
                 Session::set('_auth_list_'.$this->uid,$authList);
