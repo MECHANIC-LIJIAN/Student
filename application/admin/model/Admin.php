@@ -51,7 +51,6 @@ class Admin extends Model
                 $sessionData = [
                     'id' => $result['id'],
                     'username' => $result['username'],
-                    'is_super' => $result['is_super'],
                     'last_time' => $result['last_time'],
                 ];
                 session('admin', $sessionData);

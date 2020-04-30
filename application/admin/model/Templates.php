@@ -237,43 +237,43 @@ class Templates extends Model
         return 1;
     }
 
-    public function getTemplates()
-    {
-        $where = [];
-        if (session('admin.is_super') != 1) {
-            $where = ['uid' => session('admin.id')];
-        }
+    // public function getTemplates()
+    // {
+    //     $where = [];
+    //     if (session('admin.id') >10) {
+    //         $where=['uid' => session('admin.id')];
+    //     }
 
-        $redis = new Redis();
-        $redisKey = 'templatelist_' . session('admin.id');
-        //判断是否过期
-        $redis_status = $redis->exists($redisKey);
-        if ($redis_status == false) {
-            //缓存失效，重新存入
-            //查询数据
-            $templates = model('Templates')
-                ->where($where)
-                ->field('id,tid,uid,tname,myData,primaryKey,create_time,status')
-                ->withCount('datas')
-                ->with('getUser,getMyData')
-                ->order(['status' => 'asc', 'create_time' => 'desc'])
-                ->select()
-                ->toArray();
+    //     $redis = new Redis();
+    //     $redisKey = 'templatelist_' . session('admin.id');
+    //     //判断是否过期
+    //     $redis_status = $redis->exists($redisKey);
+    //     if ($redis_status == false) {
+    //         //缓存失效，重新存入
+    //         //查询数据
+    //         $templates = model('Templates')
+    //             ->where($where)
+    //             ->field('id,tid,uid,tname,myData,primaryKey,create_time,status')
+    //             ->withCount('datas')
+    //             ->with('getUser,getMyData')
+    //             ->order(['status' => 'asc', 'create_time' => 'desc'])
+    //             ->select()
+    //             ->toArray();
 
-            foreach ($templates as $value) {
-                $tmp = $value;
-                $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
-                $tmp['username'] = $tmp['get_user']['username'];
-                $tmp['mydata'] = $tmp['get_my_data']['title'];
-                // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
-                $redis->sAdd($redisKey, json_encode($tmp));
-            }
+    //         foreach ($templates as $value) {
+    //             $tmp = $value;
+    //             $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
+    //             $tmp['username'] = $tmp['get_user']['username'];
+    //             $tmp['mydata'] = $tmp['get_my_data']['title'];
+    //             // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
+    //             $redis->sAdd($redisKey, json_encode($tmp));
+    //         }
 
-            $redis->expire($redisKey,60);
-        }
+    //         $redis->expire($redisKey,60);
+    //     }
 
-        $templates=$redis->sMembers($redisKey);
+    //     $templates=$redis->sMembers($redisKey);
 
-        return $templates;
-    }
+    //     return $templates;
+    // }
 }

@@ -12,14 +12,18 @@ class Templates extends Base
      */
     function list() {
 
-        $where = [];
-        if (session('admin.is_super') != 1) {
-            $where = ['uid' => session('admin.id')];
+        $where=[];
+        $field='id,tid,uid,tname,myData,primaryKey,create_time,status';
+        
+        if (!in_array(2, $this->groupIds)) {
+            $where=['uid' => session('admin.id')];
+        }else{
+            $this->assign('display', 'display');
         }
 
         $templates = model('Templates')
             ->where($where)
-            ->field('id,tid,uid,tname,myData,primaryKey,create_time,status')
+            ->field($field)
             // ->withCount('datas')
             ->with('getUser,getMyData')
             ->order(['status' => 'asc', 'create_time' => 'desc'])
@@ -32,12 +36,13 @@ class Templates extends Base
             $tmp = $value;
             $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
             $tmp['username'] = $tmp['get_user']['username'];
-            if ($value['myData']!=null) {
+            if ($value['myData']!=null||$value['myData']!=='') {
                 $tmp['mydata'] = $tmp['get_my_data']['title'];
             }
             // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
             $templateList[] = $tmp;
         }
+        
 
         $this->assign('templates', $templateList);
         return view();

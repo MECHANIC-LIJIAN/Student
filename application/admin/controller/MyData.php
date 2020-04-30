@@ -15,16 +15,19 @@ class MyData extends Base
     public function index()
     {
         $where=[];
+        $field='id,uid,title,count,create_time';
         
-        if (session('admin.is_super') != 1) {
+        if (!in_array(2, $this->groupIds)) {
             $where=['uid' => session('admin.id')];
-            
+        }else{
+            $this->assign('display', 'display');
         }
+
         $dataSetList = model("MyData")
         ->with('getUser')
         ->where($where)
         ->order(['create_time' => 'desc'])
-        ->field('id,uid,title,count,create_time')
+        ->field($field)
         ->select();
         $this->assign([
             'dataSetList' => $dataSetList,

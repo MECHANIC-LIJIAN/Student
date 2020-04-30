@@ -19,7 +19,7 @@
                         <thead>
                             <tr>
                                 <th>表单名</th>
-                                {if session('admin.is_super')==1} <th>用户名</th>{/if}
+                                {present name="$display"}<th>用户名</th>{/present}
                                 <!-- <th>记录数</th> -->
                                 <th>使用的数据集</th>
                                 <th>状态</th>
@@ -32,8 +32,8 @@
                             <tr>
                                 <td><a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
                                         style="font-size:14px">{$vo.tname}</a> </td>
-                                {if session('admin.is_super')==1}<td>{present name="$vo.username"}{$vo.username}{/present}</td>{/if}
-                                <td>{present name="$vo.mydata"}{$vo.mydata}{/present}</td>
+                                {present name="$display"}<td>{$vo.get_user.username}</td>{/present}
+                                <td>{$vo.mydata}</td>
                                 {if $vo.status==1}
                                 <td>
                                     <span class="tempalte-status badge badge-pill badge-success"
