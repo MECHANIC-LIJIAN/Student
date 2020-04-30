@@ -139,7 +139,7 @@ class Cov extends Base
         }
         if ($type === 's') {
             $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . '1.png';
-            $info = $files->validate(['size' => 1920 * 1920, 'ext' => 'jpg,png'])->move('uploads/cov/2020/' . $reportDatas['pic_date'], $imgName, true);
+            $info = $files->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move('uploads/cov/2020/' . $reportDatas['pic_date'], $imgName, true);
 
             if (!$info) {
                 $this->error('上传失败');
@@ -152,7 +152,7 @@ class Cov extends Base
             $phonePicPath = '';
             foreach ($files as $file) {
                 $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . $n . '.png';
-                $info = $file->validate(['size' => 1920 * 1920, 'ext' => 'jpg,png'])->move('uploads/cov/2020/' . $reportDatas['pic_date'], $imgName, true);
+                $info = $file->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move('uploads/cov/2020/' . $reportDatas['pic_date'], $imgName, true);
                 $n += 1;
 
                 if (!$info) {
