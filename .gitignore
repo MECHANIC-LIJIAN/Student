@@ -10,3 +10,4 @@ public/pma/
 config/app.php
 config/database.php
 nohup.out
+redis_to_mysql

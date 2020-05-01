@@ -118,6 +118,7 @@ class Cov extends Base
 
         $this->assign([
             'token' => time(),
+            'title' => date("m.d", input('date'))."报告"
         ]);
         return view();
     }

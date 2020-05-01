@@ -27,19 +27,18 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="widget">
-            <div class="bg-themeprimary widget-header">
+            <!-- <div class="bg-themeprimary widget-header">
                 <i class="fa fa-arrow-left widget-icon"
                     onClick="window.location.href='{:url(\'admin/Templates/list\')}';" /></i>
                 <span class="widget-caption">{$template.tname}</span>
-            </div>
-            <div class="widget-body">
-                <ul id="myTab" class="nav nav-tabs">
-                    <li class="active">
-                        <a href="#firstPage" data-toggle="tab">
-                            数据页
-                        </a>
-                    </li>
-                    <!-- {if $template.myData!=null}
+            </div> -->
+            <ul id="myTab" class="nav nav-tabs">
+                <li class="active">
+                    <a href="#firstPage" data-toggle="tab">
+                        {$template.tname} 数据
+                    </a>
+                </li>
+                <!-- {if $template.myData!=null}
                     
                     <li>
                         <a href="#secondPage" data-toggle="tab">
@@ -47,8 +46,8 @@
                         </a>
                     </li>
                     {/if} -->
-                </ul>
-                <!-- <form id="formSearch" class="form-horizontal">
+            </ul>
+            <!-- <form id="formSearch" class="form-horizontal">
                     <div class="form-group" style="margin-top:15px">
                         <label class="control-label col-lg-1" for="txt_search_departmentname">部门名称</label>
                         <div class="col-lg-3">
@@ -64,29 +63,26 @@
                         </div>
                     </div>
                 </form> -->
-                <div id="myTabContent" class="tab-content">
-                    <div id="firstPage" class="tab-pane active">
-                        <div id="toolbar" class="btn-group">
-                            <div class="btn-group">
-                                <button id="btn_delete" type="button" class="btn btn-danger">
-                                    <span class="fa fa-remove" aria-hidden="true"></span>删除
-                                </button>
-                                <button id="btn_refresh" type="button" class="btn btn-success">
-                                    <span class="fa fa-refresh" aria-hidden="true"></span>刷新
-                                </button>
-                                <button id="copy" class="btn btn-info" dataid="{$template.tid}">
-                                    <span class="fa fa-share"></span>分享
-                                </button>
-                                <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
-                                        class="fa fa-eye"></span>查看表单</a>
-                            </div>
-
+            <div id="myTabContent" class="tab-content">
+                <div id="firstPage" class="tab-pane active">
+                    <div id="toolbar" class="btn-group">
+                        <div class="btn-group">
+                            <button id="btn_delete" type="button" class="btn btn-danger">
+                                <span class="fa fa-remove" aria-hidden="true"></span>删除
+                            </button>
+                            <button id="btn_refresh" type="button" class="btn btn-success">
+                                <span class="fa fa-refresh" aria-hidden="true"></span>刷新
+                            </button>
+                            <button id="copy" class="btn btn-info" dataid="{$template.tid}">
+                                <span class="fa fa-share"></span>分享
+                            </button>
+                            <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
+                                    class="fa fa-eye"></span>查看表单</a>
                         </div>
-                        <table id="table" data-search="true"
-                            class="table  table-hover text-nowrap  table-condensed">
-                        </table>
+
                     </div>
-                    
+                    <table id="table" data-search="true" class="table  table-hover text-nowrap  table-condensed">
+                    </table>
                 </div>
             </div>
         </div>

@@ -116,12 +116,26 @@ class Template extends Controller
                 ->where(['tid' => $id])
                 ->field('id,tid,tname,primaryKey,status,myData,options')
                 ->find();
-            //转换成字符串，有利于存储
-            $redisInfo = serialize($template);
-            //存入缓存
-            $redis->set($redisKey, $redisInfo);
-            //设置缓存周期，60秒
-            $redis->expire($redisKey, 60 * 30);
+            if ($template) {
+
+                $template['options'] = json_decode($template['options'], true);
+                $template['fields'] = array_keys($template['options']);
+
+                #判断是否有主键
+                if (!empty($template['primaryKey'])) {
+                    $template['primaryKey'] = [
+                        'field' => $template['primaryKey'],
+                        'title' => $template['options'][$template['primaryKey']]['title'],
+                    ];
+                }
+
+                //转换成字符串，有利于存储
+                $redisInfo = serialize($template);
+                //存入缓存
+                $redis->set($redisKey, $redisInfo);
+                //设置缓存周期，60*30秒
+                $redis->expire($redisKey, 60 * 30);
+            }
         }
         //获取缓存
         $template = unserialize($redis->get($redisKey));
@@ -130,10 +144,9 @@ class Template extends Controller
             return $this->fetch('template', ['info' => '该表单已关闭或未创建']);
         }
 
-        $optionList = json_decode($template['options'], true);
-        $template['fields'] = array_keys($optionList);
-
+        $optionList = $template['options'];
         unset($template['options']);
+        dump($template);
         cookie('template', $template);
         cookie('ifCheck', 0);
         cookie('content', "");
@@ -161,8 +174,8 @@ class Template extends Controller
 
             #判断是否有主键
             if (!empty($template['primaryKey'])) {
-                #找出唯一字段的值
-                $keyContent = $params[$template['primaryKey']];
+                #找出提交数据的唯一字段的值
+                $keyContent = $params[$template['primaryKey']['field']];
                 #判断是否有参考数据集并且数据是否在其中
                 if (!empty($template['myData'])) {
                     $res = model('Templates')->ifUseData($template, $keyContent);

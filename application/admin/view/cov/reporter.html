@@ -1,11 +1,14 @@
 {extend name="public/admin_base"}
+{block name="title"}
+{$title}
 
+{/block}
 {block name="page-main"}
 <div class="row">
     <div class="col-lg-6">
         <div class="widget">
             <div class="bg-themeprimary widget-header">
-                <span class="widget-caption">上传图片</span>
+                <span class="widget-caption">{$title}</span>
             </div>
             <div class="widget-body">
                 <div>

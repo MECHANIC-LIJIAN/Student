@@ -48,7 +48,8 @@ class Templates extends Model
 
         $res = in_array($keyContent, $myDatas);
         if (!$res) {
-            return "系统中未匹配到:" . $template['options'][$template['primaryKey']]['title'] . "=" . $keyContent;
+            // return $template;
+            return "系统中未匹配到:" . $template['primaryKey']['title'] . "=" . $keyContent;
         }
         return 1;
 
@@ -63,7 +64,7 @@ class Templates extends Model
      */
     public function ifExist($template, $keyContent)
     {
-        $keySid = $template['primaryKey'];
+        $keySid = $template['primaryKey']['field'];
         $res = model('TemplatesDatas')
             ->json(['cotent'])
             ->where([
