@@ -26,7 +26,7 @@
                 </div>
 
                 <div style="text-align:center;margin-top: 20px;">
-                    <button id="report" class="btn btn-lg btn-success">提交报告</button>
+                    <button id="report" disabled="true" class="btn btn-lg btn-success">提交报告</button>
                 </div>
             </div>
         </div>
@@ -44,6 +44,12 @@
 <script src="__LIB__/bootstrap-fileinput/themes/explorer-fa/theme.js" type="text/javascript"></script>
 <script src="__LIB__/bootstrap-fileinput/themes/fa/theme.js"></script>
 <script>
+    var count=0;
+    function checkCount(){
+        if(count===2){
+            $("#report").attr("disabled", false); 
+        }
+    }
     $("#single-upload").fileinput({
         language: 'zh', //设置语言
         uploadUrl: '{:url("admin/cov/ajaxUpload")}', //上传的地址
@@ -94,6 +100,8 @@
         var res = data.response
         if (res.code === 1) {
             showMsg(res.msg)
+            count++
+            checkCount()
         } else {
             showErrorMsg(res.msg)
         }
@@ -137,6 +145,8 @@
         var res = data.response
         if (res.code === 1) {
             showMsg(res.msg)
+            count++
+            checkCount()
         } else {
             showErrorMsg(res.msg)
         }

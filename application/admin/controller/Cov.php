@@ -133,9 +133,9 @@ class Cov extends Base
         $n = 2;
         $files = request()->file('file_pic');
         $reportDatas = cookie('reportDatas');
-
+        
         if (!$files) {
-            $this->error('上传失败');
+            $this->error('没有文件被上传');
         }
         if ($type === 's') {
             $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . '1.png';
