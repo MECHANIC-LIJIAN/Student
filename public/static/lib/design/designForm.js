@@ -1,37 +1,41 @@
 var id = 1;
 function deleteRow(obj) {
-  $(obj)
-    .parents("tr")
-    .remove();
-  $("a.deleteRow")
-    .last()
-    .removeClass("hidden")
-    .addClass("show");
+  $(obj).parents("tr").remove();
+  $("a.deleteRow").last().removeClass("hidden").addClass("show");
   var option_id = $(obj).attr("dataid");
   $("#primaryKey option[value='" + option_id + "']").remove();
   id = id - 1;
 }
 
-$("#addInput").click(function() {
+$("#addInput").click(function () {
   $(".deleteRow").addClass("hidden");
   var option_id = "option_" + id;
   $("#tableD").append(getInput(option_id));
+  
   addPrimaryKey(option_id, "字段" + id);
+
+  // $(".input-type").change(function () {
+  //   if($(this).val()==="text"){
+  //     option_id=$(this).attr("dataid");
+  //     delPrimaryKey(option_id);
+  //   }
+  // });
+
   id++;
 });
 
-$("#addSelect").click(function() {
+$("#addSelect").click(function () {
   $(".deleteRow").addClass("hidden");
   var option_id = "option_" + id;
   $("#tableD").append(getSelect(option_id));
   id++;
 
-  $(".confirm").click(function() {
+  $(".confirm").click(function () {
     var eleId = $(this).attr("dataid");
     addOptions(eleId);
   });
 
-  $(".editOptions").click(function() {
+  $(".editOptions").click(function () {
     var eleId = $(this).attr("dataid");
     $("textarea[id=" + eleId + "_childs" + "]")
       .removeClass("hidden")
@@ -45,7 +49,7 @@ $("#addSelect").click(function() {
   });
 });
 
-//增加一个input
+//拼接一个input的内容
 function getInput(option_id) {
   var ele;
   ele = "<tr>";
@@ -68,7 +72,9 @@ function getInput(option_id) {
     '" class="control-label">规则</label></td>';
   ele =
     ele +
-    '<td><select class="form-control" name="' +
+    '<td><select class="form-control input-type" dataid=' +
+    option_id +
+    ' name="' +
     option_id +
     '_rule"><option value="text|required"">普通文本</option><option value="phone|required">手机号</option><option value="email|required">邮箱</option><option value="number|required">数字</option><option value="text">非必填项</option>';
   ele = ele + "</select></td>";
@@ -80,7 +86,8 @@ function getInput(option_id) {
   ele = ele + "</tr>";
   return ele;
 }
-//增加一个select
+
+//拼接一个select的内容
 function getSelect(option_id) {
   var ele;
   ele = "<tr>";
@@ -134,10 +141,10 @@ function addOptions(eleId) {
   childs = $("textarea[id=" + eleId + "_childs]")
     .val()
     .split("\n");
-  childs = childs.filter(function(item) {
+  childs = childs.filter(function (item) {
     return item && item.trim();
   });
-  childs=uniq(childs)
+  childs = uniq(childs);
   if (childs.length == 0) {
     showErrorMsg("该项必填");
   } else {
@@ -174,6 +181,10 @@ function addPrimaryKey(option_id, field) {
   $("#primaryKey").append(
     "<option value='" + option_id + "'>" + field + "</option>"
   );
+}
+
+function delPrimaryKey(option_id) {
+  $("#primaryKey option[value='" + option_id + "']").remove();
 }
 
 // 思路：获取没重复的最右一值放入新数组
