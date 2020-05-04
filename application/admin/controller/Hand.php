@@ -19,6 +19,7 @@ class Hand extends Base
             if (!array_key_exists('option_1', $params)) {
                 $this->error("请至少添加一个字段");
             }
+
             $pinyin = new Pinyin();
             $tInfo = [
                 'tid' => uuid(),
@@ -44,7 +45,9 @@ class Hand extends Base
             if ($template['status'] == '1') {
                 $this->error("模板已经初始化，不可更改");
             }
+
             $tInfo['params'] = $params;
+            
             $res = model('Templates')->createByHand($tInfo);
             // return $res;
             if ($res == 1) {

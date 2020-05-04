@@ -2,7 +2,6 @@
 
 namespace app\admin\model;
 
-use myredis\Redis;
 use Overtrue\Pinyin\Pinyin;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
@@ -73,13 +72,15 @@ class Templates extends Model
         $excelData = [];
 
         #获取数组形式的原始数据并存到session
+
+        #按列读
         for ($colIndex = 1; $colIndex <= $col_num; $colIndex++) {
             if ($sheet->getCellByColumnAndRow($colIndex, 1)->getValue() == "") {
                 return "不能有空字段,请重新选择文件";
             }
+            #列中的每一行
             for ($rowIndex = 1; $rowIndex <= $row_num; $rowIndex++) {
                 $rowCell = $sheet->getCellByColumnAndRow($colIndex, $rowIndex)->getValue();
-
                 if ($rowCell !== null) {
                     $excelData[$colIndex][$rowIndex] = $rowCell;
                 }
@@ -99,12 +100,13 @@ class Templates extends Model
      */
     public function getOptionList($tInfo)
     {
-        #读数据
+        #读excel数据
         $excelData = session('excelData');
 
         $optionList = [];
         $tFields = [];
         for ($col = 1; $col <= count($excelData); $col++) {
+            #拼接字段名
             $option = 'option_' . $col;
             $optionList[$option]['title'] = $excelData[$col][1];
             for ($row = 2; $row <= count($excelData[$col]); $row++) {
@@ -163,14 +165,16 @@ class Templates extends Model
         $params = $tInfo['params'];
         unset($tInfo['params']);
         $tDdata = [];
-        $pinyin = new Pinyin();
+        
         foreach ($params as $key => $value) {
             #分割字段 option_A,option_A_rule
             $temp = explode("_", $key);
             if (count($temp) == 2) {
+                #单选项
                 $tDdata[$key]['title'] = $value;
                 $tDdata[$key]['rule'] = $params[$key . "_rule"];
             } elseif ($temp[2] != "rule") {
+                #多选项
                 $pId = implode("_", array_splice($temp, 0, 2));
                 $tDdata[$pId]['options'][$key] = $value;
             }
@@ -211,7 +215,7 @@ class Templates extends Model
         // }
 
         $tInfo['options'] = $tDdata;
-
+        halt($tDdata);
         return $this->saveData($tInfo);
     }
 
