@@ -1,4 +1,3 @@
-$(function () {
   function IsPC() {
     var userAgentInfo = navigator.userAgent;
     var Agents = [
@@ -127,4 +126,3 @@ $(function () {
       });
     }
   }
-});

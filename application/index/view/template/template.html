@@ -113,44 +113,43 @@
     <script src="__JS__/messages_zh.min.js"></script>
     <script src="__JS__/index.js"></script>
     <script>
+        $("#submitOpt").click(function () {
+            $("#subForm").submit();
+        });
 
-  $("#submitOpt").click(function () {
-    $("#subForm").submit();
-  });
-
-  $("#subForm").validate({
-    submitHandler: function (form) {
-      $.ajax({
-        url: "{:url('index/Template/collect')}",
-        type: "post",
-        dataType: "json",
-        data: $("form").serialize(),
-        success: function (data) {
-          if (data.code == 1) {
-            showMsgAndHref(data);
-          } else if (data.code == 101) {
-            if (isPC) {
-              confirm(
-                data.msg,
-                "数据覆盖确认",
-                "{:url('index/Template/collect')}",
-                $("form").serialize()
-              );
-            } else {
-              confirm(
-                data.msg,
-                "该记录已存在，确认覆盖吗?",
-                "{:url('index/Template/collect')}",
-                $("form").serialize()
-              );
-            }
-          } else {
-            showErrorMsg(data.msg);
-          }
-        },
-      });
-    },
-  });
+        $("#subForm").validate({
+            submitHandler: function (form) {
+                $.ajax({
+                    url: "{:url('index/Template/collect')}",
+                    type: "post",
+                    dataType: "json",
+                    data: $("form").serialize(),
+                    success: function (data) {
+                        if (data.code == 1) {
+                            showMsgAndHref(data);
+                        } else if (data.code == 101) {
+                            if (isPC) {
+                                confirm(
+                                    data.msg,
+                                    "数据覆盖确认",
+                                    "{:url('index/Template/collect')}",
+                                    $("form").serialize()
+                                );
+                            } else {
+                                confirm(
+                                    data.msg,
+                                    "该记录已存在，确认覆盖吗?",
+                                    "{:url('index/Template/collect')}",
+                                    $("form").serialize()
+                                );
+                            }
+                        } else {
+                            showErrorMsg(data.msg);
+                        }
+                    },
+                });
+            },
+        });
     </script>
 </body>
 
