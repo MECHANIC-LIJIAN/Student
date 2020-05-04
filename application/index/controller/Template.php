@@ -147,6 +147,7 @@ class Template extends Controller
         $optionList = $template['options'];
         unset($template['options']);
         // dump($template);
+        // dump($optionList);
         cookie('template', $template);
         cookie('ifCheck', 0);
         cookie('content', "");

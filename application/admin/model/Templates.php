@@ -215,7 +215,7 @@ class Templates extends Model
         // }
 
         $tInfo['options'] = $tDdata;
-        halt($tDdata);
+        // halt($tDdata);
         return $this->saveData($tInfo);
     }
 

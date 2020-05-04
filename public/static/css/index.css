@@ -1,0 +1,70 @@
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body {
+  background-image: url("/static/imgs/bg.jpg");
+
+  background-position: center 0;
+
+  background-repeat: no-repeat;
+
+  background-attachment: fixed;
+
+  background-size: cover;
+
+  -webkit-background-size: cover;
+
+  -o-background-size: cover;
+
+  -moz-background-size: cover;
+
+  -ms-background-size: cover;
+}
+
+.project-block-backgound {
+  background: #fff;
+  border-radius: 4px;
+}
+
+#subForm {
+  margin: 20px 30px 50px 30px;
+}
+
+#subForm label.error {
+  color: red;
+}
+
+.redInfo {
+  position: relative;
+  top: 2px;
+  font-weight: bold;
+  /* font-size: 16px; */
+  color: red;
+}
+.form-control {
+  height: 40px;
+}
+
+.form-block-background {
+    background: #fff;
+    border-radius: 4px;
+}
+
+.form-block-background .col-lg-3 {
+    padding-right: 0px;
+}
+
+label{
+
+  font-weight:unset;
+}
+label.col-lg-1{
+  padding-right: 0;
+  width: 8%;
+  font-weight: 700;
+}
+label.col-lg-10{
+  padding-left: 0;
+}
