@@ -7,15 +7,16 @@ use think\Validate;
 class Admin extends Validate
 {
     protected $rule = [
-        'username|管理员用户名' => 'require|unique:admin',
+        'username|用户名' => 'require|unique:admin|min:2|max:20|chsDash',
         'email|邮箱' => 'require|email|unique:admin',
-        'password|密码' => 'require',
+        'password|密码' => 'require|min:8|max:30|alphaDash',
         'conpass|确认密码' => 'require|confirm:password',
        
     ];
     protected $message = [
         'email.unique' => '该邮箱已被注册，请更换！',
         'code.require' => '验证码不能为空',
+        'password.alphaDash' => '密码只能包含字母、数字、下划线',
         'conpass.confirm:password' => '两次输入的密码不一致',
     ];
 

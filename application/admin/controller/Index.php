@@ -45,8 +45,8 @@ class Index extends Controller
         if (request()->isAjax()) {
             $data = [
                 'username' => input('post.username'),
-                'password' => md5(input('post.password')),
-                'conpass' => md5(input('post.conpass')),
+                'password' =>  input('post.password'),
+                'conpass' => input('post.conpass'),
                 'email' => input('post.email'),
                 'last_time' => time(),
                 'group_ids'=>'8'//默认普通用户组
