@@ -72,39 +72,11 @@
         $('.admin-del').click(function () {
 
             var id = $(this).attr('dataid');
-            layer.confirm('确定删除该用户吗？', {
-                title: '用户删除确认',
-                icon: 3
-            }, function (index) {
-                layer.close(index);
-                $.ajax({
-                    url: "{:url('admin/Admin/del')}",
-                    type: 'post',
-                    data: {
-                        id: id
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data.code == 1) {
-                            layer.msg(data.msg, {
-                                icon: 6,
-                                time: 2000
-                            }, function () {
-                                location.href = data.url;
-                            });
-                        } else {
-                            layer.open({
-                                title: '删除失败',
-                                content: data.msg,
-                                icon: 5,
-                                anim: 5
-                            });
 
-                        }
-                    }
-                });
-
-            });
+            data = {
+                id: id
+            }
+            confirm('确定删除该用户吗？', '用户删除确认', "{:url('admin/Admin/del')}", data)
             return false;
         });
 
@@ -118,39 +90,13 @@
             } else {
                 var msg = '确定启用吗？';
             }
-            layer.confirm(msg, {
-                title: '状态操作',
-                icon: 3
-            }, function (index) {
-                layer.close(index);
-                $.ajax({
-                    url: "{:url('admin/Admin/status')}",
-                    type: 'post',
-                    data: {
-                        id: id,
-                        status: status
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data.code == 1) {
-                            layer.msg(data.msg, {
-                                icon: 6,
-                                time: 2000
-                            }, function () {
-                                location.href = data.url;
-                            });
-                        } else {
-                            layer.open({
-                                title: '操作失败',
-                                content: data.msg,
-                                icon: 5,
-                                anim: 5
-                            });
 
-                        }
-                    }
-                });
-            });
+            data = {
+                id: id,
+                status: status
+            }
+            confirm(msg, '用户状态操作', "{:url('admin/Admin/status')}", data)
+
             return false;
         });
     });
