@@ -26,7 +26,7 @@ class Index extends Controller
         if (request()->isAjax()) {
             $data = [
                 'username' => input('post.username'),
-                'password' => md5(input('post.password')),
+                'password' => input('post.password'),
             ];
 
             $result = model('Admin')->login($data);
@@ -51,7 +51,7 @@ class Index extends Controller
                 'last_time' => time(),
                 'group_ids'=>'8'//默认普通用户组
             ];
-            return $data;
+            
             $result = model('Admin')->register($data);
             if ($result == 1) {
                 $this->success('注册成功', 'admin/Index/login');

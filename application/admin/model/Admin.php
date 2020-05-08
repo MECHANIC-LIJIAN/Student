@@ -2,6 +2,7 @@
 
 namespace app\admin\model;
 
+use app\admin\business\Admin as BusinessAdmin;
 use think\Db;
 use think\Model;
 use think\model\concern\SoftDelete;
@@ -35,12 +36,17 @@ class Admin extends Model
         }
         // 使用循环方式判断用户名是否存在
         foreach ($this->loginWay as $k => $v) {
-            $result = $this->where($v, $data['username'])->find();
+            $result = $this->where($v, $data['username'])->field('id,username,password,salt,status,last_time')->find();
             // 如果存在就有这个用户，跳出
             if ($result) {
                 break;
             }
         }
+
+        $adminBusiness = new BusinessAdmin();
+        $saltRes = $adminBusiness->passwordAddSalt($data['password'], $result['salt']);
+        $data['password'] = $saltRes['password'];
+
         //判断用户是否存在
         if ($result) {
             //判断用户是否可用
@@ -77,6 +83,11 @@ class Admin extends Model
         if (!$validate->scene('add')->check($data)) {
             return $validate->getError();
         }
+
+        $adminBusiness = new BusinessAdmin();
+        $saltRes = $adminBusiness->passwordAddSalt($data['password']);
+        $data['password'] = $saltRes['password'];
+        $data['salt'] = $saltRes['salt'];
 
         // 启动事务
         Db::startTrans();
@@ -120,9 +131,16 @@ class Admin extends Model
             return $validate->getError();
         }
 
-        $pass = $this->getFieldById($data['id'], 'password');
-        if ($data['password'] !== $pass) {
-            $data['password'] = md5($data['password']);
+       $oldData = $this->field('password,salt')->getById($data['id']);
+
+        //如果密码改变，重新计算
+        if ($data['password'] !== $oldData['password']) {
+            $adminBusiness = new BusinessAdmin();
+            $saltRes = $adminBusiness->passwordAddSalt($data['password']);
+            $data['password'] = $saltRes['password'];
+            $data['salt'] = $saltRes['salt'];
+        }else{
+            $data['salt'] = $oldData['salt'];
         }
 
         // 启动事务
@@ -132,6 +150,7 @@ class Admin extends Model
                 ->update([
                     'username' => $data['username'],
                     'password' => $data['password'],
+                    'salt' => $data['salt'],
                     'email' => $data['email'],
                 ]);
 
@@ -164,6 +183,11 @@ class Admin extends Model
         if (!$validate->scene('register')->check($data)) {
             return $validate->getError();
         }
+
+        $adminBusiness = new BusinessAdmin();
+        $saltRes = $adminBusiness->passwordAddSalt($data['password']);
+        $data['password'] = $saltRes['password'];
+        $data['salt'] = $saltRes['salt'];
 
         // 启动事务
         Db::startTrans();
@@ -253,8 +277,15 @@ class Admin extends Model
                 return "验证码不正确";
             } else {
                 $adminInfo = $this->where('email', $data['email'])->find();
-                $password = $data['password'];
-                $adminInfo->password = md5($password);
+
+                $adminBusiness = new BusinessAdmin();
+                $saltRes = $adminBusiness->passwordAddSalt($data['password']);
+                $data['password'] = $saltRes['password'];
+                $data['salt'] = $saltRes['salt'];
+                
+                $adminInfo->password = $data['password'];
+                $adminInfo->salt = $data['salt'];
+
                 $result = $adminInfo->save();
                 if ($result) {
                     return 1;
