@@ -19,20 +19,10 @@ class Cov extends Base
 
         $this->assign([
             'token' => time(),
+            'datas' => $reportList,
         ]);
-        if (in_array(9, $this->groupIds)) {
-            return view('index', ['datas' => $reportList]);
-        } else {
-            $reportedDate = Db::name('cov_reports')->where(['uid' => $this->uid])->field('date')->column('date');
-            foreach ($reportList as $k => $v) {
-                if (in_array($v['date'], $reportedDate)) {
-                    $reportList[$k]['ifReport'] = 1;
-                }
-            }
 
-            return view('index_b', ['datas' => $reportList]);
-        }
-
+        return view();
     }
 
     /**
@@ -74,7 +64,7 @@ class Cov extends Base
         $list = model('cov_reports')->where(['date' => input('date')])->with('getProfile')->field('id,uid,date,report_pic_path,phone_pic_path')->paginate(5);
 
         foreach ($list as $k => $v) {
-            $picList=explode('|', trim($v['phone_pic_path']));
+            $picList = explode('|', trim($v['phone_pic_path']));
             array_pop($picList);
             $v['phone_pic_path'] = $picList;
         }
@@ -90,6 +80,19 @@ class Cov extends Base
         return view();
     }
 
+    public function indexB()
+    {
+        $reportList = Db::name('cov')->field('id,title,status,date')->order('date', 'desc')->select();
+        $reportedDate = Db::name('cov_reports')->where(['uid' => $this->uid])->field('date')->column('date');
+        foreach ($reportList as $k => $v) {
+            if (in_array($v['date'], $reportedDate)) {
+                $reportList[$k]['ifReport'] = 1;
+            }
+        }
+
+        return view('index_b', ['datas' => $reportList]);
+    }
+
     /**
      * 上报页面
      *
@@ -103,7 +106,7 @@ class Cov extends Base
             $covReports = new CovReports();
             $res = $covReports->allowField(true)->save($reportDatas);
             if ($res) {
-                $this->success('提交成功', url('admin/cov/index'));
+                $this->success('提交成功', url('admin/cov/indexB'));
             } else {
                 $this->error('提交失败');
             }
@@ -118,7 +121,7 @@ class Cov extends Base
 
         $this->assign([
             'token' => time(),
-            'title' => date("m.d", input('date'))."报告"
+            'title' => date("m.d", input('date')) . "报告",
         ]);
         return view();
     }
@@ -134,7 +137,7 @@ class Cov extends Base
         $n = 2;
         $files = request()->file('file_pic');
         $reportDatas = cookie('reportDatas');
-        
+
         if (!$files) {
             $this->error('没有文件被上传');
         }

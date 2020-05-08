@@ -11,6 +11,7 @@ Route::group(
         Route::rule('per_day_reports/:date', 'admin/cov/perDayReports','GET|POST');
         Route::rule('down_per_day_reports', 'admin/cov/downPerDayReports','GET|POST');
 
+        Route::get('index_b', 'admin/cov/indexB');
         Route::rule('reporter/[:date]', 'admin/cov/reporter','GET|POST');
         Route::post('cov_ajax_upload', 'admin/cov/ajaxUpload');
     }
