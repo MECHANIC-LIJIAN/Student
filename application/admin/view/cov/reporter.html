@@ -39,13 +39,14 @@
 
 {block name="page-js"}
 
-<script src="__LIB__/bootstrap-fileinput/js/fileinput.min.js"></script>
-<script src="__LIB__/bootstrap-fileinput/js/locales/zh.js"></script>
 <link rel="stylesheet" href="__LIB__/bootstrap-fileinput/css/fileinput.min.css">
 <link href="__LIB__/bootstrap-fileinput/themes/explorer-fa/theme.css" media="all" rel="stylesheet" type="text/css" />
 
+<script src="__JS__/c2b.js"></script>
+<script src="__LIB__/bootstrap-fileinput/js/fileinput.min.js"></script>
+<script src="__LIB__/bootstrap-fileinput/js/locales/zh.js"></script>
 <script src="__LIB__/bootstrap-fileinput/themes/explorer-fa/theme.js" type="text/javascript"></script>
-<script src="__LIB__/bootstrap-fileinput/themes/fa/theme.js"></script>
+<!-- <script src="__LIB__/bootstrap-fileinput/themes/fa/theme.js"></script> -->
 <script>
     var count=0;
     function checkCount(){
@@ -57,6 +58,7 @@
         language: 'zh', //设置语言
         uploadUrl: '{:url("admin/cov/ajaxUpload")}', //上传的地址
         allowedFileExtensions: ['jpg', 'gif', 'png'],//接收的文件后缀
+
         uploadAsync: true,
         browseClass: "btn btn-primary", //按钮样式
         removeFromPreviewOnError: true,//是否移除校验文件失败的文件
@@ -65,13 +67,18 @@
         showCancel: false, // 显示取消按钮
         showZoom: false,     // 显示预览按钮
         
+        showPreview:true,
+        resizeImage:true,
+        resizePreference:'height',
+        resizeImageQuality:0.9,
+
         showUpload: true,
         showRemove: false,
         autoReplace: true,
         minImageWidth: 50, //图片的最小宽度
         minImageHeight: 50,//图片的最小高度
-        maxImageWidth: 5000,//图片的最大宽度
-        maxImageHeight: 5000,//图片的最大高度
+        maxImageWidth: 1500,//图片的最大宽度
+        maxImageHeight: 1500,//图片的最大高度
         maxFileSize: 8000,//单位为kb，如果为0表示不限制文件大小
         maxFileCount: 1, //表示允许同时上传的最大文件个数
         validateInitialCount: true,
@@ -124,9 +131,13 @@
         autoReplace: true,
         minImageWidth: 50, //图片的最小宽度
         minImageHeight: 50,//图片的最小高度
-        maxImageWidth: 5000,//图片的最大宽度
-        maxImageHeight: 5000,//图片的最大高度
+        maxImageWidth: 1500,//图片的最大宽度
+        maxImageHeight: 1500,//图片的最大高度
         maxFileSize: 8000,//单位为kb，如果为0表示不限制文件大小
+        showPreview:true,
+        resizeImage:true,
+        resizePreference:'height',
+        resizeImageQuality:0.9,
         maxFileCount: 5, //表示允许同时上传的最大文件个数
         maxFilesNum: 5,//上传最大的文件数量
         enctype: 'multipart/form-data',

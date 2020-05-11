@@ -4,13 +4,15 @@ namespace app\admin\controller;
 
 use app\admin\model\Cov as ModelCov;
 use app\admin\model\CovReports;
+use Exception;
 use think\Db;
+use think\Image;
 use ZipArchive;
 
 class Cov extends Base
 {
     /**
-     * 报告列表
+     * 辅导员-报告列表
      */
     public function index()
     {
@@ -26,7 +28,7 @@ class Cov extends Base
     }
 
     /**
-     * 新建报告
+     * 辅导员-新建报告
      *
      * @return void
      */
@@ -46,7 +48,7 @@ class Cov extends Base
         } else {
             $res = $cov->save($data);
             if ($res) {
-                $this->success('今日报告创建成功', url("admin/cov/index"));
+                $this->success('今日报告创建成功', url("admin/cov/index",['sid'=>15]));
             } else {
                 $this->error('创建失败');
             }
@@ -54,7 +56,7 @@ class Cov extends Base
     }
 
     /**
-     * ，每日报告列表
+     * 辅导员-每日报告列表
      *
      * @return void
      */
@@ -80,6 +82,11 @@ class Cov extends Base
         return view();
     }
 
+    /**
+     * 班长-报告记录
+     *
+     * @return void
+     */
     public function indexB()
     {
         $reportList = Db::name('cov')->field('id,title,status,date')->order('date', 'desc')->select();
@@ -94,7 +101,7 @@ class Cov extends Base
     }
 
     /**
-     * 上报页面
+     * 班长-上报页面
      *
      * @return void
      */
@@ -106,7 +113,7 @@ class Cov extends Base
             $covReports = new CovReports();
             $res = $covReports->allowField(true)->save($reportDatas);
             if ($res) {
-                $this->success('提交成功', url('admin/cov/indexB'));
+                $this->success('提交成功', url('admin/cov/indexB',['sid'=>15]));
             } else {
                 $this->error('提交失败');
             }
@@ -115,7 +122,7 @@ class Cov extends Base
         $reportDatas = [
             'uid' => $this->uid,
             'date' => input('date'),
-            'pic_date' => date("m.d", input('date')),
+            'pic_date' => date("n.j", input('date')),
         ];
         cookie('reportDatas', $reportDatas);
 
@@ -133,41 +140,78 @@ class Cov extends Base
      */
     public function ajaxUpload()
     {
-        $type = input('post.type');
-        $n = 2;
-        $files = request()->file('file_pic');
+
         $reportDatas = cookie('reportDatas');
+        $imgPath = 'uploads/cov/org/';
+        $subImgPath = 'uploads/cov/' . $reportDatas['pic_date'] . "/";
+
+        $textSize = 50;
+        $textColor = '#FF3333';
+        $textLocate = \think\Image::WATER_EAST;
+        $textOffset=[-100,0];
+        $textAngle = 0;
+
+        $type = input('post.type');
+        $files = request()->file('file_pic');
 
         if (!$files) {
             $this->error('没有文件被上传');
         }
+
         if ($type === 's') {
-            $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . '1.png';
-            $info = $files->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move('uploads/cov/2020/' . $reportDatas['pic_date'], $imgName, true);
 
-            if (!$info) {
-                $this->error('上传失败');
-            }
-
-            $reportDatas['report_pic_path'] = $info->getPathName();
-            cookie('reportDatas', $reportDatas);
-        } else {
-
-            $phonePicPath = '';
-            foreach ($files as $file) {
-                $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . $n . '.png';
-                $info = $file->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move('uploads/cov/2020/' . $reportDatas['pic_date'], $imgName, true);
-                $n += 1;
+            try {
+                mkdir($subImgPath, 0755, true);
+                #保存原图
+                $info = $files->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move($imgPath);
 
                 if (!$info) {
                     $this->error('上传失败');
                 }
+                #打开原图
+                $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
 
-                $phonePicPath = $phonePicPath . $info->getPathName() . '|';
-
+                #拼接图片名
+                $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . '1' . "." . $image->type();
+                
+                #添加水印
+                $image->text($reportDatas['pic_date'], getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($subImgPath . $imgName);
+              
+            } catch (Exception $e) {
+                $this->error('上传失败');
             }
 
+            $reportDatas['report_pic_path'] ="/". $subImgPath . $imgName;
+
+            cookie('reportDatas', $reportDatas);
+        } else {
+
+            $n = 2;
+            $phonePicPath = '';
+            foreach ($files as $file) {
+                try {
+                    #保存原图
+                    $info = $file->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move($imgPath);
+
+                    #打开原图
+                    $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
+
+                    #拼接图片名
+                    $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . $n . "." . $image->type();
+
+                    #添加水印
+                    $image->text($reportDatas['pic_date'], getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($subImgPath . $imgName);
+
+                } catch (Exception $e) {
+                    $this->error('上传失败');
+                }
+                $phonePicPath = $phonePicPath ."/". $subImgPath . $imgName . '|';
+                $n+=1;
+            }
+
+            
             $reportDatas['phone_pic_path'] = $phonePicPath;
+
             cookie('reportDatas', $reportDatas);
         }
 
@@ -178,11 +222,12 @@ class Cov extends Base
     public function downPerDayReports()
     {
 
-        $date = date("m.d", input('date'));
-        $path = env('ROOT_PATH') . 'public/uploads/cov/2020/';
+        $date = date("n.j", input('date'));
+        $path = env('ROOT_PATH') . 'public/uploads/cov/';
         $zipFile = $date . '.zip';
         $picPath = $path . $date;
 
+        // halt($picPath);
         $zip = new ZipArchive();
         $overwrite = false;
         if ($zip->open($path . $zipFile, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {

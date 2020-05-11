@@ -48,7 +48,8 @@
             </form>
         </div>
         <div class="logobox">
-            <p class="text-center" style="font-size: 18px;font-weight: bold;text-shadow: 3px 3px 3px #FF0000;font-style: italic;">
+            <p class="text-center"
+                style="font-size: 18px;font-weight: bold;text-shadow: 3px 3px 3px #FF0000;font-style: italic;">
                 admin
             </p>
         </div>
@@ -64,28 +65,25 @@
     <!--Beyond Scripts-->
     <script src="__JS__/beyond.js"></script>
     <script>
-        $(window).bind("load", function() {
-            /*Sets Themed Colors Based on Themes*/
-            themeprimary = getThemeColorFromCss("themeprimary");
-            themesecondary = getThemeColorFromCss("themesecondary");
-            themethirdcolor = getThemeColorFromCss("themethirdcolor");
-            themefourthcolor = getThemeColorFromCss("themefourthcolor");
-            themefifthcolor = getThemeColorFromCss("themefifthcolor");
-        });
-
-        $(function() {
-            $("#sendCode").click(function() {
+        $(function () {
+            // 禁用enter键
+            document.onkeydown = function () {
+                if (window.event && window.event.keyCode == 13) {
+                    window.event.returnValue = false;
+                }
+            };
+            $("#sendCode").click(function () {
                 $.ajax({
                     url: "{:url('admin/index/forget')}",
                     type: 'post',
                     data: $("form").serialize(),
                     dataType: 'json',
-                    success: function(data) {
+                    success: function (data) {
                         if (data.code == 1) {
                             layer.msg(data.msg, {
                                 icon: 6,
                                 time: 2000
-                            }, function() {
+                            }, function () {
                                 $('[name=email]').parent().addClass('hidden');
                                 $('[name=code]').parent().removeClass('hidden');
                                 $('#sendCode').parent().addClass('hidden');
@@ -109,19 +107,19 @@
             });
         });
 
-        $(function() {
-            $("#reset").click(function() {
+        $(function () {
+            $("#reset").click(function () {
                 $.ajax({
                     url: "{:url('admin/index/reset')}",
                     type: 'post',
                     data: $("form").serialize(),
                     dataType: 'json',
-                    success: function(data) {
+                    success: function (data) {
                         if (data.code == 1) {
                             layer.msg(data.msg, {
                                 icon: 6,
                                 time: 2000
-                            }, function() {
+                            }, function () {
                                 location.href = data.url;
                             });
                         } else {

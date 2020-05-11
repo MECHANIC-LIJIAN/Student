@@ -24,7 +24,7 @@ Cov报告记录
                             {volist name="datas" id="vo"}
                             <tr>
                                 <td>{$vo.title} </td>
-                                <td>{if $vo.ifReport==1}已提交{else /}<a href="{:url('admin/cov/reporter',['date'=>$vo.date])}" >去提交</a>{/if}</td>
+                                <td>{if $vo.ifReport==1}已提交{else /}<a href="{:url('admin/cov/reporter',['date'=>$vo.date,'sid'=>15])}" >去提交</a>{/if}</td>
                             </tr>
                             {/volist}
                         </tbody>
