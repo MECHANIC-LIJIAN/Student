@@ -23,7 +23,7 @@ class Admin extends Validate
     //登录场景验证
     public function sceneLogin()
     {
-        return $this->only(['username', 'password'])->remove('username', 'unique');
+        return $this->only(['username', 'password'])->remove('username', 'unique|chsDash');
     }
 
      //添加场景验证
