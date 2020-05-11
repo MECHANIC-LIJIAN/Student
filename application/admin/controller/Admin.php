@@ -29,8 +29,8 @@ class Admin extends Base
         if (request()->isAjax()) {
             $data = [
                 'username' => input('post.username'),
-                'password' => md5(input('post.password')),
-                'conpass' => md5(input('post.conpass')),
+                'password' => input('post.password'),
+                'conpass' => input('post.conpass'),
                 'email' => input('post.email'),
                 'group_ids' => input('post.group_ids'),
                 'status' => 1,
