@@ -134,7 +134,7 @@ return [
     'dispatch_error_tmpl'    => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
 
     // 异常页面的模板文件
-    'exception_tmpl'         => 'common/http/exception.tpl',
+    'exception_tmpl'         => Env::get('think_path') . 'tpl/think_exception.tpl',
 
     // 错误显示信息,非调试模式有效
     'error_message'          => '服务器内部错误',
