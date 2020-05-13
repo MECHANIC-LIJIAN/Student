@@ -65,22 +65,13 @@ class Cov extends Base
 
             $members = Db::name('admin')->where('email', 'in', $emailList)->field('id,username')->select();
 
-            $roles = cookie('roles');
-            if ($data['pid' == '1']) {
-                $allMembers = array_column($roles['instructor'], 'id');
-            } else {
-                $allMembers = array_column($roles['cadre'], 'id');
-            }
 
             foreach ($members as $k => $v) {
                 $members[$k]['uid'] = $members[$k]['id'];
+                unset($members[$k]['id']);
                 $members[$k]['role_id'] = 3;
                 $members[$k]['pid'] = (int) $data['pid'];
                 $members[$k]['create_time'] = time();
-
-                if (in_array($v['id'], $allMembers)) {
-                    $this->error('列表中包含已存在记录');
-                }
             }
 
             // halt($members);
