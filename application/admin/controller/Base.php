@@ -58,7 +58,7 @@ class Base extends Controller
             $authList=Session::get('_auth_list_'.$this->uid);
             $this->groupIds =Session::get('_auth_groups_'.$this->uid);
             // $authList=null;
-            // if($authList===null||$authList===''){
+            if($authList===null||$authList===''){
                 $groupIds = Db::name('AuthGroupAccess')->whereUid('=', $userRow['id'])->column('group_id');
                 
                 $ruleIds = Db::name('AuthGroup')->whereId('in', $groupIds)->column('rules');
@@ -68,7 +68,7 @@ class Base extends Controller
              
                 Session::set('_auth_list_'.$this->uid,$authList);
                 Session::set('_auth_groups_'.$this->uid,$groupIds);
-            // }
+            }
             //    dump($authList);
             View::share(['authList' => $authList]);
         }

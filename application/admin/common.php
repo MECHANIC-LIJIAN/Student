@@ -87,7 +87,7 @@ function addFilesToZip($openFile,$zipObj,$sourceAbso,$newRelat = '')
         $newTemp = $newRelat==''?$file:$newRelat.'/'.$file;  
         if(is_dir($sourceTemp))  
         {  
-            echo '创建'.$newTemp.'文件夹<br/>';  
+            // echo '创建'.$newTemp.'文件夹<br/>';  
             $zipObj->addEmptyDir($newTemp);/*这里注意：php只需传递一个文件夹名称路径即可*/  
             addFilesToZip(opendir($sourceTemp),$zipObj,$sourceTemp,$newTemp);  
         }  
