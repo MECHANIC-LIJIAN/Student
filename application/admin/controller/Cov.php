@@ -203,8 +203,8 @@ class Cov extends Base
             }
         }
 
-        $instructor = Db::name("cov_users")->where('uid', 'in', function ($query) {
-            $query->table('stu_cov_users')->where('uid', $this->uid)->field('instructor');
+        $instructor = Db::name("admin")->where('id', '=', function ($query) {
+            $query->table('stu_cov_users')->where('uid', $this->uid)->field('pid');
         })->field('uid,username')->find();
 
         $pinyin = new Pinyin();
