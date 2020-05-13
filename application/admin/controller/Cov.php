@@ -193,10 +193,10 @@ class Cov extends Base
                 $this->error('提交失败');
             }
         }
-
-        $instructor = Db::name("admin")->where('id', '=', function ($query) {
-            $query->table('stu_cov_users')->where('uid', $this->uid)->field('pid');
-        })->field('id,username')->find();
+        $instructorIds = Db::name("auth_group_access")->where(['group_id' => 9])->column('uid');
+        $pids=Db::name('cov_users')->table('stu_cov_users')->where('uid', $this->uid)->column('pid');
+        $instructorId=array_intersect($pids,$instructorIds);
+        $instructor = Db::name("admin")->where('id', '=',$instructorId)->field('id,username')->find();
 
         $pinyin = new Pinyin();
         $pathPriex = $pinyin->permalink($instructor['username'], '');
