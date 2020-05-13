@@ -205,7 +205,7 @@ class Cov extends Base
 
         $instructor = Db::name("admin")->where('id', '=', function ($query) {
             $query->table('stu_cov_users')->where('uid', $this->uid)->field('pid');
-        })->field('uid,username')->find();
+        })->field('id,username')->find();
 
         $pinyin = new Pinyin();
         $pathPriex = $pinyin->permalink($instructor['username'], '');
