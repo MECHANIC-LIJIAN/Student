@@ -49,7 +49,7 @@
                             }
                         </style>
                         <tbody>
-                            {volist name="datas"" id="vo" empty="暂时没有数据"}
+                            {volist name="hasList"" id="vo" empty="暂时没有提交数据"}
                             <tr>
                                 <td style="width: 50px;">{$vo.get_profile.username} </td>
 
@@ -69,15 +69,41 @@
                                 </td>
                             </tr>
                             {/volist}
+
+                            {volist name="notList"" id="vo" }
+                            <tr>
+                                <td style="width: 50px;">{$vo.username} </td>
+
+                                <td style="width: 30%;" colspan="2">
+                                    未提交
+                                </td>
+                            </tr>
+                            {/volist}
                         </tbody>
                     </table>
+                    {if $ifInstroctor=='yes' }
+
                     <div class="form-group text-align-right" style="margin-top: 20px;">
-                        <a href="{:url('admin/Cov/downPerDayReports',['date'=>$date])}">
-                            <button type="button" id="downReport" {empty name="datas" } disabled {/empty}
-                                class="btn btn-info">
-                                下载今日报告
-                            </button></a>
+
+                        <div class="btn-group">
+                            <a href="{:url('admin/Cov/downPerDayReports',['date'=>$date,'type'=>'all','path'=>$date_pic_path])}">
+                                <button type="button" id="downReport" {empty name="hasList" } disabled {/empty}
+                                    class="btn btn-info">
+                                    下载今日全部报告
+                                </button></a>
+                            <a href="{:url('admin/Cov/downPerDayReports',['type'=>'conditon','date'=>$date,'path'=>$report_pic_path])}">
+                                <button type="button" id="downReport" {empty name="hasList" } disabled {/empty}
+                                    class="btn btn-info">
+                                    下载今日情况单
+                                </button></a>
+                            <a href="{:url('admin/Cov/downPerDayReports',['type'=>'phone','date'=>$date,'path'=>$phone_pic_path])}">
+                                <button type="button" id="downReport" {empty name="hasList" } disabled {/empty}
+                                    class="btn btn-info">
+                                    下载今日电话截图
+                                </button></a>
+                        </div>
                     </div>
+                    {/if}
                 </div>
             </div>
         </div>

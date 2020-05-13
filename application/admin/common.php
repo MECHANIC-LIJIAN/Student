@@ -69,17 +69,32 @@ function createZip($files = array(), $destination = '', $overwrite = true)
 
 }
 
-function addFileToZip($path, $zip)
-{
-    $handler = opendir($path); //打开当前文件夹由$path指定。
-    while (($filename = readdir($handler)) !== false) {
-        if ($filename != "." && $filename != "..") { //文件夹文件名字为'.'和‘..'，不要对他们进行操作
-            if (is_dir($path . "/" . $filename)) { // 如果读取的某个对象是文件夹，则递归
-                addFileToZip($path . "/" . $filename, $zip);
-            } else { //将文件加入zip对象
-                $zip->addFile($path . "/" . $filename);
-            }
-        }
-    }
-    closedir($path);
-}
+/*压缩多级目录 
+    $openFile:目录句柄 
+    $zipObj:Zip对象 
+    $sourceAbso:源文件夹路径 
+*/  
+function addFilesToZip($openFile,$zipObj,$sourceAbso,$newRelat = '')  
+{  
+    while(($file = readdir($openFile)) != false)  
+    {  
+        if($file=="." || $file=="..")  
+            continue;  
+          
+        /*源目录路径(绝对路径)*/  
+        $sourceTemp = $sourceAbso.'/'.$file;  
+        /*目标目录路径(相对路径)*/  
+        $newTemp = $newRelat==''?$file:$newRelat.'/'.$file;  
+        if(is_dir($sourceTemp))  
+        {  
+            echo '创建'.$newTemp.'文件夹<br/>';  
+            $zipObj->addEmptyDir($newTemp);/*这里注意：php只需传递一个文件夹名称路径即可*/  
+            addFilesToZip(opendir($sourceTemp),$zipObj,$sourceTemp,$newTemp);  
+        }  
+        if(is_file($sourceTemp))  
+        {  
+            //echo '创建'.$newTemp.'文件<br/>';  
+            $zipObj->addFile($sourceTemp,$newTemp);  
+        }  
+    }  
+} 

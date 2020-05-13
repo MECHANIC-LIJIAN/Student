@@ -10,6 +10,7 @@ Route::group(
         Route::post('newreport', 'admin/cov/newReport');
         Route::rule('per_day_reports/:date', 'admin/cov/perDayReports','GET|POST');
         Route::rule('down_per_day_reports', 'admin/cov/downPerDayReports','GET|POST');
+        Route::rule('add_members', 'admin/cov/addMembers','GET|POST');
 
         Route::get('index_b', 'admin/cov/indexB');
         Route::rule('reporter/[:date]', 'admin/cov/reporter','GET|POST');

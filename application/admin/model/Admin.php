@@ -131,15 +131,16 @@ class Admin extends Model
             return $validate->getError();
         }
 
-       $oldData = $this->field('password,salt')->getById($data['id']);
+        $oldData = $this->field('password,salt')->getById($data['id']);
 
-        //如果密码改变，重新计算
         if ($data['password'] !== $oldData['password']) {
+
+            //如果密码改变，重新计算
             $adminBusiness = new BusinessAdmin();
             $saltRes = $adminBusiness->passwordAddSalt($data['password']);
             $data['password'] = $saltRes['password'];
             $data['salt'] = $saltRes['salt'];
-        }else{
+        } else {
             $data['salt'] = $oldData['salt'];
         }
 
@@ -282,7 +283,7 @@ class Admin extends Model
                 $saltRes = $adminBusiness->passwordAddSalt($data['password']);
                 $data['password'] = $saltRes['password'];
                 $data['salt'] = $saltRes['salt'];
-                
+
                 $adminInfo->password = $data['password'];
                 $adminInfo->salt = $data['salt'];
 

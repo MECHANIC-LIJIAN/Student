@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use app\admin\model\Cov as ModelCov;
 use app\admin\model\CovReports;
 use Exception;
+use Overtrue\Pinyin\Pinyin;
 use think\Db;
 use think\Image;
 use ZipArchive;
@@ -16,7 +17,6 @@ class Cov extends Base
      */
     public function index()
     {
-
         $reportList = Db::name('cov')->field('id,title,status,date')->order('date', 'desc')->select();
 
         $this->assign([
@@ -48,11 +48,50 @@ class Cov extends Base
         } else {
             $res = $cov->save($data);
             if ($res) {
-                $this->success('今日报告创建成功', url("admin/cov/index",['sid'=>15]));
+                $this->success('今日报告创建成功', url("admin/cov/index", ['sid' => 15]));
             } else {
                 $this->error('创建失败');
             }
         }
+    }
+
+    public function addMembers()
+    {
+
+        if (request()->isAjax()) {
+
+            $data = input('post.');
+            $emailList = explode("\r\n", $data['memberList']);
+
+            $members = Db::name('admin')->where('email', 'in', $emailList)->field('id,username')->select();
+            $allMembers = Db::name("cov_users")->where(['instructor' => $data['instructor']])->column('uid');
+            foreach ($members as $k => $v) {
+                $members[$k]['uid'] = $members[$k]['id'];
+                $members[$k]['role'] = 1;
+                $members[$k]['instructor'] = (int) $data['instructor'];
+                $members[$k]['create_time'] = time();
+
+                if (in_array($v['id'], $allMembers)) {
+                    $this->error('列表中包含已存在记录');
+                }
+            }
+
+            $res = Db::name("cov_users")->strict(false)->insertAll($members);
+
+            if ($res) {
+                $this->success('提交成功', url('admin/cov/index', ['sid' => 15]));
+            } else {
+                $this->error('提交失败');
+            }
+        }
+
+        $instructor = Db::name("cov_users")->where(['instructor' => 0])->field('uid,username')->select();
+
+        $this->assign([
+            'instructor' => $instructor,
+        ]);
+
+        return view();
     }
 
     /**
@@ -63,20 +102,50 @@ class Cov extends Base
     public function perDayReports()
     {
 
-        $list = model('cov_reports')->where(['date' => input('date')])->with('getProfile')->field('id,uid,date,report_pic_path,phone_pic_path')->paginate(5);
+        if (in_array(9, $this->groupIds)) {
+            $myTeam = Db::name("cov_users")->where(['instructor' => $this->uid])->field('uid,username')->select();
 
-        foreach ($list as $k => $v) {
+            $this->assign([
+                'ifInstroctor' => 'yes',
+            ]);
+
+        } else {
+            $myTeam = Db::name("cov_users")->where(['grade' => $this->uid])->field('uid,username')->select();
+            $this->assign([
+                'ifInstroctor' => 'no',
+            ]);
+        }
+
+        $hasList = model('cov_reports')
+            ->where(['date' => input('date')])
+            ->whereIn('uid', array_column($myTeam, 'uid'))
+            ->with('getProfile')
+            ->field('id,uid,date,report_pic_path,phone_pic_path')
+            ->paginate(10);
+
+        $report_pic_path = dirname($hasList[0]['report_pic_path']);
+
+        foreach ($hasList as $k => $v) {
             $picList = explode('|', trim($v['phone_pic_path']));
+            $phone_pic_path = dirname($picList[1]);
             array_pop($picList);
             $v['phone_pic_path'] = $picList;
+            foreach ($myTeam as $mk => $mv) {
+                if ($v['get_profile']['id'] == $mv['uid']) {
+                    unset($myTeam[$mk]);
+                }
+            }
         }
 
         $oneReport = Db::name('cov')->where(['date' => input('date')])->field('title,date')->find();
-
         $this->assign([
-            'datas' => $list,
+            'hasList' => $hasList,
+            'notList' => $myTeam,
             'title' => $oneReport['title'],
             'date' => $oneReport['date'],
+            'report_pic_path' => $report_pic_path,
+            'phone_pic_path' => $phone_pic_path,
+            'date_pic_path' => dirname($report_pic_path),
         ]);
 
         return view();
@@ -113,16 +182,24 @@ class Cov extends Base
             $covReports = new CovReports();
             $res = $covReports->allowField(true)->save($reportDatas);
             if ($res) {
-                $this->success('提交成功', url('admin/cov/indexB',['sid'=>15]));
+                $this->success('提交成功', url('admin/cov/indexB', ['sid' => 15]));
             } else {
                 $this->error('提交失败');
             }
         }
 
+        $instructor = Db::name("cov_users")->where('uid', 'in', function ($query) {
+            $query->table('stu_cov_users')->where('uid', $this->uid)->field('instructor');
+        })->field('uid,username')->find();
+
+        $pinyin = new Pinyin();
+        $pathPriex = $pinyin->permalink($instructor['username'], '');
+
         $reportDatas = [
             'uid' => $this->uid,
             'date' => input('date'),
             'pic_date' => date("n.j", input('date')),
+            'pathPriex' => $pathPriex,
         ];
         cookie('reportDatas', $reportDatas);
 
@@ -143,12 +220,12 @@ class Cov extends Base
 
         $reportDatas = cookie('reportDatas');
         $imgPath = 'uploads/cov/org/';
-        $subImgPath = 'uploads/cov/' . $reportDatas['pic_date'] . "/";
+        $saveImgPath = 'uploads/cov/' . $reportDatas['pathPriex'] . '/' . $reportDatas['pic_date'] . "/";
 
         $textSize = 50;
         $textColor = '#FF3333';
         $textLocate = \think\Image::WATER_EAST;
-        $textOffset=[-100,0];
+        $textOffset = [-100, 0];
         $textAngle = 0;
 
         $type = input('post.type');
@@ -161,7 +238,10 @@ class Cov extends Base
         if ($type === 's') {
 
             try {
-                mkdir($subImgPath, 0755, true);
+                $saveImgPath = $saveImgPath . 'condition/';
+                if (!is_dir($saveImgPath)) {
+                    mkdir($saveImgPath, 0755, true);
+                }
                 #保存原图
                 $info = $files->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move($imgPath);
 
@@ -173,23 +253,31 @@ class Cov extends Base
 
                 #拼接图片名
                 $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . '1' . "." . $image->type();
-                
+
+                $saveImgPath = $saveImgPath . $imgName;
+
                 #添加水印
-                $image->text($reportDatas['pic_date'], getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($subImgPath . $imgName);
-              
+                $image->text($reportDatas['pic_date'], getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($saveImgPath);
+
+                $reportDatas['report_pic_path'] = "/" . $saveImgPath;
+
             } catch (Exception $e) {
+                return $e->getMessage();
                 $this->error('上传失败');
             }
-
-            $reportDatas['report_pic_path'] ="/". $subImgPath . $imgName;
 
             cookie('reportDatas', $reportDatas);
         } else {
 
             $n = 2;
             $phonePicPath = '';
-            foreach ($files as $file) {
-                try {
+            $saveImgPath = $saveImgPath . 'phone/';
+            if (!is_dir($saveImgPath)) {
+                mkdir($saveImgPath, 0755, true);
+            }
+            try {
+
+                foreach ($files as $file) {
                     #保存原图
                     $info = $file->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move($imgPath);
 
@@ -199,18 +287,19 @@ class Cov extends Base
                     #拼接图片名
                     $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . $n . "." . $image->type();
 
+                    $saveImgName = $saveImgPath . $imgName;
+
                     #添加水印
-                    $image->text($reportDatas['pic_date'], getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($subImgPath . $imgName);
+                    $image->text($reportDatas['pic_date'], getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($saveImgName);
 
-                } catch (Exception $e) {
-                    $this->error('上传失败');
+                    $phonePicPath = $phonePicPath . "/" . $saveImgName . '|';
+                    $n += 1;
                 }
-                $phonePicPath = $phonePicPath ."/". $subImgPath . $imgName . '|';
-                $n+=1;
-            }
 
-            
-            $reportDatas['phone_pic_path'] = $phonePicPath;
+                $reportDatas['phone_pic_path'] = $phonePicPath;
+            } catch (Exception $e) {
+                $this->error('上传失败');
+            }
 
             cookie('reportDatas', $reportDatas);
         }
@@ -222,28 +311,43 @@ class Cov extends Base
     public function downPerDayReports()
     {
 
-        $date = date("n.j", input('date'));
-        $path = env('ROOT_PATH') . 'public/uploads/cov/';
-        $zipFile = $date . '.zip';
-        $picPath = $path . $date;
+        $type =input('type');
+        $date =date('n.j',input('date'));
 
-        // halt($picPath);
+        $path = env('ROOT_PATH') . 'public' . input('path');
+        
+
+        if ($type=='all') {
+            $picPath = $path;
+            $zipFile = basename($path) . '.zip';
+        }else{
+            $picPath = dirname($path);
+            $zipFile =$date. '-'. basename(basename($path)) .'.zip';
+        }
+
+        $zipPath = dirname($picPath) . '/' . $zipFile;
+        
         $zip = new ZipArchive();
+
         $overwrite = false;
-        if ($zip->open($path . $zipFile, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
+        if ($zip->open($zipPath, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
             return "无法下载";
         }
+
         $handler = opendir($picPath); //打开当前文件夹由$path指定。
 
-        while (($filename = readdir($handler)) !== false) {
-            if ($filename != "." && $filename != "..") { //文件夹文件名字为'.'和‘..'，不要对他们进行操作
-                //将文件加入zip对象
-                $zip->addFile($picPath . "/" . $filename, $filename);
-            }
-        }
-        closedir($path);
+        addFilesToZip($handler, $zip, $picPath);
+        // while (($filename = readdir($handler)) !== false) {
+        //     if ($filename != "." && $filename != "..") { //文件夹文件名字为'.'和‘..'，不要对他们进行操作
+        //         //将文件加入zip对象
+        //         $zip->addFile($picPath . "/" . $filename, $filename);
+        //     }
+        // }
         $zip->close();
-        $filename = $path . $zipFile;
+
+        closedir($picPath);
+        $zip->close();
+        $filename = $zipPath;
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
         header('Content-disposition: attachment; filename=' . basename($filename)); //文件名
