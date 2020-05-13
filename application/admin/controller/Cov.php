@@ -64,11 +64,18 @@ class Cov extends Base
             $emailList = explode("\r\n", $data['memberList']);
 
             $members = Db::name('admin')->where('email', 'in', $emailList)->field('id,username')->select();
-            $allMembers = Db::name("cov_users")->where(['instructor' => $data['instructor']])->column('uid');
+
+            $roles = cookie('roles');
+            if ($data['pid' == '1']) {
+                $allMembers = array_column($roles['instructor'], 'id');
+            } else {
+                $allMembers = array_column($roles['cadre'], 'id');
+            }
+
             foreach ($members as $k => $v) {
                 $members[$k]['uid'] = $members[$k]['id'];
-                $members[$k]['role'] = 1;
-                $members[$k]['instructor'] = (int) $data['instructor'];
+                $members[$k]['role_id'] = 3;
+                $members[$k]['pid'] = (int) $data['pid'];
                 $members[$k]['create_time'] = time();
 
                 if (in_array($v['id'], $allMembers)) {
@@ -76,6 +83,7 @@ class Cov extends Base
                 }
             }
 
+            // halt($members);
             $res = Db::name("cov_users")->strict(false)->insertAll($members);
 
             if ($res) {
@@ -85,10 +93,20 @@ class Cov extends Base
             }
         }
 
-        $instructor = Db::name("cov_users")->where(['instructor' => 0])->field('uid,username')->select();
+        $instructorIds = Db::name("auth_group_access")->where(['group_id' => 9])->column('uid');
+        $instructor = model("admin")->where('id', 'in', $instructorIds)->field('id,username')->select();
 
+        $cadreIds = Db::name("auth_group_access")->where(['group_id' => 8])->column('uid');
+        $cadre = model("admin")->where('id', 'in', $cadreIds)->field('id,username')->select();
+
+        $roles = [
+            'instructor' => $instructor,
+            'cadre' => $cadre,
+        ];
+        cookie('roles', $roles);
         $this->assign([
             'instructor' => $instructor,
+            'cadre' => $cadre,
         ]);
 
         return view();
@@ -101,16 +119,13 @@ class Cov extends Base
      */
     public function perDayReports()
     {
+        $myTeam = Db::name("cov_users")->where(['pid' => $this->uid])->field('uid,username')->select();
 
         if (in_array(9, $this->groupIds)) {
-            $myTeam = Db::name("cov_users")->where(['instructor' => $this->uid])->field('uid,username')->select();
-
             $this->assign([
                 'ifInstroctor' => 'yes',
             ]);
-
         } else {
-            $myTeam = Db::name("cov_users")->where(['grade' => $this->uid])->field('uid,username')->select();
             $this->assign([
                 'ifInstroctor' => 'no',
             ]);
@@ -311,22 +326,21 @@ class Cov extends Base
     public function downPerDayReports()
     {
 
-        $type =input('type');
-        $date =date('n.j',input('date'));
+        $type = input('type');
+        $date = date('n.j', input('date'));
 
         $path = env('ROOT_PATH') . 'public' . input('path');
-        
 
-        if ($type=='all') {
+        if ($type == 'all') {
             $picPath = $path;
             $zipFile = basename($path) . '.zip';
-        }else{
+        } else {
             $picPath = dirname($path);
-            $zipFile =$date. '-'. basename(basename($path)) .'.zip';
+            $zipFile = $date . '-' . basename(basename($path)) . '.zip';
         }
 
         $zipPath = dirname($picPath) . '/' . $zipFile;
-        
+
         $zip = new ZipArchive();
 
         $overwrite = false;
