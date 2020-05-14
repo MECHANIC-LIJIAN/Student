@@ -74,7 +74,7 @@ class Cov extends Base
                 $members[$k]['create_time'] = time();
             }
 
-            // halt($members);
+            
             $res = Db::name("cov_users")->strict(false)->insertAll($members);
 
             if ($res) {
@@ -130,10 +130,11 @@ class Cov extends Base
             ->paginate(10);
 
         $report_pic_path = dirname($hasList[0]['report_pic_path']);
-
+        $phone_pic_path = dirname(dirname($hasList[0]['report_pic_path']))."/phone";
+       
         foreach ($hasList as $k => $v) {
             $picList = explode('|', trim($v['phone_pic_path']));
-            $phone_pic_path = dirname($picList[1]);
+            
             array_pop($picList);
             $v['phone_pic_path'] = $picList;
             foreach ($myTeam as $mk => $mv) {
@@ -142,7 +143,7 @@ class Cov extends Base
                 }
             }
         }
-
+        
         $oneReport = Db::name('cov')->where(['date' => input('date')])->field('title,date')->find();
 
         $this->assign([
