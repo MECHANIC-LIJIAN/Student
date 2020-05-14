@@ -87,7 +87,7 @@ class Cov extends Base
         $instructorIds = Db::name("auth_group_access")->where(['group_id' => 9])->column('uid');
         $instructor = model("admin")->where('id', 'in', $instructorIds)->field('id,username')->select();
 
-        $cadreIds = Db::name("auth_group_access")->where(['group_id' => 8])->column('uid');
+        $cadreIds = Db::name("auth_group_access")->where(['group_id' => 10])->column('uid');
         $cadre = model("admin")->where('id', 'in', $cadreIds)->field('id,username')->select();
 
         $roles = [
