@@ -144,6 +144,7 @@ class Cov extends Base
         }
 
         $oneReport = Db::name('cov')->where(['date' => input('date')])->field('title,date')->find();
+
         $this->assign([
             'hasList' => $hasList,
             'notList' => $myTeam,
@@ -326,18 +327,17 @@ class Cov extends Base
 
         $path = env('ROOT_PATH') . 'public' . input('path');
 
+        $picPath = $path;
         if ($type == 'all') {
-            $picPath = $path;
             $zipFile = basename($path) . '.zip';
+            $zipPath = dirname($picPath) . '/' . $zipFile;
         } else {
-            $picPath = dirname($path);
-            $zipFile = $date . '-' . basename(basename($path)) . '.zip';
+            $zipFile = $date . '-' . basename($path) . '.zip';
+            $zipPath = dirname(dirname($picPath)) . '/' . $zipFile;
         }
 
-        $zipPath = dirname($picPath) . '/' . $zipFile;
-
         $zip = new ZipArchive();
-
+        
         $overwrite = false;
         if ($zip->open($zipPath, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
             return "无法下载";
