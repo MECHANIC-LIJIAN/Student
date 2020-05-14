@@ -198,10 +198,11 @@ class Cov extends Base
         $pids=Db::name('cov_users')->where('uid', $this->uid)->column('pid');
         unset($pids[array_search(1,$pids)]);
         $instructorId=array_intersect($pids,$instructorIds);
-        halt([$instructorIds,$pids,$instructorId]);
         
         $instructorId=implode("", $instructorId);
-        if(isset($instructorId)||empty($instructorId)){
+
+        // dump([$instructorIds,$pids,$instructorId]);
+        if(empty($instructorId)||$instructorId===""){
             $this->error('还没有为您分配所属辅导员');
         }
 
