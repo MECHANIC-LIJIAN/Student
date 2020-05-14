@@ -238,6 +238,7 @@ class Cov extends Base
         $imgPath = 'uploads/cov/org/';
         $saveImgPath = 'uploads/cov/' . $reportDatas['pathPriex'] . '/' . $reportDatas['pic_date'] . "/";
 
+        $text="2020.".$reportDatas['pic_date'];
         $textSize = 50;
         $textColor = '#FF3333';
         $textLocate = \think\Image::WATER_EAST;
@@ -274,7 +275,7 @@ class Cov extends Base
                 if ($return != 0) {
                     Log::error($output);
                 }
-
+                
                 #检测是否存在该图片
                 $res = Db::name('cov_pic_hash')->getByHash($output[0]);
                 if ($res) {
@@ -291,7 +292,8 @@ class Cov extends Base
                 $saveImgPath = $saveImgPath . $imgName;
 
                 #添加水印
-                $image->text($reportDatas['pic_date'], getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($saveImgPath);
+               
+                $image->text($text, getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($saveImgPath);
 
                 $reportDatas['report_pic_path'] = "/" . $saveImgPath;
 
@@ -346,7 +348,7 @@ class Cov extends Base
                     $saveImgName = $saveImgPath . $imgName;
 
                     #添加水印
-                    $image->text($reportDatas['pic_date'], getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($saveImgName);
+                    $image->text($text, getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($saveImgName);
 
                     $phonePicPath = $phonePicPath . "/" . $saveImgName . '|';
                     $n += 1;
