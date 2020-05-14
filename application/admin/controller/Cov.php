@@ -7,6 +7,7 @@ use app\admin\model\CovReports;
 use Exception;
 use Overtrue\Pinyin\Pinyin;
 use think\Db;
+use think\facade\Log;
 use think\Image;
 use ZipArchive;
 
@@ -263,8 +264,26 @@ class Cov extends Base
                 $info = $files->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move($imgPath);
 
                 if (!$info) {
-                    $this->error('上传失败');
+                    throw new Exception('上传失败');
                 }
+
+                #计算图片hash值
+                $orgImgPath=$imgPath . $info->getSaveName();
+                $order="python3 tu.py ". $orgImgPath." 2>&1";
+
+                exec($order,$output,$return);
+
+                if($return!=0){
+                    Log::error($output);
+                }
+                
+                #检测是否存在该图片
+                $res=Db::name('cov_pic_hash')->getByHash($output[0]);
+                if($res){    
+                    throw new Exception('系统中已有该图片！');
+                }
+                Db::name('cov_pic_hash')->insert(['hash'=>$output[0]]);
+                
                 #打开原图
                 $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
 
@@ -279,8 +298,8 @@ class Cov extends Base
                 $reportDatas['report_pic_path'] = "/" . $saveImgPath;
 
             } catch (Exception $e) {
-                return $e->getMessage();
-                $this->error('上传失败');
+                
+                $this->error($e->getMessage());
             }
 
             cookie('reportDatas', $reportDatas);
@@ -297,6 +316,27 @@ class Cov extends Base
                 foreach ($files as $file) {
                     #保存原图
                     $info = $file->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move($imgPath);
+                    
+                    if (!$info) {
+                        throw new Exception('上传失败');
+                    }
+    
+                    #计算图片hash值
+                    $orgImgPath=$imgPath . $info->getSaveName();
+                    $order="python3 tu.py ". $orgImgPath." 2>&1";
+    
+                    exec($order,$output,$return);
+    
+                    if($return!=0){
+                        Log::error($output);
+                    }
+                    
+                    #检测是否存在该图片
+                    $res=Db::name('cov_pic_hash')->getByHash($output[0]);
+                    if($res){    
+                        throw new Exception('系统中已有该图片！');
+                    }
+                    Db::name('cov_pic_hash')->insert(['hash'=>$output[0]]);
 
                     #打开原图
                     $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
@@ -315,7 +355,7 @@ class Cov extends Base
 
                 $reportDatas['phone_pic_path'] = $phonePicPath;
             } catch (Exception $e) {
-                $this->error('上传失败');
+                $this->error($e->getMessage());
             }
 
             cookie('reportDatas', $reportDatas);
