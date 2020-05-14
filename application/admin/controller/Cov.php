@@ -66,7 +66,6 @@ class Cov extends Base
 
             $members = Db::name('admin')->where('email', 'in', $emailList)->field('id,username')->select();
 
-
             foreach ($members as $k => $v) {
                 $members[$k]['uid'] = $members[$k]['id'];
                 unset($members[$k]['id']);
@@ -75,7 +74,6 @@ class Cov extends Base
                 $members[$k]['create_time'] = time();
             }
 
-            
             $res = Db::name("cov_users")->strict(false)->insertAll($members);
 
             if ($res) {
@@ -131,11 +129,11 @@ class Cov extends Base
             ->paginate(10);
 
         $report_pic_path = dirname($hasList[0]['report_pic_path']);
-        $phone_pic_path = dirname(dirname($hasList[0]['report_pic_path']))."/phone";
-       
+        $phone_pic_path = dirname(dirname($hasList[0]['report_pic_path'])) . "/phone";
+
         foreach ($hasList as $k => $v) {
             $picList = explode('|', trim($v['phone_pic_path']));
-            
+
             array_pop($picList);
             $v['phone_pic_path'] = $picList;
             foreach ($myTeam as $mk => $mv) {
@@ -144,7 +142,7 @@ class Cov extends Base
                 }
             }
         }
-        
+
         $oneReport = Db::name('cov')->where(['date' => input('date')])->field('title,date')->find();
 
         $this->assign([
@@ -197,18 +195,18 @@ class Cov extends Base
             }
         }
         $instructorIds = Db::name("auth_group_access")->where(['group_id' => 9])->column('uid');
-        $pids=Db::name('cov_users')->where('uid', $this->uid)->column('pid');
-        unset($pids[array_search(1,$pids)]);
-        $instructorId=array_intersect($pids,$instructorIds);
-        
-        $instructorId=implode("", $instructorId);
+        $pids = Db::name('cov_users')->where('uid', $this->uid)->column('pid');
+        unset($pids[array_search(1, $pids)]);
+        $instructorId = array_intersect($pids, $instructorIds);
+
+        $instructorId = implode("", $instructorId);
 
         // dump([$instructorIds,$pids,$instructorId]);
-        if(empty($instructorId)||$instructorId===""){
+        if (empty($instructorId) || $instructorId === "") {
             $this->error('还没有为您分配所属辅导员');
         }
 
-        $instructor = Db::name("admin")->where('id', '=',$instructorId)->field('id,username')->find();
+        $instructor = Db::name("admin")->where('id', '=', $instructorId)->field('id,username')->find();
 
         $pinyin = new Pinyin();
         $pathPriex = $pinyin->permalink($instructor['username'], '');
@@ -264,26 +262,26 @@ class Cov extends Base
                 $info = $files->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move($imgPath);
 
                 if (!$info) {
-                    throw new Exception('上传失败');
+                    $this->error('上传失败');
                 }
 
                 #计算图片hash值
-                $orgImgPath=$imgPath . $info->getSaveName();
-                $order="python3 tu.py ". $orgImgPath." 2>&1";
+                $orgImgPath = $imgPath . $info->getSaveName();
+                $order = "python3 tu.py " . $orgImgPath . " 2>&1";
 
-                exec($order,$output,$return);
+                exec($order, $output, $return);
 
-                if($return!=0){
+                if ($return != 0) {
                     Log::error($output);
                 }
-                
+
                 #检测是否存在该图片
-                $res=Db::name('cov_pic_hash')->getByHash($output[0]);
-                if($res){    
-                    throw new Exception('系统中已有该图片！');
+                $res = Db::name('cov_pic_hash')->getByHash($output[0]);
+                if ($res) {
+                    $this->error('系统中已有该图片！');
                 }
-                Db::name('cov_pic_hash')->insert(['hash'=>$output[0]]);
-                
+
+                Db::name('cov_pic_hash')->insert(['hash' => $output[0]]);
                 #打开原图
                 $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
 
@@ -298,8 +296,8 @@ class Cov extends Base
                 $reportDatas['report_pic_path'] = "/" . $saveImgPath;
 
             } catch (Exception $e) {
-                
-                $this->error($e->getMessage());
+
+                $this->error("上传失败");
             }
 
             cookie('reportDatas', $reportDatas);
@@ -316,27 +314,28 @@ class Cov extends Base
                 foreach ($files as $file) {
                     #保存原图
                     $info = $file->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move($imgPath);
-                    
+
                     if (!$info) {
-                        throw new Exception('上传失败');
+                        $this->error('上传失败');
                     }
-    
+
                     #计算图片hash值
-                    $orgImgPath=$imgPath . $info->getSaveName();
-                    $order="python3 tu.py ". $orgImgPath." 2>&1";
-    
-                    exec($order,$output,$return);
-    
-                    if($return!=0){
+                    $orgImgPath = $imgPath . $info->getSaveName();
+                    $order = "python3 tu.py " . $orgImgPath . " 2>&1";
+
+                    exec($order, $output, $return);
+
+                    if ($return != 0) {
                         Log::error($output);
                     }
-                    
+
                     #检测是否存在该图片
-                    $res=Db::name('cov_pic_hash')->getByHash($output[0]);
-                    if($res){    
-                        throw new Exception('系统中已有该图片！');
+                    $res = Db::name('cov_pic_hash')->getByHash($output[0]);
+                    if ($res) {
+                        $this->error('系统中已有该图片！');
                     }
-                    Db::name('cov_pic_hash')->insert(['hash'=>$output[0]]);
+
+                    $res = Db::name('cov_pic_hash')->insert(['hash' => $output[0]]);
 
                     #打开原图
                     $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
@@ -355,7 +354,8 @@ class Cov extends Base
 
                 $reportDatas['phone_pic_path'] = $phonePicPath;
             } catch (Exception $e) {
-                $this->error($e->getMessage());
+                
+                $this->error("上传失败");
             }
 
             cookie('reportDatas', $reportDatas);
@@ -383,7 +383,7 @@ class Cov extends Base
         }
 
         $zip = new ZipArchive();
-        
+
         $overwrite = false;
         if ($zip->open($zipPath, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
             return "无法下载";
