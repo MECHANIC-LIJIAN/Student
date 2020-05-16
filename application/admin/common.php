@@ -98,3 +98,16 @@ function addFilesToZip($openFile,$zipObj,$sourceAbso,$newRelat = '')
         }  
     }  
 } 
+
+//foreach遍历后unset删除,这种方法也是最容易想到的方法
+function delByValue($arr, $value){
+    if(!is_array($arr)){
+      return $arr;
+    }
+    foreach($arr as $k=>$v){
+      if($v == $value){
+        unset($arr[$k]);
+      }
+    }
+    return $arr;
+  }

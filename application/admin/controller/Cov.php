@@ -196,7 +196,7 @@ class Cov extends Base
         }
         $instructorIds = Db::name("auth_group_access")->where(['group_id' => 9])->column('uid');
         $pids = Db::name('cov_users')->where(['uid'=> $this->uid])->column('pid');
-        unset($pids[array_search(1, $pids)]);
+        $pids=delByValue($pids,1);
         $instructorId = array_intersect($pids, $instructorIds);
 
         $instructorId = implode("", $instructorId);
