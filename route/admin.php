@@ -11,6 +11,7 @@ Route::group(
         Route::rule('index', 'admin/Home/index', 'GET|POST');
         Route::rule('help', 'admin/Home/help', 'GET|POST');
         Route::rule('logout', 'admin/Home/logout', 'POST');
+        Route::rule('edit_info', 'admin/Home/edit', 'GET|POST');
 
         Route::rule('login', 'admin/Index/login', 'GET|POST');
         Route::rule('register', 'admin/Index/register', 'GET|POST');

@@ -18,7 +18,8 @@ class Base extends Controller
             'admin/home/index',
             'admin/index/login',
             'admin/home/logout',
-            'admin/home/help'
+            'admin/home/help',
+            'admin/home/edit'
         ];
         // //获取到当前访问的页面
         // $module = request()->module(); //获取当前访问的模块
@@ -49,7 +50,8 @@ class Base extends Controller
             $result = $auth->check($rule_name, $this->uid);
         }
 
-        // halt($auth->getAuthList($this->uid,$type=1));
+      
+
         if (!$result) {
             $this->error('您没有权限访问');
         }
