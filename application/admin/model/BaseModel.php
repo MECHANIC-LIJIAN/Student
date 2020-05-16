@@ -9,6 +9,11 @@ use think\Model;
 class BaseModel extends Model
 {
 
+    public function getProfile()
+    {
+        return $this->hasOne('Admin','id','uid')->field('id,username');
+    }
+
     /**
      * 添加数据
      * @param  array $data  添加的数据

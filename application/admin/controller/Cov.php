@@ -109,7 +109,7 @@ class Cov extends Base
      */
     public function perDayReports()
     {
-        $myTeam = Db::name("cov_users")->where(['pid' => $this->uid])->field('uid,username')->select();
+        $myTeam = model("cov_users")->where(['pid' => $this->uid])->with('getProfile')->field('uid,username')->select();
 
         if (in_array(9, $this->groupIds)) {
             $this->assign([
