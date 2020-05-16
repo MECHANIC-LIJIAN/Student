@@ -14,7 +14,7 @@ class Admin extends Base
      * @return void
      */
     function list() {
-        $admins = model('Admin')->order(['status' => 'desc'])->paginate(10);
+        $admins = model('Admin')->order(['status' => 'desc','id'=>'asc'])->paginate(15);
         $this->assign('admins', $admins);
         return view();
     }
