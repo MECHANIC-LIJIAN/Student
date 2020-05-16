@@ -109,13 +109,16 @@ class Cov extends Base
      */
     public function perDayReports()
     {
-        $myTeam = model("cov_users")->where(['pid' => $this->uid])->with('getProfile')->field('uid,username')->select();
+        $myTeam = model("cov_users")->where(['pid' => $this->uid])->with('getProfile')->field('uid')->select();
 
+        #判断角色
         if (in_array(9, $this->groupIds)) {
+            #是辅导员
             $this->assign([
                 'ifInstroctor' => 'yes',
             ]);
         } else {
+            #是学生干部
             $this->assign([
                 'ifInstroctor' => 'no',
             ]);
