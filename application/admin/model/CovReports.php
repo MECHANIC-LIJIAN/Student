@@ -10,7 +10,7 @@ class CovReports extends Model
     use SoftDelete;
     public function getProfile()
     {
-        return $this->hasOne('Admin','id','uid')->field('id,username');
+        return $this->hasOne('Admin','id','uid')->field('id,username')->order('username');;
     }
 
 }

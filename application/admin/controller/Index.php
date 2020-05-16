@@ -54,7 +54,7 @@ class Index extends Controller
             
             $result = model('Admin')->register($data);
             if ($result == 1) {
-                $this->success('注册成功', 'admin/Index/login');
+                $this->success('注册成功,请到邮箱确认', 'admin/Index/login');
             } else {
                 $this->error($result);
             }
