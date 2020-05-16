@@ -2,8 +2,9 @@
 
 namespace app\admin\controller;
 use app\admin\business\QrcodeServer;
+use think\Controller;
 
-class Qrcode extends Base
+class Qrcode extends Controller
 {
     /**
      * 直接输出二维码 + 生成二维码图片文件
@@ -15,7 +16,7 @@ class Qrcode extends Base
             'title' => true,
             'title_content' => '嗨，老范',
             'logo' => true,
-            'logo_url' => './logo.png',
+            'logo_url' => './weixin.jpg',
             'logo_size' => 80,
         ];
 
@@ -36,7 +37,5 @@ class Qrcode extends Base
         $qr_code = new QrcodeServer($config);
         $rs = $qr_code->createServer($qr_url);
         print_r($rs);
-
-        exit;
     }
 }
