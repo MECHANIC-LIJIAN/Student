@@ -57,7 +57,7 @@
     $("#single-upload").fileinput({
         language: 'zh', //设置语言
         uploadUrl: '{:url("admin/cov/ajaxUpload")}', //上传的地址
-        allowedFileExtensions: ['jpg', 'gif', 'png'],//接收的文件后缀
+        allowedFileExtensions: ['jpg','jpeg', 'gif', 'png','tif'],//接收的文件后缀
 
         uploadAsync: true,
         browseClass: "btn btn-primary", //按钮样式
@@ -122,7 +122,7 @@
         dropZoneEnabled: false,//是否显示拖拽区域
         language: 'zh', //设置语言
         uploadUrl: '{:url("admin/cov/ajaxUpload")}', //上传的地址
-        allowedFileExtensions: ['jpg', 'gif', 'png'],//接收的文件后缀
+        allowedFileExtensions: ['jpg','jpeg', 'gif', 'png','tif'],//接收的文件后缀
         browseClass: "btn btn-primary", //按钮样式
         removeFromPreviewOnError: true,//是否移除校验文件失败的文件
         overwriteInitial: false,  // 覆盖初始预览内容和标题设置
@@ -138,8 +138,8 @@
         resizeImage:true,
         resizePreference:'height',
         resizeImageQuality:0.9,
-        maxFileCount: 15, //表示允许同时上传的最大文件个数
-        maxFilesNum: 15,//上传最大的文件数量
+        maxFileCount: 16, //表示允许同时上传的最大文件个数
+        maxFilesNum: 16,//上传最大的文件数量
         enctype: 'multipart/form-data',
         previewFileIcon: "<i class='fa fa-king'></i>",
         msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
