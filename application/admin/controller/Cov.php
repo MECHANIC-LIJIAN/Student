@@ -129,7 +129,7 @@ class Cov extends Base
             ->whereIn('uid', array_column($myTeam, 'uid'))
             ->with('getProfile')
             ->field('id,uid,date,report_pic_path,phone_pic_path')
-            ->paginate(10);
+            ->select();
 
         $report_pic_path = dirname($hasList[0]['report_pic_path']);
         $phone_pic_path = dirname(dirname($hasList[0]['report_pic_path'])) . "/phone";
