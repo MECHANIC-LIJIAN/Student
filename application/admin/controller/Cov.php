@@ -263,7 +263,7 @@ class Cov extends Base
                     mkdir($saveImgPath, 0755, true);
                 }
                 #保存原图
-                $info = $files->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move($imgPath);
+                $info = $files->validate(['size' => 4000 * 4000, 'ext' => 'jpg,jpeg,tif,gif,png'])->move($imgPath);
 
                 if (!$info) {
                     $this->error('上传失败');
@@ -318,7 +318,7 @@ class Cov extends Base
 
                 foreach ($files as $file) {
                     #保存原图
-                    $info = $file->validate(['size' => 4000 * 4000, 'ext' => 'jpg,png'])->move($imgPath);
+                    $info = $file->validate(['size' => 4000 * 4000, 'ext' => 'jpg,jpeg,tif,gif,png'])->move($imgPath);
 
                     if (!$info) {
                         $this->error('上传失败');
