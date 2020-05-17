@@ -7,7 +7,6 @@ use app\admin\model\CovReports;
 use Exception;
 use Overtrue\Pinyin\Pinyin;
 use think\Db;
-use think\facade\Log;
 use think\Image;
 use ZipArchive;
 
@@ -110,10 +109,9 @@ class Cov extends Base
     public function perDayReports()
     {
         $myTeam = Db::name("cov_users")->where(['pid' => $this->uid])->field('uid,username')->select();
-        if(input('key')=='admin'){
+        if (input('key') == 'admin') {
             $myTeam = Db::name("cov_users")->where(['pid' => input('uid')])->field('uid,username')->select();
         }
-        
 
         #判断角色
         if (in_array(9, $this->groupIds)) {
@@ -134,8 +132,13 @@ class Cov extends Base
             ->with('getProfile')
             ->field('id,uid,date,report_pic_path,phone_pic_path')
             ->select();
-        sort_array($hasList->toArray(),'username','asc','str');
-        // dump($hasList);
+         
+        foreach ($hasList as $key => $val) {
+            $tmp[$key] = $val['get_profile']['username'];
+        }
+        
+        array_multisort($tmp, SORT_DESC, $hasList);
+
         $report_pic_path = dirname($hasList[0]['report_pic_path']);
         $phone_pic_path = dirname(dirname($hasList[0]['report_pic_path'])) . "/phone";
 
@@ -203,8 +206,8 @@ class Cov extends Base
             }
         }
         $instructorIds = Db::name("auth_group_access")->where(['group_id' => 9])->column('uid');
-        $pids = Db::name('cov_users')->where(['uid'=> $this->uid])->column('pid');
-        $pids=delByValue($pids,1);
+        $pids = Db::name('cov_users')->where(['uid' => $this->uid])->column('pid');
+        $pids = delByValue($pids, 1);
         $instructorId = array_intersect($pids, $instructorIds);
 
         $instructorId = implode("", $instructorId);
@@ -246,7 +249,7 @@ class Cov extends Base
         $imgPath = 'uploads/cov/org/';
         $saveImgPath = 'uploads/cov/' . $reportDatas['pathPriex'] . '/' . $reportDatas['pic_date'] . "/";
 
-        $text="2020.".$reportDatas['pic_date'];
+        $text = "2020." . $reportDatas['pic_date'];
         $textSize = 50;
         $textColor = '#FF3333';
         $textLocate = \think\Image::WATER_EAST;
@@ -283,7 +286,7 @@ class Cov extends Base
                 // if ($return != 0) {
                 //     Log::error($output);
                 // }
-                
+
                 // #检测是否存在该图片
                 // $res = Db::name('cov_pic_hash')->getByHash($output[0]);
                 // if ($res) {
@@ -300,7 +303,7 @@ class Cov extends Base
                 $saveImgPath = $saveImgPath . $imgName;
 
                 #添加水印
-               
+
                 $image->text($text, getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($saveImgPath);
 
                 $reportDatas['report_pic_path'] = "/" . $saveImgPath;
@@ -364,7 +367,7 @@ class Cov extends Base
 
                 $reportDatas['phone_pic_path'] = $phonePicPath;
             } catch (Exception $e) {
-                
+
                 $this->error("上传失败");
             }
 
