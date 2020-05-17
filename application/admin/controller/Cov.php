@@ -134,7 +134,8 @@ class Cov extends Base
             ->with('getProfile')
             ->field('id,uid,date,report_pic_path,phone_pic_path')
             ->select();
-
+        sort_array($hasList->toArray(),'username','asc','str');
+        // dump($hasList);
         $report_pic_path = dirname($hasList[0]['report_pic_path']);
         $phone_pic_path = dirname(dirname($hasList[0]['report_pic_path'])) . "/phone";
 
