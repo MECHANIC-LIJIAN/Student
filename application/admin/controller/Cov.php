@@ -133,12 +133,6 @@ class Cov extends Base
             ->field('id,uid,date,report_pic_path,phone_pic_path')
             ->select();
          
-        foreach ($hasList as $key => $val) {
-            $tmp[$key] = $val['get_profile']['username'];
-        }
-        
-        array_multisort($tmp, SORT_DESC, $hasList);
-
         $report_pic_path = dirname($hasList[0]['report_pic_path']);
         $phone_pic_path = dirname(dirname($hasList[0]['report_pic_path'])) . "/phone";
 

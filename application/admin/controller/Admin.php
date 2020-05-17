@@ -14,7 +14,12 @@ class Admin extends Base
      * @return void
      */
     function list() {
+        $data=input("get.");
+        
         $admins = model('Admin')->order(['status' => 'desc','id'=>'asc'])->paginate(15);
+        if($data['txt_search_username']!=""){
+            $admins = model('Admin')->where('username','like',"%".$data['txt_search_username']."%")->order(['status' => 'desc','id'=>'asc'])->paginate(15);
+        }
         $this->assign('admins', $admins);
         return view();
     }
