@@ -132,20 +132,20 @@ class Cov extends Base
             ->whereIn('uid', array_column($myTeam, 'uid'))
             ->with('getProfile')
             ->field('id,uid,date,report_pic_path,phone_pic_path')
-            ->select();
+            ->select()
+            ->toArray();
           
-        // array_multisort(array_column($hasList,'username'),SORT_DESC,$hasList);
-        // halt($hasList);
+        array_multisort(array_column($hasList,'username'),SORT_ASC,$hasList);
+
         $report_pic_path = dirname($hasList[0]['report_pic_path']);
         $phone_pic_path = dirname(dirname($hasList[0]['report_pic_path'])) . "/phone";
 
         foreach ($hasList as $k => &$v) {
             $picList = explode('|', trim($v['phone_pic_path']));
-
             array_pop($picList);
             $v['phone_pic_path'] = $picList;
             foreach ($myTeam as $mk => $mv) {
-                if ($v['get_profile']['id'] == $mv['uid']) {
+                if ($v['uid'] == $mv['uid']) {
                     unset($myTeam[$mk]);
                 }
             }
