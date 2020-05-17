@@ -255,6 +255,7 @@ class Admin extends Model
                 $presenttime = time();
                 $agotime = ($presenttime - $keytime);
                 if ($agotime > 3600) {
+                    $user->where(array('email' => $get['email']))->delete();
                     return "超过10分钟,链接失效";
                 } else {
                     $result = $user->where(array('email' => $get['email'], 'email_key' => $get['emailkey']))->setField('status', '1');

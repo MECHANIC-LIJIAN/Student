@@ -122,7 +122,7 @@
     $("#phone-upload").fileinput({
         uploadAsync: false,//采用同步上传
         theme: 'explorer-fa',
-        dropZoneEnabled: false,//是否显示拖拽区域
+        dropZoneEnabled: true,//是否显示拖拽区域
         language: 'zh', //设置语言
         uploadUrl: '{:url("admin/cov/ajaxUpload")}', //上传的地址
         allowedFileExtensions: ['jpg','jpeg', 'gif', 'png','tif'],//接收的文件后缀
