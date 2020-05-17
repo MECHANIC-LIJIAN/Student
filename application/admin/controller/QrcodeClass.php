@@ -2,22 +2,22 @@
 
 namespace app\admin\controller;
 use app\admin\business\QrcodeServer;
-use think\Controller;
 
-class Qrcode extends Controller
+use Endroid\QrCode\QrCode;
+
+class QrcodeClass
 {
-    /**
+    
+       /**
      * 直接输出二维码 + 生成二维码图片文件
      */
-    public function create()
-    {
+    public function create(){
+
         // 自定义二维码配置
         $config = [
-            'title' => true,
-            'title_content' => '嗨，老范',
-            'logo' => true,
-            'logo_url' => './weixin.jpg',
-            'logo_size' => 80,
+            'title'         => true,
+            'title_content' => 'test',
+            'logo'          => false,
         ];
 
         // 直接输出
@@ -25,17 +25,19 @@ class Qrcode extends Controller
 
         $qr_code = new QrcodeServer($config);
         $qr_img = $qr_code->createServer($qr_url);
+        ob_end_clean();
         echo $qr_img;
 
         // 写入文件
         $qr_url = '这是个测试二维码';
-        $file_name = '/uploads/qrcode'; // 定义保存目录
+        $file_name = './';  // 定义保存目录
 
         $config['file_name'] = $file_name;
-        $config['generate'] = 'writefile';
+        $config['generate']  = 'writefile';
 
         $qr_code = new QrcodeServer($config);
         $rs = $qr_code->createServer($qr_url);
         print_r($rs);
+
     }
 }

@@ -13,7 +13,7 @@ use think\facade\Route;
 // Route::rule('saveTestdatas', 'index/Template/saveTestdatas', 'GET|POST');
 // Route::rule('getTestdatas', 'index/Template/getTestdatas', 'GET|POST');
 
-Route::rule('qr', 'admin/Qrcode/create', 'GET|POST');
+Route::rule('qr', 'admin/QrcodeClass/create', 'GET|POST');
 
 
 Route::rule('/', 'index/index/index', 'GET|POST');
