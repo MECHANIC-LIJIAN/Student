@@ -110,6 +110,10 @@ class Cov extends Base
     public function perDayReports()
     {
         $myTeam = Db::name("cov_users")->where(['pid' => $this->uid])->field('uid,username')->select();
+        if(input('key')=='admin'){
+            $myTeam = Db::name("cov_users")->where(['pid' => input('uid')])->field('uid,username')->select();
+        }
+        
 
         #判断角色
         if (in_array(9, $this->groupIds)) {
