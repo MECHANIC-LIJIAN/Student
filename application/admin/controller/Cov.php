@@ -9,6 +9,7 @@ use Overtrue\Pinyin\Pinyin;
 use think\Db;
 use think\Image;
 use ZipArchive;
+use think\facade\Log;
 
 class Cov extends Base
 {
@@ -274,23 +275,23 @@ class Cov extends Base
                     $this->error('上传失败');
                 }
 
-                // #计算图片hash值
-                // $orgImgPath = $imgPath . $info->getSaveName();
-                // $order = "python3 tu.py " . $orgImgPath . " 2>&1";
+                #计算图片hash值
+                $orgImgPath = $imgPath . $info->getSaveName();
+                $order = "python3 tu.py " . $orgImgPath . " 2>&1";
 
-                // exec($order, $output, $return);
+                exec($order, $output, $return);
 
-                // if ($return != 0) {
-                //     Log::error($output);
-                // }
+                if ($return != 0) {
+                    Log::error($output);
+                }
 
-                // #检测是否存在该图片
-                // $res = Db::name('cov_pic_hash')->getByHash($output[0]);
-                // if ($res) {
-                //     $this->error('系统中已有该图片！');
-                // }
+                #检测是否存在该图片
+                $res = Db::name('cov_pic_hash')->getByHash($output[0]);
+                if ($res) {
+                    $this->error('系统中已有该图片！');
+                }
 
-                // Db::name('cov_pic_hash')->insert(['hash' => $output[0]]);
+                Db::name('cov_pic_hash')->insert(['hash' => $output[0]]);
                 #打开原图
                 $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
 
@@ -329,23 +330,23 @@ class Cov extends Base
                         $this->error('上传失败');
                     }
 
-                    // #计算图片hash值
-                    // $orgImgPath = $imgPath . $info->getSaveName();
-                    // $order = "python3 tu.py " . $orgImgPath . " 2>&1";
+                    #计算图片hash值
+                    $orgImgPath = $imgPath . $info->getSaveName();
+                    $order = "python3 tu.py " . $orgImgPath . " 2>&1";
 
-                    // exec($order, $output, $return);
+                    exec($order, $output, $return);
 
-                    // if ($return != 0) {
-                    //     Log::error($output);
-                    // }
+                    if ($return != 0) {
+                        Log::error($output);
+                    }
 
-                    // #检测是否存在该图片
-                    // $res = Db::name('cov_pic_hash')->getByHash($output[0]);
-                    // if ($res) {
-                    //     $this->error('系统中已有该图片！');
-                    // }
-
-                    // $res = Db::name('cov_pic_hash')->insert(['hash' => $output[0]]);
+                    #检测是否存在该图片
+                    $res = Db::name('cov_pic_hash')->getByHash($output[0]);
+                    if ($res) {
+                        $this->error('系统中已有该图片！');
+                    }
+                    
+                    Db::name('cov_pic_hash')->insert(['hash' => $output[0]]);
 
                     #打开原图
                     $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
