@@ -108,10 +108,11 @@ class Cov extends Base
      */
     public function perDayReports()
     {
-        $myTeam = Db::name("cov_users")->where(['pid' => $this->uid])->field('uid,username')->select();
+        $where = ['pid' => $this->uid];
         if (input('key') == 'admin') {
-            $myTeam = Db::name("cov_users")->where(['pid' => input('uid')])->field('uid,username')->select();
+            $where = ['pid' => input('uid')];
         }
+        $myTeam = Db::name("cov_users")->where($where)->field('uid,username')->order(['username' => 'asc'])->select();
 
         #判断角色
         if (in_array(9, $this->groupIds)) {
@@ -132,7 +133,7 @@ class Cov extends Base
             ->with('getProfile')
             ->field('id,uid,date,report_pic_path,phone_pic_path')
             ->select();
-         
+
         $report_pic_path = dirname($hasList[0]['report_pic_path']);
         $phone_pic_path = dirname(dirname($hasList[0]['report_pic_path'])) . "/phone";
 
