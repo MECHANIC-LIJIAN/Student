@@ -7,9 +7,9 @@ use app\admin\model\CovReports;
 use Exception;
 use Overtrue\Pinyin\Pinyin;
 use think\Db;
+use think\facade\Log;
 use think\Image;
 use ZipArchive;
-use think\facade\Log;
 
 class Cov extends Base
 {
@@ -115,19 +115,6 @@ class Cov extends Base
         }
         $myTeam = Db::name("cov_users")->where($where)->field('uid,username')->order(['username' => 'asc'])->select();
 
-        #判断角色
-        if (in_array(9, $this->groupIds)) {
-            #是辅导员
-            $this->assign([
-                'ifInstroctor' => 'yes',
-            ]);
-        } else {
-            #是学生干部
-            $this->assign([
-                'ifInstroctor' => 'no',
-            ]);
-        }
-
         $hasList = model('cov_reports')
             ->where(['date' => input('date')])
             ->whereIn('uid', array_column($myTeam, 'uid'))
@@ -135,8 +122,8 @@ class Cov extends Base
             ->field('id,uid,date,report_pic_path,phone_pic_path')
             ->select()
             ->toArray();
-          
-        array_multisort(array_column($hasList,'username'),SORT_ASC,$hasList);
+
+        array_multisort(array_column($hasList, 'username'), SORT_ASC, $hasList);
 
         $report_pic_path = dirname($hasList[0]['report_pic_path']);
         $phone_pic_path = dirname(dirname($hasList[0]['report_pic_path'])) . "/phone";
@@ -154,6 +141,17 @@ class Cov extends Base
 
         $oneReport = Db::name('cov')->where(['date' => input('date')])->field('title,date')->find();
 
+        #判断角色
+        if (in_array(9, $this->groupIds)) {
+            #是辅导员
+            $this->assign([
+                'instructor' => 'yes',
+            ]);
+        } else {
+            $this->assign([
+                'instructor' => 'no',
+            ]);
+        }
         $this->assign([
             'hasList' => $hasList,
             'notList' => $myTeam,
@@ -276,22 +274,9 @@ class Cov extends Base
                 }
 
                 // #计算图片hash值
-                // $orgImgPath = $imgPath . $info->getSaveName();
-                // $order = "python3 tu.py " . $orgImgPath . " 2>&1";
+                $orgImgPath = $imgPath . $info->getSaveName();
+                $this->checkPic($orgImgPath);
 
-                // exec($order, $output, $return);
-
-                // if ($return != 0) {
-                //     Log::error($output);
-                // }
-
-                // #检测是否存在该图片
-                // $res = Db::name('cov_pic_hash')->getByHash($output[0]);
-                // if ($res) {
-                //     $this->error('系统中已有该图片！');
-                // }
-
-                // Db::name('cov_pic_hash')->insert(['hash' => $output[0]]);
                 #打开原图
                 $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
 
@@ -331,22 +316,8 @@ class Cov extends Base
                     }
 
                     // #计算图片hash值
-                    // $orgImgPath = $imgPath . $info->getSaveName();
-                    // $order = "python3 tu.py " . $orgImgPath . " 2>&1";
-
-                    // exec($order, $output, $return);
-
-                    // if ($return != 0) {
-                    //     Log::error($output);
-                    // }
-
-                    // #检测是否存在该图片
-                    // $res = Db::name('cov_pic_hash')->getByHash($output[0]);
-                    // if ($res) {
-                    //     $this->error('系统中已有该图片！');
-                    // }
-                    
-                    // Db::name('cov_pic_hash')->insert(['hash' => $output[0]]);
+                    $orgImgPath = $imgPath . $info->getSaveName();
+                    $this->checkPic($orgImgPath);
 
                     #打开原图
                     $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
@@ -379,50 +350,130 @@ class Cov extends Base
     public function downPerDayReports()
     {
 
-        $type = input('type');
-        $date = date('n.j', input('date'));
+        #判断角色
+        if (in_array(9, $this->groupIds)) {
+            #是辅导员
 
-        $path = env('ROOT_PATH') . 'public' . input('path');
+            $type = input('type');
+            $date = date('n.j', input('date'));
 
-        $picPath = $path;
-        if ($type == 'all') {
-            $zipFile = basename($path) . '.zip';
-            $zipPath = dirname($picPath) . '/' . $zipFile;
+            $path = env('ROOT_PATH') . 'public' . input('path');
+
+            $picPath = $path;
+            if ($type == 'all') {
+                $zipFile = basename($path) . '.zip';
+                $zipPath = dirname($picPath) . '/' . $zipFile;
+            } else {
+                $zipFile = $date . '-' . basename($path) . '.zip';
+                $zipPath = dirname(dirname($picPath)) . '/' . $zipFile;
+            }
+
+            $zip = new ZipArchive();
+
+            $overwrite = false;
+            if ($zip->open($zipPath, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
+                return "无法下载";
+            }
+
+            $handler = opendir($picPath); //打开当前文件夹由$path指定。
+
+            addFilesToZip($handler, $zip, $picPath);
+
+            $zip->close();
+
+            closedir($picPath);
+
+            $filename = $zipPath;
+            // halt($zipFile);
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header('Content-disposition: attachment; filename=' . basename($filename)); //文件名
+            header("Content-Type: application/zip"); //zip格式的
+            header("Content-Transfer-Encoding: binary"); //告诉浏览器，这是二进制文件
+            header('Content-Length: ' . filesize($filename)); //告诉浏览器，文件大小
+            ob_clean();
+            flush();
+            @readfile($filename);
         } else {
-            $zipFile = $date . '-' . basename($path) . '.zip';
-            $zipPath = dirname(dirname($picPath)) . '/' . $zipFile;
+            #是学生干部
+
+            $where = ['pid' => $this->uid];
+            if (input('key') == 'admin') {
+                $where = ['pid' => input('uid')];
+            }
+            $myTeam = Db::name("cov_users")->where($where)->field('uid,username')->order(['username' => 'asc'])->select();
+
+            $hasList = model('cov_reports')
+                ->where(['date' => input('date')])
+                ->whereIn('uid', array_column($myTeam, 'uid'))
+                ->field('id,uid,date,report_pic_path,phone_pic_path')
+                ->select()
+                ->toArray();
+
+            foreach ($hasList as $k => &$v) {
+                $report_pic_path[] = $v['report_pic_path'];
+                $picList = explode('|', trim($v['phone_pic_path']));
+                array_pop($picList);
+                $v['phone_pic_path'] = $picList;
+                foreach ($picList as $pic) {
+                    $phone_pic_path[] = $pic;
+                }
+
+            }
+
+            $date = date('n.j', input('date'));
+            $path = input('path');
+
+            $pic_type = basename($path);
+
+            $zipFile = $date . "-" . $pic_type . ".zip";
+            $zipPath = env('ROOT_PATH') . 'public/uploads/cov/temp/' . $zipFile;
+
+            if (!is_dir('uploads/cov/temp/')) {
+                mkdir('uploads/cov/temp', 0755);
+            }
+            // halt([$report_pic_path,$phone_pic_path]);
+            if ($pic_type == "condition") {
+                createZip($report_pic_path, $zipPath);
+            } else {
+                createZip($phone_pic_path, $zipPath);
+            }
+            $filename = $zipPath;
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header('Content-disposition: attachment; filename=' . basename($filename)); //文件名
+            header("Content-Type: application/zip"); //zip格式的
+            header("Content-Transfer-Encoding: binary"); //告诉浏览器，这是二进制文件
+            header('Content-Length: ' . filesize($filename)); //告诉浏览器，文件大小
+            ob_clean();
+            flush();
+            @readfile($filename);
+            unlink($zipPath);
         }
+    }
 
-        $zip = new ZipArchive();
+    public function checkPic($picPath)
+    {
 
-        $overwrite = false;
-        if ($zip->open($zipPath, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
-            return "无法下载";
+        $log = Log::init();
+
+        #计算图片hash值
+        $orgImgPath = $picPath;
+        $order = "python3 tu.py " . $orgImgPath . " 2>&1";
+
+        exec($order, $output, $return);
+
+        if ($return != 0) {
+            $log->error($output);
+        } else {
+            #检测是否存在该图片
+            $res = Db::name('cov_pic_hash')->getByHash($output[0]);
+            if ($res) {
+                $log->notice("系统中已有该图片！\n"."[ uid ] ".$this->uid."\t"."[ hash ] ".$output[0]."\n---------------------------------------------------------------");
+            } else {
+                Db::name('cov_pic_hash')->insert(['hash' => $output[0]]);
+            }
         }
-
-        $handler = opendir($picPath); //打开当前文件夹由$path指定。
-
-        addFilesToZip($handler, $zip, $picPath);
-        // while (($filename = readdir($handler)) !== false) {
-        //     if ($filename != "." && $filename != "..") { //文件夹文件名字为'.'和‘..'，不要对他们进行操作
-        //         //将文件加入zip对象
-        //         $zip->addFile($picPath . "/" . $filename, $filename);
-        //     }
-        // }
-        $zip->close();
-
-        closedir($picPath);
-        $zip->close();
-        $filename = $zipPath;
-        header("Cache-Control: public");
-        header("Content-Description: File Transfer");
-        header('Content-disposition: attachment; filename=' . basename($filename)); //文件名
-        header("Content-Type: application/zip"); //zip格式的
-        header("Content-Transfer-Encoding: binary"); //告诉浏览器，这是二进制文件
-        header('Content-Length: ' . filesize($filename)); //告诉浏览器，文件大小
-        ob_clean();
-        flush();
-        @readfile($filename);
 
     }
 }

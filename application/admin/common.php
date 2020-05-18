@@ -20,10 +20,12 @@ function uuid()
 
 /* create a compressed zip file */
 
-function createZip($files = array(), $destination = '', $overwrite = true)
+function createZip($files = array(), $destination = '', $overwrite = false)
 {
 
-    if (file_exists($destination) && !$overwrite) {return false;}
+
+    $path = env('ROOT_PATH') . 'public';
+
 
     $validFiles = [];
 
@@ -31,7 +33,7 @@ function createZip($files = array(), $destination = '', $overwrite = true)
 
         foreach ($files as $file) {
 
-            if (file_exists($file)) {
+            if (file_exists($path.$file)) {
 
                 $validFiles[] = $file;
 
@@ -41,6 +43,7 @@ function createZip($files = array(), $destination = '', $overwrite = true)
 
     }
 
+    // halt($destination);
     if (count($validFiles)) {
 
         $zip = new ZipArchive();
@@ -52,8 +55,7 @@ function createZip($files = array(), $destination = '', $overwrite = true)
         }
 
         foreach ($validFiles as $file) {
-
-            $zip->addFile($file, $file);
+            $zip->addFile($path.$file, basename($file));
 
         }
 
