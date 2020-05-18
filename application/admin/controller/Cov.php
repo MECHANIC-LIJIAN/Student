@@ -222,6 +222,7 @@ class Cov extends Base
             $covReports = new CovReports();
             $res = $covReports->allowField(true)->save($reportDatas);
             if ($res) {
+                cookie('reportDatas',null);
                 $this->success('提交成功', url('admin/cov/indexB', ['sid' => 15]));
             } else {
                 $this->error('提交失败');

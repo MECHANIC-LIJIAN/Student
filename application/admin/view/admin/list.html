@@ -16,19 +16,19 @@
             <div class="widget-body">
                 <form id="formSearch" class="form-horizontal" action="{:url('admin/Admin/list')}" method="get">
                     <div class="form-group" style="margin-top:15px">
-                        <label class="control-label col-lg-1" for="txt_search_username">用户名</label>
-                        <div class="col-lg-2">
-                            <input type="text" class="form-control" name="txt_search_username" id="txt_search_username">
+                        <label class="control-label col-lg-1 col-xs-2" for="username">用户名</label>
+                        <div class="col-lg-2 col-xs-5">
+                            <input type="text" class="form-control" style="margin-top: 0;" name="username" id="username">
                         </div>
                         <!-- <label class="control-label col-lg-1" for="txt_search_status">状态</label>
                         <div class="col-lg-2">
                             <input type="text" class="form-control" name="txt_search_status" id="txt_search_status">
                         </div> -->
-                        <div class="col-lg-1" style="text-align:left;">
-                            <button type="submit" style="margin-left:50px" id="btn_query"
+                        <div class="col-lg-1 col-xs-2" style="text-align:left;">
+                            <button type="submit" id="btn_query"
                                 class="btn btn-primary">查询</button>
                         </div>
-                        <div class="col-lg-1" style="text-align:left;">
+                        <div class="col-lg-1 col-xs-2" style="text-align:left;">
                             <button type="button"" class="btn btn-warning" id="btn_reset_query">重置</button>
                         </div>
                     </div>

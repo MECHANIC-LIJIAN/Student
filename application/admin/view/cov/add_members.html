@@ -3,58 +3,57 @@
 为 辅导员/学生干部 添加下属班长
 {/block}
 {block name="page-breadcrumb"}
-<li class="active">为 辅导员/学生干部 添加下属班长</li>
+<li class="active">添加下属班长</li>
 {/block}
 {block name="page-main"}
 <div class="row">
-    <div class="col-xs-6">
+    <div class="col-lg-6  col-xs-12">
         <div class="widget">
             <div class="bg-themeprimary widget-header">
                 <span class="widget-caption">添加班长</span>
             </div>
             <div class="widget-body">
-
                 <div class="row">
                     <form id='form1'>
                         <legend>为辅导员添加</legend>
-                     <div class="col-lg-6">
-                         <textarea name="memberList" id="memberList" cols="30" rows="20"></textarea>
-                     </div>
- 
-                     <div class="col-lg-2">
-                         <select name="pid" id="pid" style="width: 100px;">
-                             {volist name="instructor"" id="vo" empty="暂时没有数据"}
-                             <option value="{$vo.id}">{$vo.username}</option>
-                             {/volist}
-                         </select>
-                     </div>
-                     <input type="hidden" name="role_id" value="1">
+                        <div class="col-lg-4 col-xs-12">
+                            <textarea class="col-lg-12 col-xs-12" name="memberList" id="memberList"
+                                rows="10"></textarea>
+                        </div>
+
+                        <div class="col-lg-2 col-xs-2">
+                            <select name="pid" id="pid" style="width: 100px;">
+                                {volist name="instructor"" id="vo" empty="暂时没有数据"}
+                                <option value="{$vo.id}">{$vo.username}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                        <input type="hidden" name="role_id" value="1">
                     </form>
- 
-                     <div style="text-align:center;">
-                         <button  formId='form1'  class="btn btn-lg btn-success add">为辅导员添加</button>
-                     </div>
-                 </div><div class="row">
+                    <div style="text-align:center;">
+                        <button formId='form1' class="btn btn-lg btn-success add">为辅导员添加</button>
+                    </div>
+                </div>
+                <div class="row">
                     <form id="form2">
                         <legend>为学生干部添加</legend>
-                     <div class="col-lg-6">
-                         <textarea name="memberList" id="memberList" cols="30" rows="20"></textarea>
-                     </div>
- 
-                     <div class="col-lg-2">
-                         <select name="pid" id="pid" style="width: 100px;">
-                             {volist name="cadre" id="vo" empty="暂时没有数据"}
-                             <option value="{$vo.id}">{$vo.username}</option>
-                             {/volist}
-                         </select>
-                     </div>
-                     <input type="hidden" name="role_id" value="2">
+                        <div class="col-lg-4 col-xs-12">
+                            <textarea class="col-lg-12 col-xs-12" name="memberList" id="memberList"
+                                rows="10"></textarea>
+                        </div>
+                        <div class="col-lg-2 col-xs-2">
+                            <select name="pid" id="pid" style="width: 100px;">
+                                {volist name="cadre" id="vo" empty="暂时没有数据"}
+                                <option value="{$vo.id}">{$vo.username}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                        <input type="hidden" name="role_id" value="2">
                     </form>
- 
-                     <div style="text-align:center;">
-                         <button formId='form2' class="btn btn-lg btn-success add">为学生干部添加</button>
-                     </div>
-                 </div>
+                    <div style="text-align:center;">
+                        <button formId='form2' class="btn btn-lg btn-success add">为学生干部添加</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -67,7 +66,7 @@
         $.ajax({
             url: "{:url('admin/Cov/addMembers')}",
             type: 'post',
-            data: $("#"+$(this).attr('formId')+"").serialize(),
+            data: $("#" + $(this).attr('formId') + "").serialize(),
             dataType: 'json',
             success: function (data) {
                 if (data.code == 1) {

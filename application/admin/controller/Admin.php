@@ -14,13 +14,22 @@ class Admin extends Base
      * @return void
      */
     function list() {
-        $data=input("get.");
-        
-        $admins = model('Admin')->order(['status' => 'desc','id'=>'asc'])->paginate(15);
-        if($data['txt_search_username']!=""){
-            $admins = model('Admin')->where('username','like',"%".$data['txt_search_username']."%")->order(['status' => 'desc','id'=>'asc'])->paginate(15);
+        $data = input("get.");
+
+        $admins = model('Admin')
+            ->order(['status' => 'desc', 'id' => 'asc'])
+            ->field('id,username,email,status');
+        if ($data['username'] == "") {
+            $admins = $admins->paginate(15, false);
+        } else {
+            $admins = $admins
+                ->where('username', 'like', "%" . $data['username'] . "%")
+                ->paginate(15, false, ['query' => request()->param()]);
         }
-        $this->assign('admins', $admins);
+
+        $this->assign([
+            'admins' => $admins,
+        ]);
         return view();
     }
 
@@ -89,7 +98,7 @@ class Admin extends Base
                 'username' => input('post.username'),
                 'password' => input('post.password'),
                 'email' => input('post.email'),
-                'group_ids'=>input('post.group_ids'),
+                'group_ids' => input('post.group_ids'),
             ];
             // halt($data);
             $result = model('Admin')->edit($data);
@@ -100,21 +109,21 @@ class Admin extends Base
             }
         }
 
-        $uid=input('id');
-        
-        $auth=new Auth();
-        $adminInfo =model('Admin')->field(['id,username,password,email,create_time'])->find($uid);
-        
-        $allGroups=Db::name('AuthGroup')->field(['id,title'])->select();
+        $uid = input('id');
 
-        $groups=Db::name('AuthGroupAccess')->where(['uid' => $uid])->column('group_id');
+        $auth = new Auth();
+        $adminInfo = model('Admin')->field(['id,username,password,email,create_time'])->find($uid);
+
+        $allGroups = Db::name('AuthGroup')->field(['id,title'])->select();
+
+        $groups = Db::name('AuthGroupAccess')->where(['uid' => $uid])->column('group_id');
 
         // halt($auth->getGroups($uid));
         if ($adminInfo) {
             $viewData = [
                 'adminInfo' => $adminInfo,
                 'groups' => $groups,
-                'all_group'=>$allGroups
+                'all_group' => $allGroups,
             ];
             // halt($groups);
             $this->assign($viewData);
