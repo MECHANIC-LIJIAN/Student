@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use app\admin\model\Cov as ModelCov;
 use app\admin\model\CovReports;
 use Exception;
+use myredis\Redis;
 use Overtrue\Pinyin\Pinyin;
 use think\Db;
 use think\facade\Log;
@@ -13,6 +14,17 @@ use ZipArchive;
 
 class Cov extends Base
 {
+
+    public function initialize()
+    {
+        parent::initialize();
+
+        $resdis = new Redis();
+        $redisKey = strtotime(date('Y-m-d')) . "_record";
+        if(!$resdis->exists($redisKey)){
+            $this->newReport();
+        }
+    }
     /**
      * 辅导员-报告列表
      */
@@ -43,13 +55,25 @@ class Cov extends Base
         ];
 
         $cov = new ModelCov();
-        $res = $cov->getByDate($data['date']);
+        $res = $cov->field('id')->getByDate($data['date']);
         if ($res) {
-            $this->success('今日报告已创建');
+            $resdis = new Redis();
+            $redisKey = strtotime(date('Y-m-d')) . "_record";
+            $resdis->set($redisKey, $redisKey);
+            $resdis->expire($redisKey, 60 * 60 * 16);
+            return [
+                'code' => 1,
+                'msg' => "今日报告已创建",
+                'url' => url("admin/cov/index", ['sid' => 15]),
+            ];
         } else {
             $res = $cov->save($data);
             if ($res) {
-                $this->success('今日报告创建成功', url("admin/cov/index", ['sid' => 15]));
+                return [
+                    'code' => 1,
+                    'msg' => "今日报告创建成功",
+                    'url' => url("admin/cov/index", ['sid' => 15]),
+                ];
             } else {
                 $this->error('创建失败');
             }
@@ -177,6 +201,8 @@ class Cov extends Base
         foreach ($reportList as $k => $v) {
             if (in_array($v['date'], $reportedDate)) {
                 $reportList[$k]['ifReport'] = 1;
+            }else{
+                $reportList[$k]['ifReport'] = 0;
             }
         }
 
@@ -292,7 +318,6 @@ class Cov extends Base
                 $reportDatas['report_pic_path'] = "/" . $saveImgPath;
 
             } catch (Exception $e) {
-
                 $this->error("上传失败");
             }
 
@@ -454,9 +479,6 @@ class Cov extends Base
 
     public function checkPic($picPath)
     {
-
-        $log = Log::init();
-
         #计算图片hash值
         $orgImgPath = $picPath;
         $order = "python3 tu.py " . $orgImgPath . " 2>&1";
@@ -464,14 +486,18 @@ class Cov extends Base
         exec($order, $output, $return);
 
         if ($return != 0) {
-            $log->error($output);
+            Log::write($output,'error');
         } else {
+            $pic_hash=$output[0];
             #检测是否存在该图片
-            $res = Db::name('cov_pic_hash')->getByHash($output[0]);
+            $res = Db::name('cov_pic_hash')->field('hash')->getByHash($pic_hash);
             if ($res) {
-                $log->notice("系统中已有该图片！\n"."[ uid ] ".$this->uid."\t"."[ hash ] ".$output[0]."\n---------------------------------------------------------------");
+                Db::name('cov_pic_hash')->where(['hash'=>$pic_hash])->setInc('sum');
             } else {
-                Db::name('cov_pic_hash')->insert(['hash' => $output[0]]);
+                Db::name('cov_pic_hash')->insert([
+                    'uid'=>$this->uid,
+                    'hash' => $pic_hash
+                    ]);
             }
         }
 
