@@ -334,10 +334,7 @@ class Cov extends Base
                 $saveImgName = $saveImgPath . $imgName;
                 #添加水印
                 $res = $this->addWater($orgImgPath, $saveImgName, $text);
-                if (!$res) {
-                    throw new Exception($res, 1);
-                }
-                $reportDatas['report_pic_path'] = "/" . $saveImgPath;
+                $reportDatas['report_pic_path'] = "/" . $res;
             } catch (Exception $e) {
                 $this->error("上传失败");
             }
@@ -362,10 +359,8 @@ class Cov extends Base
                     $saveImgName = $saveImgPath . $imgName;
                     #添加水印
                     $res = $this->addWater($orgImgPath, $saveImgName, $text);
-                    if (!$res) {
-                        throw new Exception($res, 1);
-                    }
-                    $phonePicPath = $phonePicPath . "/" . $saveImgName . '|';
+
+                    $phonePicPath = $phonePicPath . "/" . $res . '|';
                     $n += 1;
                 }
                 $reportDatas['phone_pic_path'] = $phonePicPath;
@@ -523,7 +518,7 @@ class Cov extends Base
             return "添加水印失败，请联系管理员";
         }
 
-        return 1;
+        return $imgSavePath;
     }
 
     public function checkPic($orgImgPath)
