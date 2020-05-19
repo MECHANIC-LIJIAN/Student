@@ -169,11 +169,11 @@ class Cov extends Base
         if (in_array(9, $this->groupIds)) {
             #是辅导员
             $this->assign([
-                'instructor' => 'yes',
+                'ifInstroctor' => 'yes',
             ]);
         } else {
             $this->assign([
-                'instructor' => 'no',
+                'ifInstroctor' => 'no',
             ]);
         }
         $this->assign([
