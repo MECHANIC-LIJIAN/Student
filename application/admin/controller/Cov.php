@@ -21,7 +21,7 @@ class Cov extends Base
 
         $resdis = new Redis();
         $redisKey = strtotime(date('Y-m-d')) . "_record";
-        if(!$resdis->exists($redisKey)){
+        if (!$resdis->exists($redisKey)) {
             $this->newReport();
         }
     }
@@ -137,7 +137,7 @@ class Cov extends Base
         if (input('key') == 'admin') {
             $where = ['pid' => input('uid')];
         }
-        $myTeam = Db::name("cov_users")->where($where)->field('uid,username')->order(['username' => 'asc'])->select();
+        $myTeam = Db::name("cov_users")->where($where)->distinct(true)->field('uid,username')->order(['username' => 'asc'])->select();
 
         $hasList = model('cov_reports')
             ->where(['date' => input('date')])
@@ -201,7 +201,7 @@ class Cov extends Base
         foreach ($reportList as $k => $v) {
             if (in_array($v['date'], $reportedDate)) {
                 $reportList[$k]['ifReport'] = 1;
-            }else{
+            } else {
                 $reportList[$k]['ifReport'] = 0;
             }
         }
@@ -221,21 +221,47 @@ class Cov extends Base
 
             $covReports = new CovReports();
             $res = $covReports->allowField(true)->save($reportDatas);
+
+            $redis = new Redis();
+            $redisKey = strtotime(date('Y-m-d')) . '_pic_hash';
+            $datas = $redis->sMembers($redisKey);
+            
+            foreach ($datas as &$value) {
+                $value = unserialize($value);
+            }
+            // 启动事务
+            Db::startTrans();
+            try {
+                Db::name('cov_pic_hash')->data($datas)->limit(100)->insertAll();
+                // 提交事务
+                Db::commit();
+                $redis->del($redisKey);
+            } catch (\Exception $e) {
+                // 回滚事务
+                Db::rollback();
+                Log::write($e->getMessage(), 'error');
+            }
+
             if ($res) {
-                cookie('reportDatas',null);
+                cookie('reportDatas', null);
                 $this->success('提交成功', url('admin/cov/indexB', ['sid' => 15]));
             } else {
                 $this->error('提交失败');
             }
         }
+
         $instructorIds = Db::name("auth_group_access")->where(['group_id' => 9])->column('uid');
-        $pids = Db::name('cov_users')->where(['uid' => $this->uid])->column('pid');
-        $pids = delByValue($pids, 1);
-        $instructorId = array_intersect($pids, $instructorIds);
+        $instructorId = Db::name('cov_users')
+            ->where([
+                'uid' => $this->uid,
+            ])
+            ->whereIn('pid', $instructorIds)
+            ->distinct(true)
+            ->column('pid');
 
-        $instructorId = implode("", $instructorId);
+        $instructorId = implode("", delByValue($instructorId, 1));
 
-        // dump([$instructorIds,$pids,$instructorId]);
+        // dump([$instructorIds, $instructorId]);
         if (empty($instructorId) || $instructorId === "") {
             $this->error('还没有为您分配所属辅导员');
         }
@@ -269,15 +295,17 @@ class Cov extends Base
     {
 
         $reportDatas = cookie('reportDatas');
+
         $imgPath = 'uploads/cov/org/';
+
+        #每日的上传目录
         $saveImgPath = 'uploads/cov/' . $reportDatas['pathPriex'] . '/' . $reportDatas['pic_date'] . "/";
 
+        #水印
         $text = "2020." . $reportDatas['pic_date'];
-        $textSize = 50;
-        $textColor = '#FF3333';
-        $textLocate = \think\Image::WATER_EAST;
-        $textOffset = [-100, 0];
-        $textAngle = 0;
+
+        #允许的后缀
+        $allowExt = 'jpg,jpeg,tif,gif,png,JPG,JPEG,PNG';
 
         $type = input('post.type');
         $files = request()->file('file_pic');
@@ -287,82 +315,61 @@ class Cov extends Base
         }
 
         if ($type === 's') {
+            $saveImgPath = $saveImgPath . 'condition/';
+            !is_dir($saveImgPath) ? mkdir($saveImgPath, 0755, true) : 1;
 
+            $n = 1;
             try {
-                $saveImgPath = $saveImgPath . 'condition/';
-                if (!is_dir($saveImgPath)) {
-                    mkdir($saveImgPath, 0755, true);
-                }
                 #保存原图
-                $info = $files->validate(['size' => 4000 * 4000, 'ext' => 'jpg,jpeg,tif,gif,png'])->move($imgPath);
+                $info = $files->validate(['size' => 4000 * 4000, 'ext' => $allowExt])->move($imgPath);
 
                 if (!$info) {
                     $this->error('上传失败');
                 }
 
-                // #计算图片hash值
+                #拼接原始绝对路径
                 $orgImgPath = $imgPath . $info->getSaveName();
-                $this->checkPic($orgImgPath);
-
-                #打开原图
-                $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
-
-                #拼接图片名
-                $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . '1' . "." . $image->type();
-
-                $saveImgPath = $saveImgPath . $imgName;
-
+                #拼接图片名,不带后缀
+                $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . $n;
+                $saveImgName = $saveImgPath . $imgName;
                 #添加水印
-
-                $image->text($text, getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($saveImgPath);
-
+                $res = $this->addWater($orgImgPath, $saveImgName, $text);
+                if (!$res) {
+                    throw new Exception($res, 1);
+                }
                 $reportDatas['report_pic_path'] = "/" . $saveImgPath;
-
             } catch (Exception $e) {
                 $this->error("上传失败");
             }
-
             cookie('reportDatas', $reportDatas);
         } else {
+            $saveImgPath = $saveImgPath . 'phone/';
+            !is_dir($saveImgPath) ? mkdir($saveImgPath, 0755, true) : 1;
 
             $n = 2;
-            $phonePicPath = '';
-            $saveImgPath = $saveImgPath . 'phone/';
-            if (!is_dir($saveImgPath)) {
-                mkdir($saveImgPath, 0755, true);
-            }
             try {
-
+                $phonePicPath = '';
                 foreach ($files as $file) {
                     #保存原图
-                    $info = $file->validate(['size' => 4000 * 4000, 'ext' => 'jpg,jpeg,tif,gif,png'])->move($imgPath);
-
+                    $info = $file->validate(['size' => 4000 * 4000, 'ext' => $allowExt])->move($imgPath);
                     if (!$info) {
                         $this->error('上传失败');
                     }
-
-                    // #计算图片hash值
+                    #拼接原始绝对路径
                     $orgImgPath = $imgPath . $info->getSaveName();
-                    $this->checkPic($orgImgPath);
-
-                    #打开原图
-                    $image = \think\Image::open($imgPath . "/" . $info->getSaveName());
-
-                    #拼接图片名
-                    $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . $n . "." . $image->type();
-
+                    #拼接图片名,不带后缀
+                    $imgName = $reportDatas['pic_date'] . '-' . session('admin.username') . $n;
                     $saveImgName = $saveImgPath . $imgName;
-
                     #添加水印
-                    $image->text($text, getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($saveImgName);
-
+                    $res = $this->addWater($orgImgPath, $saveImgName, $text);
+                    if (!$res) {
+                        throw new Exception($res, 1);
+                    }
                     $phonePicPath = $phonePicPath . "/" . $saveImgName . '|';
                     $n += 1;
                 }
-
                 $reportDatas['phone_pic_path'] = $phonePicPath;
             } catch (Exception $e) {
-
                 $this->error("上传失败");
             }
 
@@ -478,29 +485,73 @@ class Cov extends Base
         }
     }
 
-    public function checkPic($picPath)
+    /**
+     * 上传图片的方法
+     *
+     * @param [string] $imgOrgPath
+     * @param [string] $imgSavePath 不带后缀
+     * @param string $text
+     * @return void
+     */
+    public function addWater($imgOrgPath, $imgSavePath, $text = '')
     {
-        #计算图片hash值
-        $orgImgPath = $picPath;
-        $order = "python3 tu.py " . $orgImgPath . " 2>&1";
+        try {
+            $textSize = 50;
+            $textColor = '#FF3333';
+            $textLocate = \think\Image::WATER_EAST;
+            $textOffset = [-100, 0];
+            $textAngle = 0;
 
-        exec($order, $output, $return);
+            #检查图片hash值
+            $this->checkPic($imgOrgPath);
 
-        if ($return != 0) {
-            Log::write($output,'error');
-        } else {
-            $pic_hash=$output[0];
-            #检测是否存在该图片
-            $res = Db::name('cov_pic_hash')->field('hash')->getByHash($pic_hash);
-            if ($res) {
-                Db::name('cov_pic_hash')->where(['hash'=>$pic_hash])->setInc('sum');
-            } else {
-                Db::name('cov_pic_hash')->insert([
-                    'uid'=>$this->uid,
-                    'hash' => $pic_hash
-                    ]);
-            }
+            #打开原图
+            $image = \think\Image::open($imgOrgPath);
+
+            #确定水印大小和边距
+            $imageWidth = $image->width();
+            $textSize = 0.05 * $imageWidth;
+            $textOffset = [-0.1 * $imageWidth, 0];
+
+            #加上后缀
+            $imgSavePath = $imgSavePath . "." . $image->type();
+
+            #添加水印
+            $image->text($text, getcwd() . '/msyh.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($imgSavePath);
+
+        } catch (Exception $e) {
+            return "添加水印失败，请联系管理员";
         }
 
+        return 1;
+    }
+
+    public function checkPic($orgImgPath)
+    {
+        try {
+            #计算图片hash值
+            $order = "python3 tu.py " . $orgImgPath . " 2>&1";
+
+            exec($order, $output, $return);
+
+            if ($return != 0) {
+                Log::write($output, 'error');
+            } else {
+                $pic_hash = $output[0];
+
+                #记录hash
+                $recoerd = [
+                    'uid' => $this->uid,
+                    'hash' => $pic_hash,
+                    'pic_path' => $orgImgPath,
+                ];
+
+                $redis = new Redis();
+                $redisKey = strtotime(date('Y-m-d')) . '_pic_hash';
+                $redis->sAdd($redisKey, serialize($recoerd));
+            }
+        } catch (Exception $e) {
+            Log::write($e->getMessage(), 'error');
+        }
     }
 }

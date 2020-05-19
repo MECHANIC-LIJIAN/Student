@@ -14,6 +14,9 @@
                 <span class="widget-caption">{$title}</span>
             </div>
             <div class="widget-body">
+                <div class="alert alert-warning">
+                    为了保证成功上传，请在情况单上传之后再上传截图；多张截图时一次性选择完再上传
+                </div>
                 <div>
                     <legend>上传情况单</legend>
                     <form enctype="multipart/form-data">
@@ -60,9 +63,9 @@
     $("#single-upload").fileinput({
         language: 'zh', //设置语言
         uploadUrl: '{:url("admin/cov/ajaxUpload")}', //上传的地址
-        allowedFileExtensions: ['jpg','jpeg', 'gif', 'png','tif'],//接收的文件后缀
+        allowedFileExtensions: ['jpg',"JPG", "jpeg", "JPEG", 'gif', 'png','PNG','tif'],//接收的文件后缀
 
-        uploadAsync: true,
+        uploadAsync: false,//false：采用同步上传
         browseClass: "btn btn-primary", //按钮样式
         removeFromPreviewOnError: true,//是否移除校验文件失败的文件
         overwriteInitial: false,  // 覆盖初始预览内容和标题设置
@@ -109,7 +112,7 @@
             .siblings('.fileinput-remove')
             .hide()
             
-    }).on("fileuploaded", function (event, data, previewId, index) {
+    }).on("filebatchuploadsuccess", function (event, data, previewId, index) {
         var res = data.response
         if (res.code === 1) {
             showMsg(res.msg)
@@ -158,6 +161,16 @@
             showZoom: false,                                    // 显示预览按钮
             showDrag: false,                                        // 显示拖拽
         },
+    }).on('fileerror', function (event, data, msg) {
+        // 清除当前的预览图 ，并隐藏 【移除】 按钮
+        $(event.target)
+            .fileinput('clear')
+            .fileinput('unlock')
+        $(event.target)
+            .parent()
+            .siblings('.fileinput-remove')
+            .hide()
+            
     }).on("filebatchuploadsuccess", function (event, data, previewId, index) {
         var res = data.response
         if (res.code === 1) {
