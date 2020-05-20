@@ -21,6 +21,11 @@
                                 <th>报告人</th>
                                 <th>情况单</th>
                                 <th>电话截图</th>
+                                {if $Think.get.key=="admin"} 
+                                {notempty name="hasList"}
+                                <th style="width: 10%;">操作</th>
+                                {/notempty}
+                                {/if}
                             </tr>
                         </thead>
                         <style>
@@ -70,6 +75,12 @@
                                     <!-- <img class="report_pic" src="/{$vvo}" alt="" srcset=""> -->
                                     {/volist}
                                 </td>
+
+                                {if $Think.get.key=="admin"} 
+                                <td>
+                                    <a href="#" class="btn btn-danger btn-xs report-del" dataid="{$vo.id}">删除</a>
+                                </td>
+                                {/if}
                             </tr>
                             {/volist}
 
@@ -150,6 +161,35 @@
             $(".opacityBottom").remove();
         });
     }
+
+
+    $('.report-del').click(function () {
+
+        var id = $(this).attr('dataid');
+        layer.confirm('确定删除该记录吗？', {
+            title: '删除确认',
+            icon: 3
+        }, function (index) {
+            layer.close(index);
+            $.ajax({
+                url: "{:url('admin/Cov/delOneReport')}",
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == 1) {
+                        showMsgAndHref(data)
+                    } else {
+                        showErrorMsg(data.msg)
+                    }
+                }
+            });
+
+        });
+        return false;
+    });
 </script>
 
 {/block}

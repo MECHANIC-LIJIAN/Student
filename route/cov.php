@@ -9,6 +9,8 @@ Route::group(
         Route::get('index', 'admin/cov/index');
         Route::post('newreport', 'admin/cov/newReport');
         Route::rule('per_day_reports/:date', 'admin/cov/perDayReports','GET|POST');
+
+        Route::post('del_one_report', 'admin/cov/delOneReport');
         Route::rule('down_per_day_reports', 'admin/cov/downPerDayReports','GET|POST');
         Route::rule('add_members', 'admin/cov/addMembers','GET|POST');
 

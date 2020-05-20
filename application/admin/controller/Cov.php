@@ -80,6 +80,31 @@ class Cov extends Base
         }
     }
 
+    public function delOneReport()
+    {
+        if (request()->isAjax()) {
+            $reportId = input('post.id');
+            $oneReport = model('cov_reports')->where(['id' => $reportId])->field('id,uid,date,report_pic_path,phone_pic_path')->find();
+
+            try {
+                $picList = explode('|', trim($oneReport['phone_pic_path']));
+                array_pop($picList);
+
+                array_push($picList, $oneReport['report_pic_path']);
+
+                $publicPath = env('ROOT_PATH') . "public";
+                foreach ($picList as $img) {
+                    unlink($publicPath . $img);
+                }
+            } catch (Exception $e) {
+                Log::write($e->getMessage(), 'error');
+            }
+
+            $oneReport->delete(true);
+            $this->success("删除成功");
+        }
+    }
+
     public function addMembers()
     {
 
@@ -225,7 +250,7 @@ class Cov extends Base
             $redis = new Redis();
             $redisKey = strtotime(date('Y-m-d')) . '_pic_hash';
             $datas = $redis->sMembers($redisKey);
-            
+
             foreach ($datas as &$value) {
                 $value = unserialize($value);
             }
