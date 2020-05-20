@@ -48,13 +48,16 @@ class Templates extends Model
         session('tInfo', $tInfo);
 
         //获取文件后缀
-        $suffix = explode(".", $fileInfo['name'])[1];
+        $suffix = end(explode(".", $fileInfo['name']));
+
 
         //判断哪种类型
         if ($suffix == "xlsx") {
             $reader = new Xlsx();
-        } else {
+        } else if ($suffix == "xls")  {
             $reader = new Xls();
+        }else{
+            return "不是有效的excel文件";
         }
 
         // $reader->setReadDataOnly(true);
@@ -76,6 +79,7 @@ class Templates extends Model
         #按列读
         for ($colIndex = 1; $colIndex <= $col_num; $colIndex++) {
             if ($sheet->getCellByColumnAndRow($colIndex, 1)->getValue() == "") {
+                return $colIndex;
                 return "不能有空字段,请重新选择文件";
             }
             #列中的每一行
