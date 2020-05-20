@@ -79,7 +79,6 @@ class Templates extends Model
         #按列读
         for ($colIndex = 1; $colIndex <= $col_num; $colIndex++) {
             if ($sheet->getCellByColumnAndRow($colIndex, 1)->getValue() == "") {
-                return $colIndex;
                 return "不能有空字段,请重新选择文件";
             }
             #列中的每一行
