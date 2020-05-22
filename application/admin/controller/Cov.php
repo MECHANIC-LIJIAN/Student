@@ -330,7 +330,7 @@ class Cov extends Base
         $text = "2020." . $reportDatas['pic_date'];
 
         #允许的后缀
-        $allowExt = 'jpg,jpeg,tif,gif,png,JPG,JPEG,PNG';
+        $allowExt = 'jpg,jpeg,tif,gif,png';
 
         $type = input('post.type');
         $files = request()->file('file_pic');
