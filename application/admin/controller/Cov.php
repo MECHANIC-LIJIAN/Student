@@ -458,6 +458,7 @@ class Cov extends Base
             ob_clean();
             flush();
             @readfile($filename);
+            unlink($zipPath);
         } else {
             #是学生干部
 
