@@ -22,7 +22,7 @@
                     <legend>上传情况单</legend>
                     <form enctype="multipart/form-data">
                         <div class="file-loading">
-                            <input id="single-upload" name="file_pic" type="file" class="file">
+                            <input id="single-upload" name="single_file_pic" type="file" class="file">
                         </div>
                     </form>
                 </div>
@@ -117,7 +117,7 @@
         }
     });
     $("#phone-upload").fileinput({
-        uploadAsync: false,//采用同步上传
+        uploadAsync: true,//采用异步上传
         theme: 'explorer-fa',
         dropZoneEnabled: true,//是否显示拖拽区域
         language: 'zh', //设置语言
@@ -164,7 +164,7 @@
             .siblings('.fileinput-remove')
             .hide()
             
-    }).on("filebatchuploadsuccess", function (event, data, previewId, index) {
+    }).on("fileuploaded", function (event, data, previewId, index) {
         var res = data.response
         if (res.code === 1) {
             showMsg(res.msg)

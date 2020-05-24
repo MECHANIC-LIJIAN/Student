@@ -333,13 +333,16 @@ class Cov extends Base
         $allowExt = 'jpg,jpeg,tif,gif,png';
 
         $type = input('post.type');
-        $files = request()->file('file_pic');
-
-        if (!$files) {
-            $this->error('没有文件被上传');
-        }
 
         if ($type === 's') {
+
+            $files = request()->file('single_file_pic');
+
+            if (!$files) {
+                $this->error('没有文件被上传');
+            }
+
+            
             $saveImgPath = $saveImgPath . 'condition/';
             !is_dir($saveImgPath) ? mkdir($saveImgPath, 0755, true) : 1;
 
@@ -365,6 +368,14 @@ class Cov extends Base
             }
             cookie('reportDatas', $reportDatas);
         } else {
+
+            $files = request()->file('file_pic');
+
+            if (!$files) {
+                $this->error('没有文件被上传');
+            }
+
+            
             $saveImgPath = $saveImgPath . 'phone/';
             !is_dir($saveImgPath) ? mkdir($saveImgPath, 0755, true) : 1;
 
