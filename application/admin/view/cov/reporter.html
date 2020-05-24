@@ -62,7 +62,8 @@
         }
     }
     $("#single-upload").fileinput({
-        uploadAsync: false,//采用同步上传
+        // uploadAsync: false,//采用同步上传
+        uploadAsync: true,
         dropZoneEnabled: false,//是否显示拖拽区域
         language: 'zh', //设置语言
         uploadUrl: '{:url("admin/cov/ajaxUpload")}', //上传的地址
@@ -106,7 +107,7 @@
             .siblings('.fileinput-remove')
             .hide()
             
-    }).on("filebatchuploadsuccess", function (event, data, previewId, index) {
+    }).on("fileuploaded", function (event, data, previewId, index) {
         var res = data.response
         if (res.code === 1) {
             showMsg(res.msg)
@@ -117,7 +118,7 @@
         }
     });
     $("#phone-upload").fileinput({
-        uploadAsync: true,//采用异步上传
+        uploadAsync: false,//采用同步上传
         theme: 'explorer-fa',
         dropZoneEnabled: true,//是否显示拖拽区域
         language: 'zh', //设置语言
@@ -164,7 +165,7 @@
             .siblings('.fileinput-remove')
             .hide()
             
-    }).on("fileuploaded", function (event, data, previewId, index) {
+    }).on("filebatchuploadsuccess", function (event, data, previewId, index) {
         var res = data.response
         if (res.code === 1) {
             showMsg(res.msg)
