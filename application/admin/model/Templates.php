@@ -112,6 +112,7 @@ class Templates extends Model
             #拼接字段名
             $option = 'option_' . $col;
             $optionList[$option]['title'] = $excelData[$col][1];
+            $optionList[$option]['rule'] ='required';
             for ($row = 2; $row <= count($excelData[$col]); $row++) {
                 $optionList[$option]['options'][$option . "_" . ($row - 1)] = $excelData[$col][$row];
             }
@@ -224,7 +225,6 @@ class Templates extends Model
 
     private function saveData($tInfo)
     {
-
         Db::startTrans();
         try {
             $tInfo['create_time'] = time();

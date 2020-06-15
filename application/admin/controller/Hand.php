@@ -25,6 +25,7 @@ class Hand extends Base
                 'tid' => uuid(),
                 'uid' => session('admin.id'),
                 'tname' => $params['templateName'],
+                'remarks' => $params['remarks'],
                 'tabbr' => $pinyin->abbr($params['templateName']),
                 'primaryKey' => $params['primaryKey'],
                 'myData' => $params['myData'],
@@ -32,6 +33,7 @@ class Hand extends Base
             unset($params['templateName']);
             unset($params['primaryKey']);
             unset($params['myData']);
+            unset($params['remarks']);
 
             #模板名是否重复
             $validate = new \app\admin\validate\Templates();

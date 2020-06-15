@@ -12,8 +12,10 @@ class Import extends Base
                 'tid' => uuid(),
                 'uid' => session('admin.id'),
                 'tname' => input('post.tname'),
+                'remarks' => input('post.remarks',""),
                 'tFile' => input('file.tempalte'),
             ];
+            
             #验证文件类型 模板名是否重复
             $validate = new \app\admin\validate\Templates();
             if (!$validate->scene('upload')->check($tInfo)) {

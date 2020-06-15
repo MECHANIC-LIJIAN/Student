@@ -7,126 +7,8 @@
 {/block}
 {block name="page-style"}
 <link href="__CSS__/main.css" rel="stylesheet">
-<style>
-    #subForm label.error {
-        color: red;
-    }
+<link href="__CSS__/hand.css" rel="stylesheet">
 
-    @media screen and (max-width: 768px) {
-        select {
-            min-width: 50px;
-        }
-
-        input {
-            max-width: 100px;
-        }
-
-        td,
-        label {
-            font-size: 10px;
-        }
-
-        .td>input {
-            max-width: 80px;
-            padding: 2px;
-            font-size: 10px;
-        }
-
-        .table>thead>tr>th,
-        .table>tbody>tr>th,
-        .table>tfoot>tr>th,
-        .table>thead>tr>td,
-        .table>tbody>tr>td,
-        .table>tfoot>tr>td {
-            padding: 2px;
-            font-size: 10px;
-        }
-    }
-
-    .i-radio {
-        display: none;
-    }
-
-    .s-radio {
-        display: inline-block;
-        border: 1px solid #ccc;
-        width: 16px;
-        height: 16px;
-        border-radius: 2px;
-        vertical-align: middle;
-        margin-right: 5px;
-        position: relative;
-    }
-
-    .s-radio:before {
-        content: '';
-        font-size: 0;
-        width: 10px;
-        height: 10px;
-        background: rgb(143, 188, 238);
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin-left: -5px;
-        margin-top: -5px;
-        border-radius: 2px;
-        display: none;
-    }
-
-    .i-radio:checked~.s-radio:before {
-        display: block;
-    }
-
-    .select {
-        display: inline-block;
-        width: auto;
-        min-width: 80px;
-        height: 30px;
-        position: relative;
-        vertical-align: middle;
-        padding: 0;
-        overflow: hidden;
-        background-color: #fff;
-        color: #555;
-        border: 1px solid #aaa;
-        text-shadow: none;
-        border-radius: 4px;
-        transition: box-shadow 0.25s ease;
-        z-index: 2;
-    }
-
-    .select:hover {
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-    }
-
-    .select:before {
-        content: "";
-        position: absolute;
-        width: 0;
-        height: 0;
-        border: 10px solid transparent;
-        border-top-color: #ccc;
-        top: 14px;
-        right: 10px;
-        cursor: pointer;
-        z-index: -2;
-    }
-
-    .select select {
-        cursor: pointer;
-        padding: 10px;
-        width: 100%;
-        border: none;
-        background: transparent;
-        background-image: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-    }
-
-    .select select:focus {
-        outline: none;
-    }
-</style>
 {/block}
 {block name="page-main"}
 <div class="row">
@@ -138,18 +20,24 @@
                 <span class="widget-caption">手动创建表单</span>
             </div>
             <div class="widget-body">
-                <!-- style="background-color:rgba(45, 195, 232,0.25); padding: 20px;" -->
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="form-horizontal">
                             <form autocomplete="off" id="subForm">
                                 <table class="table" id="tableD">
-                                    <caption>
-                                        <h4>表单名</h4>
-                                        <input type="text" required="true" name="templateName" class="form-control"
-                                            style="max-width:none;">
-                                    </caption>
-                                    <tbody>
+                                    <tr>
+                                        <th colspan="4">
+                                            <h4>表单名</h4>
+                                            <input type="text" required="true" name="templateName" class="form-control"
+                                                style="max-width:none;">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th  colspan="4">
+                                            <h4>表单说明</h4>
+                                            <textarea type="text" required="true" class="form-control" id="remarks" name="remarks" rows="5"></textarea>
+                                        </th>
+                                    </tr>
                                 </table>
                             </form>
                             <button id="addInput" class="btn btn-info">添加文本框</button>
@@ -161,13 +49,16 @@
                         <form class="form-box">
                             <div class="well">
                                 <div>
-                                    <h4><font color="red"
-                                        style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>是否指定唯一标识字段</h4>
+                                    <h4>
+                                        <font color="red"
+                                            style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
+                                        是否指定唯一标识字段
+                                    </h4>
                                     <label>
                                         <input type="radio" name="ifUseKey" class="key-radio i-radio" value="1">
                                         <span class="s-radio"></span>指定
                                     </label>
-        
+
                                     <label>
                                         <input type="radio" name="ifUseKey" class="key-radio i-radio" value="0" checked>
                                         <span class="s-radio"></span>不指定
@@ -176,29 +67,34 @@
                                 <div class="hidden myKey">
                                     <h5>请选择唯一标识字段</h5>
                                     <select class="select" name="primaryKey" id="primaryKey">
-                                     
+
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <div class="well mydata-box hidden">
                                 <div>
-                                    <h4><font color="red"
-                                        style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>是否使用自定义数据集</h4>
+                                    <h4>
+                                        <font color="red"
+                                            style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
+                                        是否使用自定义数据集
+                                    </h4>
                                     <label>
                                         <input type="radio" name="ifUseData" class="data-radio i-radio" value="1">
                                         <span class="s-radio"></span>使用
                                     </label>
-        
+
                                     <label>
-                                        <input type="radio" name="ifUseData" class="data-radio i-radio" value="0" checked>
+                                        <input type="radio" name="ifUseData" class="data-radio i-radio" value="0"
+                                            checked>
                                         <span class="s-radio"></span>不使用
                                     </label>
                                 </div>
                                 <div class="hidden myData">
                                     <h5>请选择数据集</h5>
                                     {neq name="Think.session.myData|count" value="0"}
-                                    <select class="select" name="primaryKeyData" id="primaryKeyData" style="margin-bottom: 10px;">
+                                    <select class="select" name="primaryKeyData" id="primaryKeyData"
+                                        style="margin-bottom: 10px;">
                                         {volist name="Think.session.myData" id="vo"}
                                         <option value="{$vo.id}">{$vo.title}</option>
                                         {/volist}
@@ -237,7 +133,7 @@
                 $(".mydata-box").removeClass("show").addClass("hidden")
             }
         })
-         $(".data-radio").click(function () {
+        $(".data-radio").click(function () {
             var value = $(this).val();
             if (value === "1") {
                 $(".myData").removeClass("hidden").addClass("show")

@@ -114,7 +114,7 @@ class Template extends Controller
             //查询数据
             $template = model("Templates")
                 ->where(['tid' => $id])
-                ->field('id,tid,tname,primaryKey,status,myData,options')
+                ->field('id,tid,tname,remarks,primaryKey,status,myData,options')
                 ->find();
             if ($template) {
 
@@ -152,7 +152,7 @@ class Template extends Controller
         cookie('ifCheck', 0);
         cookie('content', "");
 
-        return $this->fetch('template', ['optionList' => $optionList, 'tname' => $template['tname']]);
+        return $this->fetch('template', ['optionList' => $optionList, 'tname' => $template['tname'],'remarks' => $template['remarks']]);
     }
 
     public function collect()

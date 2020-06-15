@@ -22,12 +22,15 @@
 
 <body>
     <div class="container" style="margin-top: 50px;margin-bottom: 50px;">
-        <div class="row col-lg-offset-2">
-            <div class="col-lg-8 form-block-background" style="padding-bottom:20px;padding-top:20px;">
+        <div class="row  col-lg-offset-1" >
+            <div class="col-lg-10 form-block-background" style="padding-bottom:20px;padding-top:20px;">
                 {notpresent name="$info"}
                 <form class="form-horizontal" role="form" id="subForm" autocomplete="off">
-                    <legend style="text-align: center;font-size:28px;">{$tname}</legend>
+                    <legend style="text-align: center;font-size:24px;">{$tname}</legend>
 
+                    <p style="margin:20px 0 20px 0;">
+                        {$remarks}
+                    </p>
                     {volist name="optionList" id="vo" key="k"}
                     {notpresent name="$vo.options"}
                     <!-- 输出input -->
@@ -93,7 +96,7 @@
                     {/elt}
                     {/notpresent}
                     {/volist}
-                    <div class="form-group">
+                    <div class="form-group" style="margin-top: 50px;">
                         <input type="button" style="height: 40px;" class="btn btn-info form-control" id="submitOpt"
                             value="提交">
                     </div>

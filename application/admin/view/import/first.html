@@ -8,22 +8,6 @@
 {block name="page-style"}
 <link href="__CSS__/main.css" rel="stylesheet">
 <link href="__CSS__/project.css" rel="stylesheet">
-<style>
-    img {
-        width: 150px;
-        -webkit-transition: -webkit-transform .3s ease;
-        -moz-transition: -moz-transform .3s ease;
-        -ms-transition: -ms-transform .3s ease;
-        transition: transform .3s ease;
-    }
-
-    img:hover {
-        -webkit-transform: scale(1.2);
-        -moz-transform: scale(1.2);
-        -ms-transform: scale(1.2);
-        transform: scale(1.2)
-    }
-</style>
 {/block}
 {block name="page-main"}
 <div class="project-team-container">
@@ -47,17 +31,36 @@
                     </li>
                 </ul>
                 <div class="project-first-step">
-                    <form id="uploadForm" enctype="multipart/form-data">
-                        <div class="form-inline">
-                            <label for="tname" class="col-lg-2 col-lg-offset-1 control-label">表单名</label>
-                            <input type="text" class="form-control" id="tname">
-                            <input type="text" class="form-control file-input" name="fileBrowserInput" id="fileBrowserInput"
-                                readonly="readonly">
-                            <input type="file" class="hidden" id="tempalteFile">
-                            <div class="input-group">
-                                <input type="button" id="fileBrowser" class="btn btn-default" value="选择文件">
+                    <form id="uploadForm" role="form" class="form-horizontal" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="tname" class="col-lg-2 control-label">表单名</label>
+                            <div class="col-lg-8">
+                                <input type="text" class="form-control" id="tname">
                             </div>
-                            <input type="button" class="btn btn-info" value="提交" id="subFile">
+                        </div>
+                        <div class="form-group">
+                            <label for="fileBrowserInput" class="col-lg-2 control-label">文件</label>
+                            <div class="col-lg-1">
+                                <div class="input-group">
+                                    <input type="button" id="fileBrowser" class="btn btn-default" value="选择文件">
+                                </div>
+                            </div>
+                            <div class="col-lg-7">
+                                <input type="text" class="col-lg-6 form-control file-input" name="fileBrowserInput"
+                                    id="fileBrowserInput" readonly="readonly">
+                                <input type="file" class="hidden" id="tempalteFile">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="remarks" class="col-lg-2 control-label">表单说明</label>
+                            <div class="col-lg-8">
+                                <textarea type="text" class="form-control" id="remarks" name="remarks"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-12 text-center">
+                                <input type="button" class="btn btn-info btn-lg" value="提交" id="subFile">
+                            </div>
                         </div>
                     </form>
                     <br>
@@ -129,6 +132,7 @@
             var fd = new FormData();
             fd.append("tempalte", $("#tempalteFile")[0].files[0]);
             fd.append("tname", $("#tname").val())
+            fd.append("remarks", $("#remarks").val())
             $.ajax({
                 method: "post",
                 url: "{:url('admin/Import/first')}",

@@ -4,13 +4,15 @@ html {
 }
 
 body {
-  background-image: url("/static/imgs/bg.jpg");
+  /* background-image: url("/static/imgs/bg.jpg"); */
 
   background-position: center 0;
 
   background-repeat: no-repeat;
 
   background-attachment: fixed;
+
+  background-color: whitesmoke;
 
   background-size: cover;
 
@@ -50,6 +52,8 @@ body {
 .form-block-background {
     background: #fff;
     border-radius: 4px;
+
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .form-block-background .col-lg-3 {
@@ -57,8 +61,8 @@ body {
 }
 
 label{
-
   font-weight:unset;
+  font-weight: bold;
 }
 label.col-lg-1{
   padding-right: 0;
