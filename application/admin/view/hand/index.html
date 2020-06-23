@@ -142,6 +142,8 @@
             }
         })
         $(".initTemplate").click(function () {
+
+            $(".confirm").click()
             $("#subForm").submit()
         })
         $("#subForm").validate(
@@ -152,6 +154,7 @@
                     var myData = $("#primaryKeyData").val();
                     var primaryKey = $("#primaryKey").val();
                     var data = $('#subForm').serialize()
+                    
                     if (ifUseData == "1") {
                         data = data + '&' + $.param({ 'myData': myData, })
                     }

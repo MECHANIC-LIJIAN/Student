@@ -152,7 +152,7 @@ class Template extends Controller
         cookie('ifCheck', 0);
         cookie('content', "");
 
-        return $this->fetch('template', ['optionList' => $optionList, 'tname' => $template['tname'],'remarks' => $template['remarks']]);
+        return $this->fetch('template', ['optionList' => $optionList, 'tname' => $template['tname'], 'remarks' => $template['remarks']]);
     }
 
     public function collect()
@@ -177,25 +177,7 @@ class Template extends Controller
             if (!empty($template['primaryKey'])) {
                 #找出提交数据的唯一字段的值
                 $keyContent = $params[$template['primaryKey']['field']];
-                #判断是否有参考数据集并且数据是否在其中
-                if (!empty($template['myData'])) {
-                    $res = model('Templates')->ifUseData($template, $keyContent);
-                    if ($res != 1) {
-                        return $this->error($res);
-                    }
-                }
-                #判断是否为覆盖确认
-                if (cookie('ifCheck') == 1) {
-                    #是覆盖确认，更新数据
-                    $res = model('TemplatesDatas')->allowField(true)->save($data, ['id' => cookie('dataid')]);
-                    if ($res) {
-                        cookie('ifCheck', null);
-                        cookie('content', '感谢您在' . $template['tname'] . '的提交');
-                        $this->success('数据更新成功！', url('index/index/index'));
-                    } else {
-                        $this->error('数据更新失败！');
-                    }
-                }
+                
                 #判断数据是否存在
                 $res = model('Templates')->ifExist($template, $keyContent);
                 if ($res == 1) {
@@ -205,9 +187,16 @@ class Template extends Controller
                         'msg' => "该记录已存在，确认覆盖吗?",
                     ]);
                 }
+
+                #判断是否有参考数据集并且数据是否在其中
+                if (!empty($template['myData'])) {
+                    $res = model('Templates')->ifUseData($template, $keyContent);
+                    if ($res != 1) {
+                        return $this->error($res);
+                    }
+                }
             }
 
-            #该页面第一次提交
             #保存新数据
             $res = model('Templates')->saveData($template, $data);
             if ($res == 1) {
@@ -217,6 +206,29 @@ class Template extends Controller
             } else {
                 $this->error($res);
             }
+        }
+    }
+
+    public function collectUpdate()
+    {
+        $template = json_decode(cookie('template'), true);
+        $templateField = $template['fields'];
+        $data['tid'] = $template['id'];
+        #接受页面参数
+        foreach ($templateField as $value) {
+            $params[$value] = input("post.$value");
+        }
+
+        $data['content'] = json_encode($params);
+        $data['update_time'] = time();
+        #是覆盖确认，更新数据
+        $res = model('TemplatesDatas')->allowField(true)->save($data, ['id' => cookie('dataid')]);
+        if ($res) {
+            cookie('ifCheck', null);
+            cookie('content', '感谢您在' . $template['tname'] . '的提交');
+            $this->success('数据更新成功！', url('index/index/index'));
+        } else {
+            $this->error('数据更新失败！');
         }
     }
 }

@@ -40,8 +40,8 @@ class Templates extends Model
             $redisInfo = serialize($myDatas);
             //存入缓存
             $redis->set($redisKey, $redisInfo);
-            //设置缓存周期，60秒
-            $redis->expire($redisKey, 60);
+            //设置缓存周期，60*10秒
+            $redis->expire($redisKey, 60*10);
         }
         //获取缓存
         $myDatas = unserialize($redis->get($redisKey));

@@ -22,6 +22,8 @@ Route::rule('fill/:id', 'index/Template/readTemplate', 'GET|POST');
 
 Route::rule('collect', 'index/Template/collect', 'GET|POST');
 
+Route::rule('collectUpdate', 'index/Template/collectUpdate', 'POST');
+
 // Route::get('ip','index/Ip/index');
 
 Route::rule('datasToMysql', 'index/Template/datasToMysql', 'GET|POST');
