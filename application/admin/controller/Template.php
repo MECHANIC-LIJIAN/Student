@@ -275,7 +275,7 @@ class Template extends Base
         ob_end_clean(); // 清除缓冲
         
         $response = array(
-            'code' => '1',
+            'code' => 1,
             'file' => "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," . base64_encode($xlsData),
             'filename'=>$filename,
             'msg' => '导出成功',
