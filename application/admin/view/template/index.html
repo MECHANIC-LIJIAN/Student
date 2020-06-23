@@ -47,22 +47,7 @@
                     </li>
                     {/if} -->
             </ul>
-            <!-- <form id="formSearch" class="form-horizontal">
-                    <div class="form-group" style="margin-top:15px">
-                        <label class="control-label col-lg-1" for="txt_search_departmentname">部门名称</label>
-                        <div class="col-lg-3">
-                            <input type="text" class="form-control" id="txt_search_departmentname">
-                        </div>
-                        <label class="control-label col-lg-1" for="txt_search_statu">状态</label>
-                        <div class="col-lg-3">
-                            <input type="text" class="form-control" id="txt_search_statu">
-                        </div>
-                        <div class="col-lg-4" style="text-align:left;">
-                            <button type="button" style="margin-left:50px" id="btn_query"
-                                class="btn btn-primary">查询</button>
-                        </div>
-                    </div>
-                </form> -->
+
             <div id="myTabContent" class="tab-content">
                 <div id="firstPage" class="tab-pane active">
                     <div id="toolbar" class="btn-group">
@@ -75,6 +60,9 @@
                             </button>
                             <button id="copy" class="btn btn-info" dataid="{$template.tid}">
                                 <span class="fa fa-share"></span>分享
+                            </button>
+                            <button id="export" class="btn btn-file" dataid="{$template.tid}">
+                                <span class="fa fa-file-excel-o"></span>导出
                             </button>
                             <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
                                     class="fa fa-eye"></span>查看表单</a>
@@ -95,10 +83,6 @@
 <link rel="stylesheet" href="__LIB__/bootstrap-table/bootstrap-table.min.css">
 <script src="__LIB__/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="__LIB__/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
-<script src="__LIB__/bootstrap-table/extensions/FileSaver/FileSaver.min.js"></script>
-<script src="__LIB__/bootstrap-table/extensions/xlsx/xlsx.core.min.js"></script>
-<script src="__LIB__/bootstrap-table/extensions/tableExport.js"></script>
-<script src="__LIB__/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
 <script>
     $("#copy").click(function () {
         copyToClip("{$shareUrl}");
@@ -124,18 +108,6 @@
             // height: 750, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
             uniqueId: "ID", //每一行的唯一标识，一般为主键列
             detailView: false, //是否显示父子表
-            //显示导出插件
-            showExport: true,
-            //导出文件类型
-            exportTypes: ['csv', 'xlsx'],
-            //导出范围
-            exportDataType: "all", //basic'导出当前页, 'all'导出全部, 'selected'导出选中项.
-            //文件名称设置
-            exportOptions: {
-                fileName: "{$template.tname}",
-                tableName: "{$template.tname}",
-                worksheetName: 'sheet1',  //表格工作区名称
-            },
 
             columns: {$fields|raw},
         });
@@ -153,8 +125,7 @@
 
     });
 
-
-    var isPC = IsPC();
+    //异步删除数据
     function ajax_del(url, data) {
         $.ajax({
             url: url,
@@ -170,6 +141,9 @@
             }
         });
     }
+
+    var isPC = IsPC();
+
     if (isPC) {
         function confirm(msg, title, url, data) {
             layer.confirm(msg, {
@@ -217,6 +191,25 @@
         $('#table').bootstrapTable('refresh');
     })
 
+    $("#export").click(function () {
+        $.ajax({
+            url: "{:url('admin/Template/export')}",
+            type: 'post',
+            data: {
+                id: "{$template.id}",
+                tid: "{$template.tid}"
+            },
+            dataType: 'json',
+            success: function (ret) {
+                var $a = $("<a>");
+                $a.attr("href", ret.file);
+                $("body").append($a);
+                $a.attr("download", ret.filename);
+                $a[0].click();
+                $a.remove();
+            }
+        })
+    })
 
 </script>
 
