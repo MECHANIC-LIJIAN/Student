@@ -19,24 +19,7 @@ Route::group(
         Route::rule('forget', 'admin/Index/forget', 'GET|POST');
         Route::rule('reset', 'admin/Index/reset', 'POST');
 
-        Route::group('templates', function () {
-            Route::rule('list', 'admin/Templates/list', 'GET|POST');
-            Route::rule('control', 'admin/Templates/control', 'POST');
-            Route::rule('add', 'admin/Templates/add', 'GET|POST');
-            Route::rule('del', 'admin/Templates/del', 'POST');
 
-            #文件创建模板
-            Route::group('createByFile', function () {
-                Route::rule('First', 'admin/Import/First', 'GET|POST');
-                Route::rule('Second', 'admin/Import/Second', 'GET|POST');
-                // Route::rule('Third', 'admin/Import/Third', 'GET|POST');
-            });
-            #手动创建模板
-            Route::group('createByHand', function () {
-                Route::rule('index', 'admin/Hand/index', 'GET|POST');
-                Route::rule('add', 'admin/Hand/add', 'POST')->ext('do');
-            });
-        });
         #单个表单数据
         Route::group('template', function () {
             Route::rule('detail/[:id]', 'admin/Template/index', 'GET')->ext();

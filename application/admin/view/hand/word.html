@@ -33,20 +33,45 @@
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th  colspan="4">
+                                        <th colspan="4">
                                             <h4>表单说明</h4>
-                                            <textarea type="text" class="form-control" id="remarks" name="remarks" rows="5"></textarea>
+                                            <textarea type="text" class="form-control" id="remarks" name="remarks"
+                                                rows="3"></textarea>
                                         </th>
                                     </tr>
+                                    <tr>
+                                        <td><label for="option_2" class="control-label">文件名</label></td>
+                                        <td><input type="text" required="true" class="form-control" name="option_1">
+                                        </td>
+                                        <td><label for="option_2" class="control-label">规则</label></td>
+                                        <td><input type="text" class="form-control" name="option_1_rule"
+                                                value="word|required" readonly></td>
+                                        <td><a dataid="option_1" onclick="deleteRow(this)" class="deleteRow">删除</a></td>
+                                    </tr>
                                 </table>
+                                <br>
+                                <br>
+
+                                <div class="form-group">
+                                    <label for="fileBrowserInput" style="font-size: 16px;"
+                                        class="col-lg-2 control-label">模板文件</label>
+                                    <div class="col-lg-1">
+                                        <div class="input-group">
+                                            <input type="button" id="fileBrowser" class="btn btn-default" value="选择文件">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-7">
+                                        <input type="text" class="col-lg-6 form-control file-input"
+                                        id="fileBrowserInput" readonly="readonly">
+                                        <input type="file" class="hidden" id="tempalteFile">
+                                    </div>
+                                </div>
                             </form>
-                            <button id="addInput" class="btn btn-info">添加文本框</button>
-                            <button id="addSelect" class="btn btn-info">添加下拉菜单</button>
+
                         </div>
                     </div>
-
-                    <input type="hidden" id="beginId" value="1">
-                    <input type="hidden" id="formType" value="common">
+                    <input type="hidden" id="beginId" value="2">
+                    <input type="hidden" id="formType" value="word">
 
                     <div class="col-lg-3">
                         <form class="form-box">
@@ -108,6 +133,11 @@
                                 </div>
                             </div>
                         </form>
+
+                        <button id="addInput" class="btn btn-info">添加文本框</button>
+                        <button id="addSelect" class="btn btn-info">添加下拉菜单</button>
+                        <br>
+                        <br>
                         <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
                             初始化表单</button>
                     </div>
@@ -125,6 +155,44 @@
 
 <script>
     $(function () {
+
+        function copyThis(obj) {
+            var data = $(obj).val()
+            copyToClip(data)
+        }
+
+        $("#fileBrowser").click(function () {
+            $("#tempalteFile").val("");
+            $("#tempalteFile").click();
+            $("#tempalteFile").change(function () {
+                CheckFile(this)
+                $("#fileBrowserInput").val($("#tempalteFile").val())
+            });
+        })
+        //文件上传验证.
+        function CheckFile(obj) {
+            var array = new Array('doc', 'docx'); //可以上传的文件类型 
+            if (obj.value == '') {
+                showErrorMsg("选择要上传的文件!");
+                return false;
+            }
+            else {
+                var fileContentType = obj.value.match(/^(.*)(\.)(.{1,8})$/)[3];
+                var isExists = false;
+                for (var i in array) {
+                    if (fileContentType.toLowerCase() == array[i].toLowerCase()) {
+                        isExists = true;
+                        return true;
+                    }
+                }
+                if (isExists == false) {
+                    obj.value = null;
+                    showErrorMsg("上传文件类型不正确,必须为.doc.docx!");
+                    return false;
+                }
+            }
+        }
+
         $(".key-radio").click(function () {
             var value = $(this).val();
             if (value === "1") {
@@ -145,41 +213,48 @@
             }
         })
         $(".initTemplate").click(function () {
-
             $(".confirm").click()
             $("#subForm").submit()
         })
-        $("#subForm").validate(
-            {
-                submitHandler: function (form) {
-                    var ifUseData = $("input[name='ifUseData']:checked").val();
-                    var ifUseKey = $("input[name='ifUseKey']:checked").val();
-                    var myData = $("#primaryKeyData").val();
-                    var primaryKey = $("#primaryKey").val();
-                    var data = $('#subForm').serialize()
-                    
-                    if (ifUseData == "1") {
-                        data = data + '&' + $.param({ 'myData': myData, })
-                    }
-                    if (ifUseKey == "1") {
-                        data = data + '&' + $.param({ 'primaryKey': primaryKey, })
-                    }
+        $("#subForm").validate({
+            submitHandler: function (form) {
+                var ifUseData = $("input[name='ifUseData']:checked").val();
+                var ifUseKey = $("input[name='ifUseKey']:checked").val();
+                var myData = $("#primaryKeyData").val();
+                var primaryKey = $("#primaryKey").val();
 
-                    $.ajax({
-                        url: "{:url('admin/Hand/add')}",
-                        type: "post",
-                        dataType: 'json',
-                        data: data,
-                        success: function (data) {
-                            if (data.code == 1) {
-                                showMsgAndHref(data)
-                            } else {
-                                showErrorMsg(data.msg)
-                            }
-                        },
-                    });
-                },
-            });
+                var data = $('#subForm').serialize()
+
+                var formdata = new FormData(document.getElementById('subForm'));
+                formdata.append("wordfile", $("#tempalteFile")[0].files[0]);
+                console.log(formdata);
+
+                if (ifUseData == "1") {
+                    formdata.append('myData',myData)
+                }
+                if (ifUseKey == "1") {
+                    formdata.append('primaryKey',primaryKey)
+                }
+
+                $.ajax({
+                    url: "{:url('admin/Hand/add')}",
+                    type: "post",
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: formdata,
+                    success: function (data) {
+                        if (data.code == 1) {
+                            showMsgAndHref(data)
+                        } else {
+                            showErrorMsg(data.msg)
+                        }
+                    },
+                });
+            },
+        });
+
     });
 </script>
 {/block}

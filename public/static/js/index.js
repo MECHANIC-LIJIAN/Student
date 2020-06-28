@@ -1,3 +1,21 @@
+$(function () {
+  /**
+   * 复制内容到粘贴板
+   * content : 需要复制的内容
+   */
+  function copyToClip(content) {
+    var aux = document.createElement("input");
+    aux.setAttribute("value", content);
+    document.body.appendChild(aux);
+    aux.select();
+    document.execCommand("copy");
+    document.body.removeChild(aux);
+    showMsg("复制成功");
+  }
+
+  /*
+   *判断设备类型
+   */
   function IsPC() {
     var userAgentInfo = navigator.userAgent;
     var Agents = [
@@ -48,8 +66,7 @@
         anim: 5,
       });
     }
-
-    function confirm(msg, title, url, data) {
+    function confirmMsg(msg, title, url, data) {
       layer.confirm(
         msg,
         {
@@ -93,10 +110,11 @@
           setTimeout(function () {
             // $.mobile.changePage(data.url); //手机网页式跳转
             location.href = data.url;
-          }, 1000);
+          }, 300);
         },
       });
     }
+
     function showErrorMsg(msg) {
       layer.open({
         content: msg,
@@ -105,7 +123,7 @@
     }
 
     //询问框
-    function confirm(msg, title, url, data) {
+    function confirmMsg(msg, title, url, data) {
       layer.open({
         content: msg,
         btn: ["确认", "取消"],
@@ -126,3 +144,4 @@
       });
     }
   }
+});

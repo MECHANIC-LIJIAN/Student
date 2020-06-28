@@ -1,17 +1,16 @@
-var id = 1;
-function deleteRow(obj) {
-  $(obj).parents("tr").remove();
-  $("a.deleteRow").last().removeClass("hidden").addClass("show");
-  var option_id = $(obj).attr("dataid");
-  $("#primaryKey option[value='" + option_id + "']").remove();
-  id = id - 1;
+var formType = $("#formType").val();
+if (formType === "word") {
+  var id = 2;
+} else {
+  var id = 1;
 }
-
 $("#addInput").click(function () {
   $(".deleteRow").addClass("hidden");
+
   var option_id = "option_" + id;
+
   $("#tableD").append(getInput(option_id));
-  
+
   addPrimaryKey(option_id, "字段" + id);
 
   // $(".input-type").change(function () {
@@ -76,14 +75,31 @@ function getInput(option_id) {
     option_id +
     ' name="' +
     option_id +
-    '_rule"><option value="text|required"">普通文本</option><option value="phone|required">手机号</option><option value="email|required">邮箱</option><option value="number|required">数字</option><option value="text">非必填项</option>';
+    '_rule">\
+    <option value="text|required"">普通文本</option>\
+    <option value="phone|required">手机号</option>\
+    <option value="email|required">邮箱</option>\
+    <option value="number|required">数字</option>\
+    <option value="text">非必填项</option>';
   ele = ele + "</select></td>";
+
+  if (formType === "word") {
+    ele =
+      ele +
+      '<td><input type="button" value="复制到word" class="btn btn-success" onclick=copyToClip('+
+        '"${' +
+        option_id +
+        '}") /></td>'
+  }
+
   ele =
     ele +
     '<td><a dataid="' +
     option_id +
     '" onclick="deleteRow(this)" class="deleteRow">删除</a></td>';
+
   ele = ele + "</tr>";
+
   return ele;
 }
 
@@ -127,6 +143,16 @@ function getSelect(option_id) {
     '_edit" dataid="' +
     option_id +
     '">修改</a></td>';
+
+  if (formType === "word") {
+    ele =
+      ele +
+      '<td><input type="button" value="复制到word" class="btn btn-success" onclick=copyToClip('+
+        '"${' +
+        option_id +
+        '}") /></td>'
+  }
+
   ele =
     ele +
     '<td><a dataid="' +
@@ -134,6 +160,15 @@ function getSelect(option_id) {
     '" onclick="deleteRow(this)" class="deleteRow">删除</a></td>';
   ele = ele + "</tr>";
   return ele;
+}
+
+//删除行事件
+function deleteRow(obj) {
+  $(obj).parents("tr").remove();
+  $("a.deleteRow").last().removeClass("hidden").addClass("show");
+  var option_id = $(obj).attr("dataid");
+  $("#primaryKey option[value='" + option_id + "']").remove();
+  id = id - 1;
 }
 
 function addOptions(eleId) {

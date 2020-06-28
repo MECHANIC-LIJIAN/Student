@@ -219,7 +219,7 @@ class Templates extends Model
         // }
 
         $tInfo['options'] = $tDdata;
-        // halt($tDdata);
+        // halt($tInfo);
         return $this->saveData($tInfo);
     }
 
@@ -228,13 +228,20 @@ class Templates extends Model
         Db::startTrans();
         try {
             $tInfo['create_time'] = time();
-            Db::name('templates')->strict(false)->json(['options'])->insertGetId($tInfo);
+            $tid=Db::name('templates')->strict(false)->json(['options'])->insertGetId($tInfo);
             Db::name("templates_sum")->where('id', 1)->setInc('count');
 
+            if ($tInfo['ttype']==1) {
+                Db::name("word_path")->insert([
+                    'tid'=>$tid,
+                    'path'=>$tInfo['word_path'],
+                ]);
+            }
             Db::commit();
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
+            // return $e->getMessage();
             return "初始化失败";
         }
         // $redis = new Redis();

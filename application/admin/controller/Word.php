@@ -4,16 +4,11 @@ namespace app\admin\controller;
 
 use Overtrue\Pinyin\Pinyin;
 
-class Hand extends Base
+class Word extends Base
 {
     public function index()
     {
         return view();
-    }
-
-    public function word()
-    {
-        return view('word');
     }
 
     public function add()
@@ -21,41 +16,12 @@ class Hand extends Base
         if (request()->isAjax()) {
 
             $params = input('post.');
-            $tInfo = [];
-
-            #判断表单类型
-            if ($params['option_1_rule'] == 'word|required') {
-
-                if (!array_key_exists('option_2', $params)) {
-                    $this->error("请至少添加一个字段");
-                }
-
-                $wordfile = request()->file('wordfile');
-
-                if ($wordfile == null) {
-                    $this->error("请上传模板文件");
-                }
-                // 移动到框架应用根目录/uploads/ 目录下
-                $info = $wordfile->move('uploads/wordfile');
-                if ($info) {
-                    // 成功上传后 获取上传信息
-                    $wordPath =  "/uploads/wordfile/" .$info->getSaveName();
-                } else {
-                    // 上传失败获取错误信息
-                    $this->error("文件上传失败");
-                }
-
-                $tInfo['word_path'] = $wordPath;
-                $tInfo['ttype'] = 1;
-            }
-
-            // halt($tInfo);
-            if ((!array_key_exists('option_1', $params))) {
+            if (!array_key_exists('option_1', $params)||!array_key_exists('option_2', $params)) {
                 $this->error("请至少添加一个字段");
             }
 
             $pinyin = new Pinyin();
-            $tInfo = $tInfo + [
+            $tInfo = [
                 'tid' => uuid(),
                 'uid' => session('admin.id'),
                 'tname' => $params['templateName'],
@@ -64,8 +30,6 @@ class Hand extends Base
                 'primaryKey' => $params['primaryKey'],
                 'myData' => $params['myData'],
             ];
-
-            // halt($tInfo);
             unset($params['templateName']);
             unset($params['primaryKey']);
             unset($params['myData']);
@@ -85,7 +49,7 @@ class Hand extends Base
             }
 
             $tInfo['params'] = $params;
-
+            
             $res = model('Templates')->createByHand($tInfo);
             // return $res;
             if ($res == 1) {
