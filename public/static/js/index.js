@@ -66,7 +66,7 @@ $(function () {
         anim: 5,
       });
     }
-    function confirmMsg(msg, title, url, data) {
+    function confirm(msg, title, url, data) {
       layer.confirm(
         msg,
         {
@@ -123,7 +123,7 @@ $(function () {
     }
 
     //询问框
-    function confirmMsg(msg, title, url, data) {
+    function confirm(msg, title, url, data) {
       layer.open({
         content: msg,
         btn: ["确认", "取消"],

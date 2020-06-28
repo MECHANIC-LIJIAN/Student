@@ -95,7 +95,7 @@
             data = {
                 id: id
             }
-            confirmMsg('确定删除该用户吗？', '用户删除确认', "{:url('admin/Admin/del')}", data)
+            confirm('确定删除该用户吗？', '用户删除确认', "{:url('admin/Admin/del')}", data)
             return false;
         });
 
@@ -114,7 +114,7 @@
                 id: id,
                 status: status
             }
-            confirmMsg(msg, '用户状态操作', "{:url('admin/Admin/status')}", data)
+            confirm(msg, '用户状态操作', "{:url('admin/Admin/status')}", data)
 
             return false;
         });
