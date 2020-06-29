@@ -66,6 +66,8 @@
                             </button>
                             <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
                                     class="fa fa-eye"></span>查看表单</a>
+                            <a href="{:url('admin/Word/export_word',['tId' => $tId])}" target="_blank" class="btn btn-default"><span
+                                        class="fa fa-eye"></span>导出word</a>
                         </div>
 
                     </div>
@@ -208,7 +210,7 @@
                     $a.attr("download", ret.filename);
                     $a[0].click();
                     $a.remove();
-                }else{
+                } else {
                     showErrorMsg(ret.msg)
                 }
             }

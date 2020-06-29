@@ -24,7 +24,8 @@
         "topthink/think-migration": "v2.0.3",
         "5ini99/think-auth": "^1.0",
         "topthink/think-image": "^1.0",
-        "endroid/qrcode": "^3.7"
+        "endroid/qrcode": "^3.7",
+        "phpoffice/phpword": "^0.17.0"
     },
     "autoload": {
         "psr-4": {

@@ -39,7 +39,7 @@ class Hand extends Base
                 $info = $wordfile->move('uploads/wordfile');
                 if ($info) {
                     // 成功上传后 获取上传信息
-                    $wordPath =  "/uploads/wordfile/" .$info->getSaveName();
+                    $wordPath =  "uploads/wordfile/" .$info->getSaveName();
                 } else {
                     // 上传失败获取错误信息
                     $this->error("文件上传失败");

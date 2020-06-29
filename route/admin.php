@@ -27,6 +27,7 @@ Route::group(
             Route::rule('ajax_del', 'admin/Template/del', 'POST')->ext('do');
             Route::rule('ajax_export', 'admin/Template/export', 'POST')->ext('do');
 
+            Route::rule('export_word','admin/Word/export_word', 'GET');
         });
 
         #数据集

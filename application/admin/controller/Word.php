@@ -2,64 +2,71 @@
 
 namespace app\admin\controller;
 
-use Overtrue\Pinyin\Pinyin;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\TemplateProcessor;
+use think\Db;
 
 class Word extends Base
 {
-    public function index()
+
+    public function export_word()
     {
-        return view();
-    }
 
-    public function add()
-    {
-        if (request()->isAjax()) {
+        $tId = input('tId');
 
-            $params = input('post.');
-            if (!array_key_exists('option_1', $params)||!array_key_exists('option_2', $params)) {
-                $this->error("请至少添加一个字段");
+        $template = model('Templates')
+            ->where(['tid' => $tId])
+            ->field('id,tid,tname')
+            // ->json(['options'])
+            ->find();
+
+        #默认排序字段和规则
+        $fields = ['id,tid,content,create_time,update_time'];
+        $orders = ['update_time' => 'desc'];
+
+        #默认搜索条件
+        $map[] = ['tid', '=', $template['id']];
+
+        $list = Db::name('TemplatesDatas')
+            ->where($map)
+            ->json(['content'])
+            ->field($fields)
+            ->order($orders)
+            ->select();
+
+        $wordFile = Db::name('word_path')->where(['tid' => $template['id']])->column('path');
+
+        $tmpdir = dirname($wordFile[0]);
+        if (!file_exists($tmpdir)) {
+            @mkdir($tmpdir, 0777, true);
+        }
+        // halt($tmpdir);
+        \PhpOffice\PhpWord\Settings::setTempDir($tmpdir);
+        // \PhpOffice\PhpWord\Settings::setZipClass(\PhpOffice\PhpWord\Settings::PCLZIP);
+
+        $savedir = env('ROOT_PATH').'public/uploads/word/save/' . md5($tId);
+        if (!file_exists($savedir)) {
+            @mkdir($savedir, 0777, true);
+        }
+
+        dump($wordFile[0]);
+
+        $PHPWord = new PhpWord();
+
+        foreach ($list as $record) {
+            $word = $PHPWord->loadTemplate(env('ROOT_PATH')."public/".$wordFile[0]);
+            unset($record['content']['option_1']);
+            foreach ($record['content'] as $k => $v) {
+                dump($k);
             }
+            $word->setValue('ketiname', '测试题目');
+            $word->setValues($record['content']);
+            # 保存文件
+            # 生成临时文件以供下载
+            $tmpFileName = $savedir . "/" . $record['id'] . ".docx";
 
-            $pinyin = new Pinyin();
-            $tInfo = [
-                'tid' => uuid(),
-                'uid' => session('admin.id'),
-                'tname' => $params['templateName'],
-                'remarks' => $params['remarks'],
-                'tabbr' => $pinyin->abbr($params['templateName']),
-                'primaryKey' => $params['primaryKey'],
-                'myData' => $params['myData'],
-            ];
-            unset($params['templateName']);
-            unset($params['primaryKey']);
-            unset($params['myData']);
-            unset($params['remarks']);
-
-            #模板名是否重复
-            $validate = new \app\admin\validate\Templates();
-            if (!$validate->scene('hand')->check($tInfo)) {
-                return $this->error($validate->getError());
-            }
-
-            $template = model('templates')
-                ->where('tid', $tInfo['tid'])
-                ->find();
-            if ($template['status'] == '1') {
-                $this->error("模板已经初始化，不可更改");
-            }
-
-            $tInfo['params'] = $params;
-            
-            $res = model('Templates')->createByHand($tInfo);
-            // return $res;
-            if ($res == 1) {
-                session('tInfo', null);
-                session('optionList', null);
-                session('excelData', null);
-                $this->success("模板初始化成功", 'admin/Templates/list');
-            } else {
-                $this->error($res);
-            }
+            dump($tmpFileName);
+            $word->saveAs($tmpFileName);
         }
     }
 }

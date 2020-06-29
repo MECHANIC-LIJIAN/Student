@@ -26,7 +26,6 @@ Route::group(
          #创建word模板
          Route::group('createWord', function () {
             Route::rule('index', 'admin/hand/word', 'GET|POST');
-            Route::rule('add', 'admin/Hand/add', 'POST')->ext('do');
         });
     }
 );
