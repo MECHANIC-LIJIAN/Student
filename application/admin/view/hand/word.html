@@ -20,6 +20,10 @@
                 <span class="widget-caption">手动创建表单</span>
             </div>
             <div class="widget-body">
+                <div class="alert alert-warning" style="font-size:1.2em;width: 50%;">
+                    请注意,&lt;<font style="color: red;">文件名</font>&gt;的命名规则应该是唯一的,比如学号,手机号,或其他定义的规则,应在"表单说明"里说明
+                    
+                </div>
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="form-horizontal">
@@ -62,7 +66,7 @@
                                     </div>
                                     <div class="col-lg-7">
                                         <input type="text" class="col-lg-6 form-control file-input"
-                                        id="fileBrowserInput" readonly="readonly">
+                                            id="fileBrowserInput" readonly="readonly">
                                         <input type="file" class="hidden" id="tempalteFile">
                                     </div>
                                 </div>
@@ -74,28 +78,12 @@
                     <input type="hidden" id="formType" value="word">
 
                     <div class="col-lg-3">
-                        <form class="form-box">
+                        <form class="form-box hidden">
                             <div class="well">
-                                <div>
-                                    <h4>
-                                        <font color="red"
-                                            style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
-                                        是否指定唯一标识字段
-                                    </h4>
-                                    <label>
-                                        <input type="radio" name="ifUseKey" class="key-radio i-radio" value="1">
-                                        <span class="s-radio"></span>指定
-                                    </label>
-
-                                    <label>
-                                        <input type="radio" name="ifUseKey" class="key-radio i-radio" value="0" checked>
-                                        <span class="s-radio"></span>不指定
-                                    </label>
-                                </div>
-                                <div class="hidden myKey">
+                                <div class="myKey">
                                     <h5>请选择唯一标识字段</h5>
                                     <select class="select" name="primaryKey" id="primaryKey">
-
+                                        <option value="option_1">文件名</option>
                                     </select>
                                 </div>
                             </div>
@@ -219,21 +207,17 @@
         $("#subForm").validate({
             submitHandler: function (form) {
                 var ifUseData = $("input[name='ifUseData']:checked").val();
-                var ifUseKey = $("input[name='ifUseKey']:checked").val();
                 var myData = $("#primaryKeyData").val();
                 var primaryKey = $("#primaryKey").val();
-
-                var data = $('#subForm').serialize()
-
                 var formdata = new FormData(document.getElementById('subForm'));
+
                 formdata.append("wordfile", $("#tempalteFile")[0].files[0]);
-                console.log(formdata);
+
+                formdata.append('primaryKey', primaryKey)
+
 
                 if (ifUseData == "1") {
-                    formdata.append('myData',myData)
-                }
-                if (ifUseKey == "1") {
-                    formdata.append('primaryKey',primaryKey)
+                    formdata.append('myData', myData)
                 }
 
                 $.ajax({
