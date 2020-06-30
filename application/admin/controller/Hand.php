@@ -36,10 +36,10 @@ class Hand extends Base
                     $this->error("请上传模板文件");
                 }
                 // 移动到框架应用根目录/uploads/ 目录下
-                $info = $wordfile->move('uploads/wordfile');
+                $info = $wordfile->move('uploads/word/wordfile');
                 if ($info) {
                     // 成功上传后 获取上传信息
-                    $wordPath =  "uploads/wordfile/" .$info->getSaveName();
+                    $wordPath =  "uploads/word/wordfile/" .$info->getSaveName();
                 } else {
                     // 上传失败获取错误信息
                     $this->error("文件上传失败");

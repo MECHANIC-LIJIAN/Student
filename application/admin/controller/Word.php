@@ -4,7 +4,6 @@ namespace app\admin\controller;
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Settings;
-use PhpOffice\PhpWord\TemplateProcessor;
 use think\Db;
 
 class Word extends Base
@@ -28,6 +27,7 @@ class Word extends Base
         #默认搜索条件
         $map[] = ['tid', '=', $template['id']];
 
+        #查询数据
         $list = Db::name('TemplatesDatas')
             ->where($map)
             ->json(['content'])
@@ -35,44 +35,49 @@ class Word extends Base
             ->order($orders)
             ->select();
 
-        #模板文件路径
+        #查询word模板
         $orgFile = Db::name('word_path')->where(['tid' => $template['id']])->column('path');
-        $orgFile=$orgFile[0];
+        $orgFile = $orgFile[0];
 
-        #设置临时文件目录
-        $tmpdir = dirname($orgFile);
+        #设置phpword临时目录
+        $tmpdir = env('ROOT_PATH') . 'public/uploads/word/tmp/';
+        if (!file_exists($tmpdir)) {
+            @mkdir($tmpdir, 0777, true);
+        }
         \PhpOffice\PhpWord\Settings::setTempDir($tmpdir);
+        \PhpOffice\PhpWord\Settings::setZipClass(Settings::PCLZIP);
 
-        #设置压缩方式
-        // \PhpOffice\PhpWord\Settings::setZipClass(Settings::PCLZIP);
-        $savedir = env('ROOT_PATH').'public/uploads/word/save/' . md5($tId);
-        $savedir = 'uploads/word/save/' . md5($tId);
+        #设置word保存目录
+        $savedir = env('ROOT_PATH') . 'public/uploads/word/save/' . md5($tId);
+        // $savedir = 'uploads/word/save/' . md5($tId);
         if (!file_exists($savedir)) {
             @mkdir($savedir, 0777, true);
         }
 
-        $wordFiles=[];
+        try {
+            $wordFiles = [];
 
-        $PHPWord = new PhpWord();
+            $PHPWord = new PhpWord();
 
-        foreach ($list as $record) {
-            $word = $PHPWord->loadTemplate($orgFile);
-            // unset($record['content']['option_1']);
-            $word->setValues($record['content']);
-            # 保存文件
-            $tmpFileName ="/". $savedir . "/" . $record['content']['option_1'] . ".docx";
-            array_push($wordFiles,$tmpFileName);
-            
-            $word->saveAs($tmpFileName);
+            foreach ($list as $record) {
+                $word = $PHPWord->loadTemplate($orgFile);
+                // unset($record['content']['option_1']);
+
+                $word->setValues($record['content']);
+                # 保存文件
+                $tmpFileName = $savedir . "/" . $record['content']['option_1'] . ".docx";
+                array_push($wordFiles, $tmpFileName);
+                $word->saveAs($tmpFileName);
+            }
+        } catch (\Exception $e) {
+            return "生成word失败";
         }
 
-        $zipFileName=$savedir."/".$template['tname'].".zip";
-        // dump($wordFiles);
-        // dump($zipFileName);
-        // halt(unlink($zipFileName));
-
-        createZip($wordFiles,$zipFileName);
-
+        $zipFileName = $savedir . "/test" . ".zip";
+        $res = createZip($wordFiles, $zipFileName, $scene = 'word');
+        if(!$res){
+            return "文件打包失败";
+        }
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
         header('Content-disposition: attachment; filename=' . basename($zipFileName)); //文件名

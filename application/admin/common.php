@@ -20,17 +20,20 @@ function uuid()
 
 /* create a compressed zip file */
 
-function createZip($files = array(), $destination = '', $overwrite = false)
+function createZip($files = array(), $destination = '',$scene='' ,$overwrite = false)
 {
 
     $path = env('ROOT_PATH') . 'public';
 
+    if ($scene==='word') {
+        $path='';
+    }
     $validFiles = [];
 
     if (is_array($files)) {
 
         foreach ($files as $file) {
-
+            
             if (file_exists($path . $file)) {
 
                 $validFiles[] = $file;
