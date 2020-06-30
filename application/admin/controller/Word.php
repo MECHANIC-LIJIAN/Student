@@ -74,11 +74,14 @@ class Word extends Base
             return "生成word失败";
         }
 
-        $zipFileName = $savedir . "/".$template['tname'] . ".zip";
-        $res = createZip($wordFiles, $zipFileName, $scene = 'word');
-        if (!$res) {
+        try {
+            $zipFileName = $savedir . "/" . $template['tname'] . ".zip";
+            $res = createZip($wordFiles, $zipFileName, $scene = 'word');
+        } catch (\Exception $e) {
+            return $e->getMessage();
             return "文件打包失败";
         }
+
         unlink($savedir);
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
