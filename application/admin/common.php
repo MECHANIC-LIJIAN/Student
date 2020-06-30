@@ -20,20 +20,20 @@ function uuid()
 
 /* create a compressed zip file */
 
-function createZip($files = array(), $destination = '',$scene='' ,$overwrite = false)
+function createZip($files = array(), $destination = '', $scene = '', $overwrite = false)
 {
 
     $path = env('ROOT_PATH') . 'public';
 
-    if ($scene==='word') {
-        $path='';
+    if ($scene === 'word') {
+        $path = '';
     }
     $validFiles = [];
 
     if (is_array($files)) {
 
         foreach ($files as $file) {
-            
+
             if (file_exists($path . $file)) {
 
                 $validFiles[] = $file;
@@ -53,11 +53,21 @@ function createZip($files = array(), $destination = '',$scene='' ,$overwrite = f
             return false;
 
         }
-        
-        foreach ($validFiles as $file) {
-            $zip->addFile($path . $file, basename($file));
-            if ($scene==='word') {
-                $zip->addFromString(basename($file), file_get_contents($file));//中文使用这个
+
+        if ($scene === 'word') {
+            $fileNum=0;
+            
+            foreach ($validFiles as $file) {
+                $basePath=dirname($file);
+                $ext=substr(strrchr($file, '.'), 1);
+                rename($file,$basePath."/".$fileNum.".".$ext);
+                $zip->addFile($path . $file, basename($file));
+                $zip->renameName($fileNum.".".$ext,basename($file));
+
+            }
+        }else{
+            foreach ($validFiles as $file) {
+                $zip->addFile($path . $file, basename($file));
             }
         }
 
