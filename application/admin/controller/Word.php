@@ -53,14 +53,14 @@ class Word extends Base
 
         foreach ($list as $record) {
             $word = $PHPWord->loadTemplate(env('ROOT_PATH')."public/".$wordFile[0]);
-            unset($record['content']['option_1']);
+            // unset($record['content']['option_1']);
 
             $word->setValues($record['content']);
             # 保存文件
             # 生成临时文件以供下载
             $tmpFileName = $savedir . "/" . $record['content']['option_1'] . ".docx";
 
-            // dump($tmpFileName);
+            dump($tmpFileName);
             $word->saveAs($tmpFileName);
         }
     }
