@@ -1,9 +1,9 @@
 {extend name="public/admin_base"}
 
-{block name="title"}创建表单{/block}
+{block name="title"}创建word表单{/block}
 {block name="page-breadcrumb"}
 <li>创建表单</li>
-<li class="active">手动创建表单</li>
+<li class="active">手动创建word表单</li>
 {/block}
 {block name="page-style"}
 <link href="__CSS__/main.css" rel="stylesheet">
@@ -17,12 +17,18 @@
             <div class="bg-themeprimary widget-header">
                 <i class="fa fa-arrow-left widget-icon"
                     onClick="window.location.href='{:url(\'admin/Templates/add\')}';" /></i>
-                <span class="widget-caption">手动创建表单</span>
+                <span class="widget-caption">手动创建word表单</span>
             </div>
             <div class="widget-body">
                 <div class="alert alert-warning" style="font-size:1.2em;width: 50%;">
-                    请注意,&lt;<font style="color: red;">文件名</font>&gt;的命名规则应该是唯一的,比如学号,手机号,或其他定义的规则,应在"表单说明"里说明
-                    
+                    <ul class="fa-ul">
+                        <li>
+                            <i class="fa fa-exclamation-triangle fa-li fa-lg" aria-hidden="true"></i>
+
+                            &lt;<font style="color: red;">文件名</font>&gt;的命名规则应该是唯一的，比如学号，手机号，或其他定义的规则，应在"表单说明"里说明
+                        </li>
+                    </ul>
+
                 </div>
                 <div class="row">
                     <div class="col-lg-6">
@@ -77,57 +83,64 @@
                     <input type="hidden" id="beginId" value="2">
                     <input type="hidden" id="formType" value="word">
 
-                    <div class="col-lg-3">
-                        <form class="form-box hidden">
-                            <div class="well">
-                                <div class="myKey">
-                                    <h5>请选择唯一标识字段</h5>
-                                    <select class="select" name="primaryKey" id="primaryKey">
-                                        <option value="option_1">文件名</option>
-                                    </select>
+                    <div class="col-lg-6 form-horizontal">
+                        <div>
+                            <form class="form-box hidden">
+                                <div class="well">
+                                    <div class="myKey">
+                                        <h5>请选择唯一标识字段</h5>
+                                        <select class="select" name="primaryKey" id="primaryKey">
+                                            <option value="option_1">文件名</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="well mydata-box hidden">
-                                <div>
-                                    <h4>
-                                        <font color="red"
-                                            style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
-                                        是否使用自定义数据集
-                                    </h4>
-                                    <label>
-                                        <input type="radio" name="ifUseData" class="data-radio i-radio" value="1">
-                                        <span class="s-radio"></span>使用
-                                    </label>
+                                <div class="well mydata-box hidden">
+                                    <div>
+                                        <h4>
+                                            <font color="red"
+                                                style="position:relative; top:5px;font-weight:bold;font-size:16px">*
+                                            </font>
+                                            是否使用自定义数据集
+                                        </h4>
+                                        <label>
+                                            <input type="radio" name="ifUseData" class="data-radio i-radio" value="1">
+                                            <span class="s-radio"></span>使用
+                                        </label>
 
-                                    <label>
-                                        <input type="radio" name="ifUseData" class="data-radio i-radio" value="0"
-                                            checked>
-                                        <span class="s-radio"></span>不使用
-                                    </label>
+                                        <label>
+                                            <input type="radio" name="ifUseData" class="data-radio i-radio" value="0"
+                                                checked>
+                                            <span class="s-radio"></span>不使用
+                                        </label>
+                                    </div>
+                                    <div class="hidden myData">
+                                        <h5>请选择数据集</h5>
+                                        {neq name="Think.session.myData|count" value="0"}
+                                        <select class="select" name="primaryKeyData" id="primaryKeyData"
+                                            style="margin-bottom: 10px;">
+                                            {volist name="Think.session.myData" id="vo"}
+                                            <option value="{$vo.id}">{$vo.title}</option>
+                                            {/volist}
+                                        </select>
+                                        {else /}
+                                        <p class="alert alert-warning">您还没有数据集，请新建数据集</p>
+                                        {/neq}
+                                    </div>
                                 </div>
-                                <div class="hidden myData">
-                                    <h5>请选择数据集</h5>
-                                    {neq name="Think.session.myData|count" value="0"}
-                                    <select class="select" name="primaryKeyData" id="primaryKeyData"
-                                        style="margin-bottom: 10px;">
-                                        {volist name="Think.session.myData" id="vo"}
-                                        <option value="{$vo.id}">{$vo.title}</option>
-                                        {/volist}
-                                    </select>
-                                    {else /}
-                                    <p class="alert alert-warning">您还没有数据集，请新建数据集</p>
-                                    {/neq}
-                                </div>
-                            </div>
-                        </form>
+                            </form>
 
-                        <button id="addInput" class="btn btn-info">添加文本框</button>
-                        <button id="addSelect" class="btn btn-info">添加下拉菜单</button>
-                        <br>
-                        <br>
-                        <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
-                            初始化表单</button>
+                            <button id="addInput" class="btn btn-info">添加文本框</button>
+                            <button id="addSelect" class="btn btn-info">添加下拉菜单</button>
+                            <br>
+                            <br>
+                            <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
+                                初始化表单</button>
+                        </div>
+
+                        <div>
+
+                        </div>
                     </div>
                 </div>
             </div>
