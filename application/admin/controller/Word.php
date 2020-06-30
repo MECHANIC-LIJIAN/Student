@@ -44,8 +44,8 @@ class Word extends Base
         if (!file_exists($tmpdir)) {
             @mkdir($tmpdir, 0777, true);
         }
-        \PhpOffice\PhpWord\Settings::setTempDir($tmpdir);
-
+        Settings::setTempDir($tmpdir);
+        Settings::setZipClass(Settings::PCLZIP);
         #设置word保存目录
         $savedir = env('ROOT_PATH') . 'public/uploads/word/save/' . md5($tId);
         // $savedir = 'uploads/word/save/' . md5($tId);
@@ -64,17 +64,18 @@ class Word extends Base
 
                 $word->setValues($record['content']);
                 # 保存文件
-                $tmpFileName = $savedir . "/" . $record['content']['option_1'] . ".docx";
-                array_push($wordFiles, $tmpFileName);
-                $word->saveAs($tmpFileName);
+                $wordFileName = $savedir . "/" . $record['content']['option_1'] . ".docx";
+                array_push($wordFiles, $wordFileName);
+                $word->saveAs(iconv("utf-8","gbk",$wordFileName));
             }
         } catch (\Exception $e) {
+            return $e->getMessage();
             return "生成word失败";
         }
 
         $zipFileName = $savedir . "/test" . ".zip";
         $res = createZip($wordFiles, $zipFileName, $scene = 'word');
-        if(!$res){
+        if (!$res) {
             return "文件打包失败";
         }
         header("Cache-Control: public");
