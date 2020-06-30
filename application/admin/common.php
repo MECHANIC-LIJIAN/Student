@@ -61,7 +61,7 @@ function createZip($files = array(), $destination = '', $scene = '', $overwrite 
                 $basePath=dirname($file);
                 $ext=substr(strrchr($file, '.'), 1);
                 rename($file,$basePath."/".$fileNum.".".$ext);
-                $zip->addFile($path . $file, basename($file));
+                $zip->addFile($basePath."/".$fileNum.".".$ext, $fileNum.".".$ext);
                 $zip->renameName($fileNum.".".$ext,basename($file));
 
             }
