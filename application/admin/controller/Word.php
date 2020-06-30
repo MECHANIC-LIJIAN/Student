@@ -44,7 +44,7 @@ class Word extends Base
         \PhpOffice\PhpWord\Settings::setTempDir($tmpdir);
 
         #设置压缩方式
-        \PhpOffice\PhpWord\Settings::setZipClass(Settings::PCLZIP);
+        // \PhpOffice\PhpWord\Settings::setZipClass(Settings::PCLZIP);
         $savedir = env('ROOT_PATH').'public/uploads/word/save/' . md5($tId);
         $savedir = 'uploads/word/save/' . md5($tId);
         if (!file_exists($savedir)) {
