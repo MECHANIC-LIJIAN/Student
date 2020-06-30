@@ -61,13 +61,16 @@
                             <button id="copy" class="btn btn-info" dataid="{$template.tid}">
                                 <span class="fa fa-share"></span>分享
                             </button>
-                            <button id="export" class="btn btn-file" dataid="{$template.tid}">
-                                <span class="fa fa-file-excel-o"></span>导出
+                            <button id="export" class="btn btn-file btn-" dataid="{$template.tid}">
+                                <span class="fa fa-file-excel-o"></span>导出excel
                             </button>
+                            {if $template.ttype=="1"}
+                            <a href="{:url('admin/Word/export_word',['tId' => $tId])}" target="_blank" class="btn btn-default"><span
+                                class="fa fa-file-word-o"></span>导出word</a>
+                            {/if}
                             <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
                                     class="fa fa-eye"></span>查看表单</a>
-                            <a href="{:url('admin/Word/export_word',['tId' => $tId])}" target="_blank" class="btn btn-default"><span
-                                        class="fa fa-eye"></span>导出word</a>
+
                         </div>
 
                     </div>
