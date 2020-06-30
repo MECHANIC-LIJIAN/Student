@@ -49,23 +49,18 @@ class Word extends Base
             @mkdir($savedir, 0777, true);
         }
 
-        dump($wordFile[0]);
-
         $PHPWord = new PhpWord();
 
         foreach ($list as $record) {
             $word = $PHPWord->loadTemplate(env('ROOT_PATH')."public/".$wordFile[0]);
             unset($record['content']['option_1']);
-            foreach ($record['content'] as $k => $v) {
-                dump($k);
-            }
-            $word->setValue('ketiname', '测试题目');
+
             $word->setValues($record['content']);
             # 保存文件
             # 生成临时文件以供下载
-            $tmpFileName = $savedir . "/" . $record['id'] . ".docx";
+            $tmpFileName = $savedir . "/" . $record['content']['option_1'] . ".docx";
 
-            dump($tmpFileName);
+            // dump($tmpFileName);
             $word->saveAs($tmpFileName);
         }
     }
