@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\TemplateProcessor;
 use think\Db;
 
@@ -34,34 +35,53 @@ class Word extends Base
             ->order($orders)
             ->select();
 
-        $wordFile = Db::name('word_path')->where(['tid' => $template['id']])->column('path');
+        #模板文件路径
+        $orgFile = Db::name('word_path')->where(['tid' => $template['id']])->column('path');
+        $orgFile=$orgFile[0];
 
-        $tmpdir = dirname($wordFile[0]);
-        if (!file_exists($tmpdir)) {
-            @mkdir($tmpdir, 0777, true);
-        }
-        // halt($tmpdir);
+        #设置临时文件目录
+        $tmpdir = dirname($orgFile);
         \PhpOffice\PhpWord\Settings::setTempDir($tmpdir);
-        // \PhpOffice\PhpWord\Settings::setZipClass(\PhpOffice\PhpWord\Settings::PCLZIP);
 
+        #设置压缩方式
+        \PhpOffice\PhpWord\Settings::setZipClass(Settings::PCLZIP);
         $savedir = env('ROOT_PATH').'public/uploads/word/save/' . md5($tId);
+        $savedir = 'uploads/word/save/' . md5($tId);
         if (!file_exists($savedir)) {
             @mkdir($savedir, 0777, true);
         }
 
+        $wordFiles=[];
+
         $PHPWord = new PhpWord();
 
         foreach ($list as $record) {
-            $word = $PHPWord->loadTemplate(env('ROOT_PATH')."public/".$wordFile[0]);
+            $word = $PHPWord->loadTemplate($orgFile);
             // unset($record['content']['option_1']);
-
             $word->setValues($record['content']);
             # 保存文件
-            # 生成临时文件以供下载
-            $tmpFileName = $savedir . "/" . $record['content']['option_1'] . ".docx";
-
-            dump($tmpFileName);
+            $tmpFileName ="/". $savedir . "/" . $record['content']['option_1'] . ".docx";
+            array_push($wordFiles,$tmpFileName);
+            
             $word->saveAs($tmpFileName);
         }
+
+        $zipFileName=$savedir."/".$template['tname'].".zip";
+        // dump($wordFiles);
+        // dump($zipFileName);
+        // halt(unlink($zipFileName));
+
+        createZip($wordFiles,$zipFileName);
+
+        header("Cache-Control: public");
+        header("Content-Description: File Transfer");
+        header('Content-disposition: attachment; filename=' . basename($zipFileName)); //文件名
+        header("Content-Type: application/zip"); //zip格式的
+        header("Content-Transfer-Encoding: binary"); //告诉浏览器，这是二进制文件
+        header('Content-Length: ' . filesize($zipFileName)); //告诉浏览器，文件大小
+        ob_clean();
+        flush();
+        @readfile($zipFileName);
+        unlink($zipFileName);
     }
 }

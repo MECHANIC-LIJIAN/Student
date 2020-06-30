@@ -23,9 +23,7 @@ function uuid()
 function createZip($files = array(), $destination = '', $overwrite = false)
 {
 
-
     $path = env('ROOT_PATH') . 'public';
-
 
     $validFiles = [];
 
@@ -33,7 +31,7 @@ function createZip($files = array(), $destination = '', $overwrite = false)
 
         foreach ($files as $file) {
 
-            if (file_exists($path.$file)) {
+            if (file_exists($path . $file)) {
 
                 $validFiles[] = $file;
 
@@ -47,16 +45,14 @@ function createZip($files = array(), $destination = '', $overwrite = false)
     if (count($validFiles)) {
 
         $zip = new ZipArchive();
-
         if ($zip->open($destination, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
 
             return false;
 
         }
-
+        
         foreach ($validFiles as $file) {
-            $zip->addFile($path.$file, basename($file));
-
+            $zip->addFile($path . $file, basename($file));
         }
 
         $zip->close();
