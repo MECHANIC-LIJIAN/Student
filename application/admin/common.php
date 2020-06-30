@@ -44,6 +44,7 @@ function createZip($files = array(), $destination = '',$scene='' ,$overwrite = f
 
     }
 
+    halt($validFiles);
     // halt($destination);
     if (count($validFiles)) {
 

@@ -67,7 +67,7 @@ class Word extends Base
                 # 保存文件
                 $wordFileName = $savedir . "/" . $record['content']['option_1'] . ".docx";
                 array_push($wordFiles, $wordFileName);
-                $word->saveAs(iconv("utf-8","gbk",$wordFileName));
+                $word->saveAs($wordFileName);
             }
         } catch (\Exception $e) {
             return $e->getMessage();
