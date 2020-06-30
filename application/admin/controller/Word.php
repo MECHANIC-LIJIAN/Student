@@ -46,13 +46,13 @@ class Word extends Base
             @mkdir($tmpdir, 0777, true);
         }
         Settings::setTempDir($tmpdir);
+        
         if (env('APP_STATUS') != 'line');{
             Settings::setZipClass(Settings::PCLZIP);
         }
 
         #设置word保存目录
         $savedir = env('ROOT_PATH') . 'public/uploads/word/save/' . md5($tId);
-        // $savedir = 'uploads/word/save/' . md5($tId);
         if (!file_exists($savedir)) {
             @mkdir($savedir, 0777, true);
         }
@@ -96,7 +96,8 @@ class Word extends Base
             return "文件打包失败";
         }
 
-        unlink($savedir);
+        deldir($savedir);
+        
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
         header('Content-disposition: attachment; filename=' . basename($zipFileName)); //文件名
