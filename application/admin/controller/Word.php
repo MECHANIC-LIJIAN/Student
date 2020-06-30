@@ -45,7 +45,8 @@ class Word extends Base
             @mkdir($tmpdir, 0777, true);
         }
         Settings::setTempDir($tmpdir);
-        Settings::setZipClass(Settings::PCLZIP);
+        // Settings::setZipClass(Settings::PCLZIP);
+
         #设置word保存目录
         $savedir = env('ROOT_PATH') . 'public/uploads/word/save/' . md5($tId);
         // $savedir = 'uploads/word/save/' . md5($tId);
@@ -73,7 +74,7 @@ class Word extends Base
             return "生成word失败";
         }
 
-        $zipFileName = $savedir . "/test" . ".zip";
+        $zipFileName = $savedir . "/".$template['tname'] . ".zip";
         $res = createZip($wordFiles, $zipFileName, $scene = 'word');
         if (!$res) {
             return "文件打包失败";
