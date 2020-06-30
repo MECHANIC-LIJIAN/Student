@@ -46,7 +46,7 @@ class Word extends Base
             @mkdir($tmpdir, 0777, true);
         }
         Settings::setTempDir($tmpdir);
-        
+
         if (env('APP_STATUS') != 'line');{
             Settings::setZipClass(Settings::PCLZIP);
         }
@@ -57,6 +57,7 @@ class Word extends Base
             @mkdir($savedir, 0777, true);
         }
 
+        #批量生成文档
         try {
             $wordFiles = [];
 
@@ -64,20 +65,23 @@ class Word extends Base
 
             foreach ($list as $record) {
                 $word = $PHPWord->loadTemplate($orgFile);
-                // unset($record['content']['option_1']);
-
+                # 替换文本
                 $word->setValues($record['content']);
-                # 保存文件
+
                 $wordFileName = $savedir . "/" . $record['content']['option_1'] . ".docx";
+                # 记录文档路径
                 array_push($wordFiles, $wordFileName);
+                # 生成文件
                 $word->saveAs($wordFileName);
             }
         } catch (\Exception $e) {
             return "生成word失败";
         }
 
+        #将文档所在文件夹打包
         try {
             $zipFileName = $tmpdir . $template['tname'] . ".zip";
+            
             $zip = new ZipArchive();
 
             $overwrite = false;
@@ -92,12 +96,14 @@ class Word extends Base
             $zip->close();
 
             closedir($savedir);
+
+            #删除生成的文档
+            deldir($savedir);
+
         } catch (\Exception $e) {
             return "文件打包失败";
         }
 
-        deldir($savedir);
-        
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
         header('Content-disposition: attachment; filename=' . basename($zipFileName)); //文件名
@@ -107,6 +113,8 @@ class Word extends Base
         ob_clean();
         flush();
         @readfile($zipFileName);
+
+        #删除压缩包
         unlink($zipFileName);
     }
 }
