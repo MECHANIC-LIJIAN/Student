@@ -45,7 +45,6 @@ class Word extends Base
             @mkdir($tmpdir, 0777, true);
         }
         \PhpOffice\PhpWord\Settings::setTempDir($tmpdir);
-        \PhpOffice\PhpWord\Settings::setZipClass(Settings::PCLZIP);
 
         #设置word保存目录
         $savedir = env('ROOT_PATH') . 'public/uploads/word/save/' . md5($tId);
