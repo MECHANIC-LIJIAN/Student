@@ -54,7 +54,7 @@ function createZip($files = array(), $destination = '', $scene = '', $overwrite 
 
         }
 
-        if ($scene === 'word') {
+        if ($scene === 'sd') {
             $fileNum = 0;
             $fileArr = [];
             foreach ($validFiles as $file) {

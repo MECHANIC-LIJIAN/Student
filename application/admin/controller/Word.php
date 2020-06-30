@@ -70,7 +70,6 @@ class Word extends Base
                 $word->saveAs($wordFileName);
             }
         } catch (\Exception $e) {
-            return $e->getMessage();
             return "生成word失败";
         }
 
@@ -78,7 +77,6 @@ class Word extends Base
             $zipFileName = $savedir . "/" . $template['tname'] . ".zip";
             $res = createZip($wordFiles, $zipFileName, $scene = 'word');
         } catch (\Exception $e) {
-            return $e->getMessage();
             return "文件打包失败";
         }
 
