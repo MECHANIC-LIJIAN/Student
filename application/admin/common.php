@@ -55,17 +55,24 @@ function createZip($files = array(), $destination = '', $scene = '', $overwrite 
         }
 
         if ($scene === 'word') {
-            $fileNum=0;
-            
+            $fileNum = 0;
+            $fileArr = [];
             foreach ($validFiles as $file) {
-                $basePath=dirname($file);
-                $ext=substr(strrchr($file, '.'), 1);
-                rename($file,$basePath."/".$fileNum.".".$ext);
-                $zip->addFile($basePath."/".$fileNum.".".$ext, $fileNum.".".$ext);
-                $zip->renameName($fileNum.".".$ext,basename($file));
+                $basePath = dirname($file);
+                $ext = substr(strrchr($file, '.'), 1);
+                rename($file, $basePath . "/" . $fileNum . "." . $ext);
+                $zip->addFile($basePath . "/" . $fileNum . "." . $ext, $fileNum . "." . $ext);
+                $zip->renameName($fileNum . "." . $ext, basename($file));
 
+                $fileArr[$fileNum . "." . $ext] = basename($file);
+                $fileNum++;
             }
-        }else{
+
+            foreach ($fileArr as $k => $v) {
+                rename($basePath . "/" . $k,$basePath . "/" . $v);
+            }
+            // halt($fileNum);
+        } else {
             foreach ($validFiles as $file) {
                 $zip->addFile($path . $file, basename($file));
             }
