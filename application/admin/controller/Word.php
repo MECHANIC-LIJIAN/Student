@@ -79,6 +79,7 @@ class Word extends Base
         if (!$res) {
             return "文件打包失败";
         }
+        unlink($savedir);
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
         header('Content-disposition: attachment; filename=' . basename($zipFileName)); //文件名

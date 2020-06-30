@@ -44,7 +44,6 @@ function createZip($files = array(), $destination = '',$scene='' ,$overwrite = f
 
     }
 
-    halt($validFiles);
     // halt($destination);
     if (count($validFiles)) {
 
@@ -57,6 +56,9 @@ function createZip($files = array(), $destination = '',$scene='' ,$overwrite = f
         
         foreach ($validFiles as $file) {
             $zip->addFile($path . $file, basename($file));
+            if ($scene==='word') {
+                $zip->addFromString(basename($file), file_get_contents($file));//中文使用这个
+            }
         }
 
         $zip->close();
