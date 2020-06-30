@@ -20,14 +20,11 @@ function uuid()
 
 /* create a compressed zip file */
 
-function createZip($files = array(), $destination = '', $scene = '', $overwrite = false)
+function createZip($files = array(), $destination = '', $overwrite = false)
 {
 
     $path = env('ROOT_PATH') . 'public';
 
-    if ($scene === 'word') {
-        $path = '';
-    }
     $validFiles = [];
 
     if (is_array($files)) {
@@ -54,28 +51,8 @@ function createZip($files = array(), $destination = '', $scene = '', $overwrite 
 
         }
 
-        if ($scene === 'sd') {
-            $fileNum = 0;
-            $fileArr = [];
-            foreach ($validFiles as $file) {
-                $basePath = dirname($file);
-                $ext = substr(strrchr($file, '.'), 1);
-                rename($file, $basePath . "/" . $fileNum . "." . $ext);
-                $zip->addFile($basePath . "/" . $fileNum . "." . $ext, $fileNum . "." . $ext);
-                $zip->renameName($fileNum . "." . $ext, basename($file));
-
-                $fileArr[$fileNum . "." . $ext] = basename($file);
-                $fileNum++;
-            }
-
-            foreach ($fileArr as $k => $v) {
-                rename($basePath . "/" . $k,$basePath . "/" . $v);
-            }
-            // halt($fileNum);
-        } else {
-            foreach ($validFiles as $file) {
-                $zip->addFile($path . $file, basename($file));
-            }
+        foreach ($validFiles as $file) {
+            $zip->addFile($path . $file, basename($file));
         }
 
         $zip->close();

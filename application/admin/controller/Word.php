@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Settings;
 use think\Db;
+use ZipArchive;
 
 class Word extends Base
 {
@@ -45,7 +46,9 @@ class Word extends Base
             @mkdir($tmpdir, 0777, true);
         }
         Settings::setTempDir($tmpdir);
-        // Settings::setZipClass(Settings::PCLZIP);
+        if (env('APP_STATUS') != 'line');{
+            Settings::setZipClass(Settings::PCLZIP);
+        }
 
         #设置word保存目录
         $savedir = env('ROOT_PATH') . 'public/uploads/word/save/' . md5($tId);
@@ -74,8 +77,21 @@ class Word extends Base
         }
 
         try {
-            $zipFileName = $savedir . "/" . $template['tname'] . ".zip";
-            $res = createZip($wordFiles, $zipFileName, $scene = 'word');
+            $zipFileName = $tmpdir . $template['tname'] . ".zip";
+            $zip = new ZipArchive();
+
+            $overwrite = false;
+            if ($zip->open($zipFileName, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
+                return "无法下载";
+            }
+
+            $handler = opendir($savedir); //打开当前文件夹由$path指定。
+
+            addFilesToZip($handler, $zip, $savedir);
+
+            $zip->close();
+
+            closedir($savedir);
         } catch (\Exception $e) {
             return "文件打包失败";
         }
