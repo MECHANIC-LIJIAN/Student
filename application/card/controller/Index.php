@@ -48,17 +48,19 @@ class Index extends Controller
         if (!Cookie::has('studata')) {
             $this->redirect('card/Index/index');
         }
+
         $data = cookie('studata');
 
         $n = "\n\n";
-        $header = "亲爱的 " . $data['stuname'] . " 同学：" . $n;
+        $header = "亲爱的 " . $data['stuname'] . " 同学：";
         $main = "在你离开母校之前" . $n;
         $main .= "我们为你准备了一份清单" . $n;
-        $main .= "希望成为你大学时代的美好回忆" . $n;
-        $main .= $data['firstTime'] . " 第一次见到你" . $n . $n;
+        $main .= "希望成为你大学时代的美好回忆" . $n. $n;
 
+        $main .= $data['firstTime'] . " 第一次见到你" . $n ;
         $main .= "在书架边认真挑书的你" . $n;
         $main .= "带走了心爱的《" . $data['firstBook'] . "》" . $n;
+        $main .="大学期间，你一共借了".$data['count']."本书，\n超越了".$data['sort']."的同学";
         $msg = "分别总是伤感
 
         一直压抑着的情绪最终在第一个舍友离开时崩塌
@@ -78,14 +80,8 @@ class Index extends Controller
         $width = $image->width();
         // 返回图片的高度
         $height = $image->height();
-        // 返回图片的类型
-        $type = $image->type();
-        // 返回图片的mime类型
-        $mime = $image->mime();
-        // 返回图片的尺寸数组 0 图片宽度 1 图片高度
-        $size = $image->size();
 
-        $textSize = 10;
+        $textSize = 0.015*($image->height());
         $textColor = '#000000';
         $textLocate = \think\Image::WATER_CENTER;
         $textOffset = [0, 0];
@@ -99,7 +95,7 @@ class Index extends Controller
         $imgSaveName = $imgSavePath . $data['stuno'] . "." . $image->type();
         try {
             #添加水印
-            $image->text($header, getcwd() . '/static/fonts/mkbfsg.ttf', $textSize, $textColor, $textLocate, [-80, -120], $textAngle)->text($main, getcwd() . '/static/fonts/mkbfsg.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($imgSaveName);
+            $image->text($header, getcwd() . '/static/fonts/mkbfsg.ttf', $textSize, $textColor, $textLocate, [-70, -130], $textAngle)->text($main, getcwd() . '/static/fonts/mkbfsg.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($imgSaveName);
         } catch (\Exception $e) {
             return "服务器错误，请稍后重试";
         }
@@ -107,7 +103,7 @@ class Index extends Controller
         // Cookie::delete('studata');
 
         $this->assign([
-            'imgPath' => $imgSaveName,
+            'imgPath' => $imgSaveName."?".time(),
         ]);
         return view();
         // main("Cache-Control: public");
@@ -154,4 +150,6 @@ class Index extends Controller
             // print_r($rs);
         }
     }
+
+   
 }
