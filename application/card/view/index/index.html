@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>哈尔滨医科大学电子借阅卡</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta itemprop="name" content="{$tname}" />
+    <meta name="description" itemprop="description" content="{$tname}" />
+    <meta name="author" content="Li Jian" />
+    <style>
+        .main {
+            border-radius: 20px;
+            width: 100%;
+            height: 350px;
+            margin: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        form {
+            width: 95%;
+            max-width: 640px;
+            min-width: 320px;
+            margin: 0 auto;
+            font-family: "Microsoft Yahei";
+            font-size: 20px;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            height: 30px;
+            margin: 10px 0;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .form-line {
+            border: 0 none;
+            background-image: linear-gradient(#3dc2e0, #11b3d8),
+                linear-gradient(#1f3144, #1f3144);
+            background-size: 0px 2px, 100% 1px;
+            background-repeat: no-repeat;
+            background-position: center bottom, center calc(100% - 1px);
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        input[type="text"]:focus {
+            background-size: 100% 2px, 100% 1px;
+            transition: all 0.5s;
+            border: none;
+            outline: none;
+        }
+
+        #subInfo {
+            background: #66c1e4;
+            border: none;
+            color: #fff;
+            box-shadow: 1px 1px 1px #4c6e91;
+            -webkit-box-shadow: 1px 1px 1px #4c6e91;
+            -moz-box-shadow: 1px 1px 1px #4c6e91;
+            text-shadow: 1px 1px 1px #5079a3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <form autocomplete="off">
+            <fieldset>
+                <legend style="font-size: 24px;">图书借阅卡</legend>
+                <br />
+                <label for="stuname">
+                    姓名<input type="text" class="form-line" name="stuname" id="stuname" />
+                </label>
+                <label for="stuno">
+                    学号<input type="text" class="form-line" name="stuno" id="stuno" />
+                </label>
+                <input type="button" id="subInfo" value="查询" />
+            </fieldset>
+        </form>
+    </div>
+
+    <script src="__JS__/jquery.min.js"></script>
+    <script src="__LIB__/layer_mobile/layer.js"></script>
+    <script>
+        layer = mobile;
+        $("#subInfo").click(function () {
+            $.ajax({
+                url: "{:url('card/Index/read')}",
+                type: "post",
+                data: $("form").serialize(),
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == 1) {
+                        layer.open({
+                            content: data.msg,
+                            btn: "我知道了",
+                            end: function (index) {
+                                setTimeout(function () {
+                                    location.href = data.url;
+                                }, 300);
+                            },
+                        });
+                    } else {
+                        layer.open({
+                            content: msg,
+                            btn: "我知道了",
+                        });
+                    }
+                },
+            });
+
+            return false;
+        });
+    </script>
+</body>
+
+</html>
