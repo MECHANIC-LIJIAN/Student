@@ -51,7 +51,7 @@ class Index extends Controller
 
         $data = cookie('studata');
 
-        $n = "\n\n";
+        $n = "\n";
         $header = "亲爱的 " . $data['stuname'] . " 同学：".$n;
         $main = "在你离开母校之前" . $n;
         $main .= "我们为你准备了一份清单" . $n;
