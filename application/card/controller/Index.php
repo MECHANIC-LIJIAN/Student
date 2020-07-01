@@ -57,7 +57,7 @@ class Index extends Controller
         $main .= "我们为你准备了一份清单" . $n;
         $main .= "希望成为你大学时代的美好回忆" . $n. $n;
 
-        $main .= $data['firstTime'] . " 第一次见到你" . $n ;
+        $main .= " ".$data['firstTime'] . " 第一次见到你" . $n ;
         $main .= "在书架边认真挑书的你" . $n;
         $main .= "带走了心爱的《" . $data['firstBook'] . "》" . $n;
         $main .="大学期间，你一共借了".$data['count']."本书，\n超越了".$data['sort']."的同学";
@@ -95,7 +95,7 @@ class Index extends Controller
         $imgSaveName = $imgSavePath . $data['stuno'] . "." . $image->type();
         try {
             #添加水印
-            $image->text($header, getcwd() . '/static/fonts/mkbfsg.ttf', $textSize, $textColor, $textLocate, [-70, -130], $textAngle)->text($main, getcwd() . '/static/fonts/mkbfsg.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($imgSaveName);
+            $image->text($header, getcwd() . '/static/fonts/mkbfsg.ttf', $textSize, $textColor, $textLocate, [-70, -110], $textAngle)->text($main, getcwd() . '/static/fonts/mkbfsg.ttf', $textSize, $textColor, $textLocate, $textOffset, $textAngle)->save($imgSaveName);
         } catch (\Exception $e) {
             return "服务器错误，请稍后重试";
         }
