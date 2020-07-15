@@ -47,7 +47,7 @@ class Word extends Base
         }
         Settings::setTempDir($tmpdir);
 
-        if (env('APP_STATUS') != 'line');{
+        if (env('APP_STATUS') != 'line'){
             Settings::setZipClass(Settings::PCLZIP);
         }
 
