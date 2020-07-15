@@ -73,7 +73,6 @@ class Word extends Base
                 array_push($wordFiles, $wordFileName);
                 # 生成文件
                 $word->saveAs($wordFileName);
-                dump($wordFileName);
             }
         } catch (\Exception $e) {
             return "生成word失败";
@@ -99,13 +98,12 @@ class Word extends Base
             closedir($savedir);
 
             #删除生成的文档
-            // deldir($savedir);
+            deldir($savedir);
 
         } catch (\Exception $e) {
             return "文件打包失败";
         }
 
-        halt('s');
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
         header('Content-disposition: attachment; filename=' . basename($zipFileName)); //文件名
