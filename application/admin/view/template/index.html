@@ -65,8 +65,8 @@
                                 <span class="fa fa-file-excel-o"></span>导出excel
                             </button>
                             {if $template.ttype=="1"}
-                            <a href="{:url('admin/Word/export_word',['tId' => $tId])}" target="_blank" class="btn btn-default"><span
-                                class="fa fa-file-word-o"></span>导出word</a>
+                            <a href="{:url('admin/Word/export_word',['tId' => $tId])}" target="_blank"
+                                class="btn btn-default"><span class="fa fa-file-word-o"></span>导出word</a>
                             {/if}
                             <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
                                     class="fa fa-eye"></span>查看表单</a>
@@ -92,6 +92,7 @@
     $("#copy").click(function () {
         copyToClip("{$shareUrl}");
     })
+
     $(function () {
         //初始化Table
         $("#table").bootstrapTable({
@@ -114,19 +115,19 @@
             uniqueId: "ID", //每一行的唯一标识，一般为主键列
             detailView: false, //是否显示父子表
 
-            columns: {$fields|raw},
+            columns: JSON.parse('{$fields|raw}'),
         });
-    //得到查询的参数
-    function queryParams(params) {
-        return {
-            //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
-            limit: params.limit, //页面大小
-            offset: params.offset,
-            order: params.order,
-            ordername: params.sort,
-            search: params.search
+        //得到查询的参数
+        function queryParams(params) {
+            return {
+                //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                limit: params.limit, //页面大小
+                offset: params.offset,
+                order: params.order,
+                ordername: params.sort,
+                search: params.search
+            };
         };
-    };
 
     });
 
