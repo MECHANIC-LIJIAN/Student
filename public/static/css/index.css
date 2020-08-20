@@ -42,7 +42,6 @@ body {
   position: relative;
   top: 2px;
   font-weight: bold;
-  /* font-size: 16px; */
   color: red;
 }
 .form-control {
@@ -62,13 +61,22 @@ body {
 
 label{
   font-weight:unset;
-  font-weight: bold;
+}
+
+label>span{
+  font-weight: 700;
 }
 label.col-lg-1{
   padding-right: 0;
-  width: 8%;
+  width: 6%;
   font-weight: 700;
 }
 label.col-lg-10{
   padding-left: 0;
+}
+
+@media screen and (min-width: 1200px) {
+  label.col-lg-1{
+    width: 4%;
+  }
 }
