@@ -51,13 +51,13 @@
                     <!-- 输出select -->
                     {elt name="$vo.options|count" value="4"}
                     <div class="form-group">
-                        <label for="{$key}" class="col-lg-1">
+                        <label for="{$key}" class="col-lg-12">
+                            <span class="blod">{$k}.&nbsp;&nbsp;</span>
+                            {$vo.title}
                             {neq name="$vo.rule" value="text"}
-                            <span class="redInfo">*</span>
+                            <span class="redInfo">*
+                            </span>
                             {/neq}
-                        </label>
-                        <label for="{$key}" class="col-lg-10">
-                            <span class="blod">{$k}.&nbsp;&nbsp;</span>{$vo.title}
                         </label>
                         <div class="col-lg-10">
                             <ul class="list-group">
@@ -71,14 +71,13 @@
                     </div>
                     {else /}
                     <div class="form-group">
-                        <label for="{$key}" class="col-lg-1">
+                        <label for="{$key}" class="col-lg-12">
+                            <span class="blod">{$k}.&nbsp;&nbsp;</span>
+                            {$vo.title}
                             {neq name="$vo.rule" value="text"}
                             <span class="redInfo">*
                             </span>
                             {/neq}
-                        </label>
-                        <label for="{$key}" class="col-lg-10">
-                            <span class="blod">{$k}.&nbsp;&nbsp;</span>{$vo.title}
                         </label>
                         <div class="col-lg-10">
                             <select class="form-control" required="true" name="{$key}">
