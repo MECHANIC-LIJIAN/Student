@@ -13,7 +13,7 @@ class Templates extends Base
     function list() {
 
         $where=[];
-        $field='id,tid,uid,tname,myData,primaryKey,create_time,status';
+        $field='id,tid,uid,ttype,tname,myData,primaryKey,create_time,status';
         
         if (!in_array(2, $this->groupIds)) {
             $where=['uid' => session('admin.id')];
@@ -29,6 +29,8 @@ class Templates extends Base
             ->order(['status' => 'asc', 'create_time' => 'desc'])
             ->select()
             ->toArray();
+
+
         $templateList = [];
         
         
@@ -83,6 +85,68 @@ class Templates extends Base
             }
         }
     }
+
+
+    /**
+     * 表单编辑
+     *
+     * @return void
+     */
+    public function edit()
+    {
+        if (request()->isAjax()) {
+            $params = input('post.');
+            $tInfo = [];
+
+            if ((!array_key_exists('option_1', $params))) {
+                $this->error("请至少添加一个字段");
+            }
+            $tInfo =[
+                'tid' => $params['tid'],
+                'tname' => $params['templateName'],
+                'remarks' => $params['remarks'],
+                'primaryKey' => $params['primaryKey'],
+                'myData' => $params['myData'],
+            ];
+
+            unset($params['templateName']);
+            unset($params['primaryKey']);
+            unset($params['myData']);
+            unset($params['remarks']);
+            unset($params['tid']);
+
+            $tInfo['params'] = $params;
+
+            $res = model('Templates')->editByHand($tInfo);
+            if ($res == 1) {
+                $this->success("表单编辑成功", 'admin/Templates/list');
+            } else {
+                $this->error($res);
+            }
+        }
+
+        $id = input('tid');
+        $tInfo=model('Templates')->where(['tid'=>$id])->find();
+        $tInfo['options']=json_decode($tInfo['options'], true);
+
+
+        $keys=[];
+        foreach($tInfo['options'] as $k=>$v){
+            if(!isset($v['options'])&&$v['rule']!='text'){
+                $keys[$k]=$v['title'];
+            }
+        }
+        #获取显示在页面的数据列表
+        $this->assign([
+            'optionList' => $tInfo['options'],
+            'tInfo'=>$tInfo,
+            'keys'=>$keys,
+            'formLength'=>sizeof($tInfo['options'])+1,
+        ]);
+        return view();
+    }
+
+
     /**
      * 表单管理
      *

@@ -144,3 +144,20 @@ function deldir($dir)
         return false;
     }
 }
+
+
+
+function getFieldType($rule){
+    $ruleAndText=[
+        'email'=>"邮箱",
+        'phone'=>"手机号",
+        'number'=>"数字",
+        'text'=>"普通文本",
+    ];
+    $tmp=explode("|",$rule);
+    if(count($tmp)==1){
+        return "非必填项";
+    }else{
+        return $ruleAndText[$tmp[0]];
+    }
+}

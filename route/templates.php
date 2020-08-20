@@ -9,6 +9,7 @@ Route::group(
         Route::rule('list', 'admin/Templates/list', 'GET|POST');
         Route::rule('control', 'admin/Templates/control', 'POST');
         Route::rule('add', 'admin/Templates/add', 'GET|POST');
+        Route::rule('edit/[:tid]', 'admin/Templates/edit', 'GET|POST');
         Route::rule('del', 'admin/Templates/del', 'POST');
 
         #文件创建模板

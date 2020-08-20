@@ -35,16 +35,15 @@
                     {notpresent name="$vo.options"}
                     <!-- 输出input -->
                     <div class="form-group">
-                        <label for="{$key}" class="col-lg-1">
+                        <label for="{$key}" class="col-lg-12">
+                            <span class="blod">{$k}.&nbsp;&nbsp;</span>
+                            {$vo.title}
                             {neq name="$vo.rule" value="text"}
                             <span class="redInfo">*
                             </span>
                             {/neq}
                         </label>
-                        <label for="{$key}" class="col-lg-10">
-                            <span class="blod">{$k}.&nbsp;&nbsp;</span>{$vo.title}
-                        </label>
-                        <div class="col-lg-10">
+                        <div class="col-lg-12">
                             <input type="text" class="form-control  {$vo.rule|split}" id="{$key}" name="{$key}">
                         </div>
                     </div>

@@ -1,0 +1,232 @@
+{extend name="public/admin_base"}
+
+{block name="title"}编辑表单{/block}
+{block name="page-breadcrumb"}
+<li class="active">编辑表单</li>
+{/block}
+{block name="page-style"}
+<link href="__CSS__/main.css" rel="stylesheet">
+<link href="__CSS__/hand.css" rel="stylesheet">
+
+{/block}
+{block name="page-main"}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="widget">
+            <div class="bg-themeprimary widget-header">
+                <i class="fa fa-arrow-left widget-icon"
+                    onClick="window.location.href='{:url(\'admin/Templates/list\')}';" /></i>
+                <span class="widget-caption">编辑表单</span>
+            </div>
+            <div class="widget-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-horizontal">
+                            <form autocomplete="off" id="subForm">
+                                <table class="table" id="tableD">
+                                    <tr>
+                                        <th colspan="4">
+                                            <h4>表单名</h4>
+                                            <input type="text" required="true" name="templateName" class="form-control"
+                                                style="max-width:none;" value="{$tInfo.tname}">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="4">
+                                            <h4>表单说明</h4>
+                                            <textarea type="text" class="form-control" id="remarks" name="remarks"
+                                                rows="5">{$tInfo.remarks}</textarea>
+                                        </th>
+                                    </tr>
+                                    {volist name="optionList" id='option' key="k"}
+                                    <tr>
+                                        <td><label for="{$key}" class="control-label">字段{$k}</label>
+                                        </td>
+                                        <td><input type="text" required="true" class="form-control fieldTitle"
+                                                name="{$key}" value="{$option.title}"></td>
+                                        {notpresent name="$option.options"}
+                                        <td><label for="{$key}" class="control-label">规则</label></td>
+                                        <td style="width: 25%;"><select class="form-control input-type" dataid="{$key}"
+                                                name="{$key}_rule">
+                                                <option value="{$option.rule}">{$option.rule|getFieldType}</option>
+                                                <option value="text|required">普通文本</option>
+                                                <option value="phone|required">手机号</option>
+                                                <option value="email|required">邮箱</option>
+                                                <option value="number|required">数字</option>
+                                                <option value="text">非必填项</option>
+                                            </select>
+                                        </td>
+                                        {else /}
+                                        <input type="text" class="hidden" value="required" name="{$key}_rule">
+                                        <td style="width: 50px;">
+                                            <select class="form-control" required="true" id="{$key}_options">
+                                                {volist name="option.options" id="vo"}
+                                                <option name="{$key}">{$vo}</option>
+                                                {/volist}
+                                            </select>
+                                            {volist name="option.options" id="vo"}
+                                            <input type="hidden" value="{$vo}" name="{$key}" class="hidden">
+                                            {/volist}
+                                        </td>
+                                        {/notpresent}
+                                    </tr>
+                                    {/volist}
+                                </table>
+
+                    <input type="text" class="hidden" name="tid" id="tid" value="{$tInfo.tid}">
+                            </form>
+                            <button id="addInput" class="btn btn-info">添加文本框</button>
+                            <button id="addSelect" class="btn btn-info">添加下拉菜单</button>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="formType" value="edit">
+                    <input type="hidden" name="beginId" id="beginId" value="{$formLength}">
+
+                    <div class="col-lg-3">
+                        <form class="form-box">
+                            <div class="well">
+                                <div>
+                                    <h4>
+                                        <font color="red"
+                                            style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
+                                        是否指定唯一标识字段
+                                    </h4>
+                                    <label>
+                                        <input type="radio" name="ifUseKey" class="key-radio i-radio" value="1">
+                                        <span class="s-radio"></span>指定
+                                    </label>
+
+                                    <label>
+                                        <input type="radio" name="ifUseKey" class="key-radio i-radio" value="0" checked>
+                                        <span class="s-radio"></span>不指定
+                                    </label>
+                                </div>
+                                <div class="hidden myKey">
+                                    <h5>请选择唯一标识字段</h5>
+                                    <select class="select" name="primaryKey" id="primaryKey">
+                                        {volist name="keys" id='vo'}
+                                        <option value="{$key}">{$vo}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="well mydata-box hidden">
+                                <div>
+                                    <h4>
+                                        <font color="red"
+                                            style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
+                                        是否使用自定义数据集
+                                    </h4>
+                                    <label>
+                                        <input type="radio" name="ifUseData" class="data-radio i-radio" value="1">
+                                        <span class="s-radio"></span>使用
+                                    </label>
+
+                                    <label>
+                                        <input type="radio" name="ifUseData" class="data-radio i-radio" value="0"
+                                            checked>
+                                        <span class="s-radio"></span>不使用
+                                    </label>
+                                </div>
+                                <div class="hidden myData">
+                                    <h5>请选择数据集</h5>
+                                    {neq name="Think.session.myData|count" value="0"}
+                                    <select class="select" name="primaryKeyData" id="primaryKeyData"
+                                        style="margin-bottom: 10px;">
+                                        {volist name="Think.session.myData" id="vo"}
+                                        <option value="{$vo.id}">{$vo.title}</option>
+                                        {/volist}
+                                    </select>
+                                    {else /}
+                                    <p class="alert alert-warning">您还没有数据集，请新建数据集</p>
+                                    {/neq}
+                                </div>
+                            </div>
+                        </form>
+                        <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
+                            确认更改表单</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="page-js"}
+<script src="__JS__/jquery.validate.min.js"></script>
+<script src="__JS__/messages_zh.min.js"></script>
+<script src="__LIB__/design/designForm.js"></script>
+
+
+<script>
+    $(function () {
+        $(".key-radio").click(function () {
+            var value = $(this).val();
+            if (value === "1") {
+                $(".myKey").removeClass("hidden").addClass("show")
+                $(".mydata-box").removeClass("hidden").addClass("show")
+            } else {
+                $(".form-box")[0].reset();
+                $(".myKey").removeClass("show").addClass("hidden")
+                $(".mydata-box").removeClass("show").addClass("hidden")
+            }
+        })
+        $(".data-radio").click(function () {
+            var value = $(this).val();
+            if (value === "1") {
+                $(".myData").removeClass("hidden").addClass("show")
+            } else {
+                $(".myData").removeClass("show").addClass("hidden")
+            }
+        })
+
+        // $("#primaryKey").click(function () {
+
+        //     $("#primaryKey").empty()
+        //     $('.fieldTitle').each(function (key, value) {
+        //         $("#primaryKey").append("<option value='" + $(this).attr('name') + "'>" + $(this).val() + "</option>");
+        //     });
+        // })
+
+
+        $(".initTemplate").click(function () {
+
+            $(".confirm").click()
+            $("#subForm").submit()
+        })
+        $("#subForm").validate(
+            {
+                submitHandler: function (form) {
+                    var ifUseData = $("input[name='ifUseData']:checked").val();
+                    var ifUseKey = $("input[name='ifUseKey']:checked").val();
+                    var myData = $("#primaryKeyData").val();
+                    var primaryKey = $("#primaryKey").val();
+                    var data = $('#subForm').serialize()
+
+                    if (ifUseData == "1") {
+                        data = data + '&' + $.param({ 'myData': myData, })
+                    }
+                    if (ifUseKey == "1") {
+                        data = data + '&' + $.param({ 'primaryKey': primaryKey, })
+                    }
+
+                    $.ajax({
+                        url: "{:url('admin/Templates/edit')}",
+                        type: "post",
+                        dataType: 'json',
+                        data: data,
+                        success: function (data) {
+                            if (data.code == 1) {
+                                showMsgAndHref(data)
+                            } else {
+                                showErrorMsg(data.msg)
+                            }
+                        },
+                    });
+                },
+            });
+    });
+</script>
+{/block}

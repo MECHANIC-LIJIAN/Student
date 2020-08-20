@@ -15,12 +15,14 @@
             </div>
             <div class="widget-body">
                 <div class="table-responsive">
+                    <!-- <div class="alert alert-danger">
+                        <p>使用word模板的表单无法编辑</p>
+                    </div> -->
                     <table class="table table-hover table-bordered text-nowrap" style="padding: 2px;">
                         <thead>
                             <tr>
                                 <th>表单名</th>
                                 {present name="$display"}<th>用户名</th>{/present}
-                                <!-- <th>记录数</th> -->
                                 <th>使用的数据集</th>
                                 <th>状态</th>
                                 <th colspan="3">操作</th>
@@ -30,10 +32,16 @@
                         <tbody>
                             {volist name="templates" id="vo"}
                             <tr>
-                                <td><a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
+                                <td><a href="{:url('admin/Template/index',['id'=>$vo.tid,'sid'=>'2'])}"
                                         style="font-size:14px">{$vo.tname}</a> </td>
                                 {present name="$display"}<td>{$vo.get_user.username}</td>{/present}
-                                <td>{$vo.mydata}</td>
+                                <td>
+                                    {notempty name="$vo.mydata"}
+                                    {$vo.mydata}
+                                    {else /}
+                                    未指定数据集
+                                    {/notempty}
+                                </td>
                                 {if $vo.status==1}
                                 <td>
                                     <span class="tempalte-status badge badge-pill badge-success"
@@ -57,14 +65,18 @@
                                         dataid="{$vo.id}" status="{$vo.status}">删除</a> </td>
                                 {/if}
                                 <td>
-                                    <a href="{:url('admin/Template/index',['id'=>$vo.tid])}"
+                                    <a href="{:url('admin/Template/index',['id'=>$vo.tid,'sid'=>'2'])}"
                                         class="btn btn-xs btn-success"><span class="fa fa-table"></span>数据</a>
                                 </td>
                                 <td>
-                                    <a class="copy btn btn-xs btn-info" dataid="{$vo.shareUrl}"><span
-                                            class="fa fa-share"></span>分享</a>
-                                    <a href="{$vo.shareUrl}" target="_blank" class="btn btn-xs btn-default"><span
-                                            class="fa fa-eye"></span>表单</a>
+                                    <a class="copy" dataid="{$vo.shareUrl}"><span class="fa"></span>分享</a>|
+                                    <a href="{$vo.shareUrl}" target="_blank" class=""><span class="fa"></span>查看</a>
+                                    
+                                    {if $vo.ttype==0}
+                                    |
+                                    <a href="{:url('admin/Templates/edit',['tid'=>$vo.tid,'sid'=>'2'])}" class=""><span
+                                            class="fa"></span>编辑</a>
+                                    {/if}
                                 </td>
                                 <td>{$vo.create_time|date='Y年m月d日 H:i'}</td>
 

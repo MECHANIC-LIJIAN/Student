@@ -2,6 +2,7 @@
 
 namespace app\admin\model;
 
+use myredis\Redis;
 use Overtrue\Pinyin\Pinyin;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
@@ -50,13 +51,12 @@ class Templates extends Model
         //获取文件后缀
         $suffix = end(explode(".", $fileInfo['name']));
 
-
         //判断哪种类型
         if ($suffix == "xlsx") {
             $reader = new Xlsx();
-        } else if ($suffix == "xls")  {
+        } else if ($suffix == "xls") {
             $reader = new Xls();
-        }else{
+        } else {
             return "不是有效的excel文件";
         }
 
@@ -112,7 +112,7 @@ class Templates extends Model
             #拼接字段名
             $option = 'option_' . $col;
             $optionList[$option]['title'] = $excelData[$col][1];
-            $optionList[$option]['rule'] ='required';
+            $optionList[$option]['rule'] = 'required';
             for ($row = 2; $row <= count($excelData[$col]); $row++) {
                 $optionList[$option]['options'][$option . "_" . ($row - 1)] = $excelData[$col][$row];
             }
@@ -169,7 +169,7 @@ class Templates extends Model
         $params = $tInfo['params'];
         unset($tInfo['params']);
         $tDdata = [];
-        
+
         foreach ($params as $key => $value) {
             #分割字段 option_A,option_A_rule
             $temp = explode("_", $key);
@@ -223,18 +223,60 @@ class Templates extends Model
         return $this->saveData($tInfo);
     }
 
+    public function editByHand($tInfo)
+    {
+        $params = $tInfo['params'];
+        unset($tInfo['params']);
+        $tDdata = [];
+
+        foreach ($params as $key => $value) {
+            #分割字段 option_A,option_A_rule
+            $temp = explode("_", $key);
+            if (count($temp) == 2) {
+                #单选项
+                $tDdata[$key]['title'] = $value;
+                $tDdata[$key]['rule'] = $params[$key . "_rule"];
+            } elseif ($temp[2] != "rule") {
+                #多选项
+                $pId = implode("_", array_splice($temp, 0, 2));
+                $tDdata[$pId]['options'][$key] = $value;
+            }
+        }
+        $tInfo['options'] = $tDdata;
+
+        try {
+            $info = $this->where(['tid' => $tInfo['tid']])->find();
+            $info->tname = $tInfo['tname'];
+            $info->remarks = $tInfo['remarks'];
+            $info->primaryKey = $tInfo['primaryKey'];
+            $info->myData = $tInfo['myData'];
+            $info->options = $tInfo['options'];
+            $info->update_time = time();
+            // halt($info);
+            $res = $info->save();
+
+            $redis = new Redis();
+            $redis->del('template_' . $tInfo['tid']);
+            
+        } catch (\Exception $e) {
+            // return $e->getMessage();
+            return "编辑失败";
+        }
+        return $res;
+    }
+
     private function saveData($tInfo)
     {
         Db::startTrans();
         try {
             $tInfo['create_time'] = time();
-            $tid=Db::name('templates')->strict(false)->json(['options'])->insertGetId($tInfo);
+            $tid = Db::name('templates')->strict(false)->json(['options'])->insertGetId($tInfo);
             Db::name("templates_sum")->where('id', 1)->setInc('count');
 
-            if ($tInfo['ttype']==1) {
+            if ($tInfo['ttype'] == 1) {
                 Db::name("word_path")->insert([
-                    'tid'=>$tid,
-                    'path'=>$tInfo['word_path'],
+                    'tid' => $tid,
+                    'path' => $tInfo['word_path'],
                 ]);
             }
             Db::commit();

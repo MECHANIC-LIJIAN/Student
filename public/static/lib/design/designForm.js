@@ -1,9 +1,13 @@
 var formType = $("#formType").val();
-if (formType === "word") {
+console.log(formType)
+if (formType === "edit") {
+  var id = $("#beginId").val();
+}else if (formType === "word") {
   var id = 2;
 } else {
   var id = 1;
 }
+
 $("#addInput").click(function () {
   $(".deleteRow").addClass("hidden");
 
@@ -61,7 +65,7 @@ function getInput(option_id) {
     "</label></td>";
   ele =
     ele +
-    '<td><input type="text" required="true" class="form-control" name="' +
+    '<td><input type="text" required="true" class="form-control fieldTitle" name="' +
     option_id +
     '"></td>';
   ele =
@@ -116,7 +120,7 @@ function getSelect(option_id) {
     "</label></td>";
   ele =
     ele +
-    '<td><input type="text" required="true" class="form-control" name="' +
+    '<td><input type="text" required="true" class="form-control fieldTitle" name="' +
     option_id +
     '"><input type="text" class="hidden" value="required" name="' +
     option_id +
