@@ -28,9 +28,11 @@
                 <form class="form-horizontal" role="form" id="subForm" autocomplete="off">
                     <legend style="text-align: center;font-size:24px;">{$tname}</legend>
 
-                    <p style="margin:20px 0 20px 0;">
-                        {$remarks}
-                    </p>
+                    <div class="alert alert-info">
+                        <p style="margin:20px 0 20px 0;">
+                            {php}  echo nl2br($remarks)  {/php}
+                        </p>
+                    </div>
                     {volist name="optionList" id="vo" key="k"}
                     {notpresent name="$vo.options"}
                     <!-- 输出input -->
