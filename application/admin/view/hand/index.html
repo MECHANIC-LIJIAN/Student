@@ -33,9 +33,10 @@
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th  colspan="4">
+                                        <th colspan="4">
                                             <h4>表单说明</h4>
-                                            <textarea type="text" class="form-control" id="remarks" name="remarks" rows="5"></textarea>
+                                            <textarea type="text" class="form-control" id="remarks" name="remarks"
+                                                rows="5"></textarea>
                                         </th>
                                     </tr>
                                 </table>
@@ -50,6 +51,17 @@
 
                     <div class="col-lg-3">
                         <form class="form-box">
+                            <div class="well">
+                                <div>
+                                    <h4>表单截止时间</h4>
+                                    <div class="input-group">
+                                        <input name="endTime" type="text" autocomplete="off" id="endTime"
+                                            class="form-control">
+                                            <!-- <span class="input-group-addon"><i class="fa fa-calendar"></i></span> -->
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="well">
                                 <div>
                                     <h4>
@@ -123,8 +135,19 @@
 <script src="__LIB__/design/designForm.js"></script>
 
 
+<script src="__LIB__/laydate/laydate.js"></script>
+
+
+
 <script>
     $(function () {
+        laydate.render({
+            elem: '#endTime' //指定元素
+            , type: 'datetime'
+        });
+
+
+
         $(".key-radio").click(function () {
             var value = $(this).val();
             if (value === "1") {
@@ -156,8 +179,12 @@
                     var ifUseKey = $("input[name='ifUseKey']:checked").val();
                     var myData = $("#primaryKeyData").val();
                     var primaryKey = $("#primaryKey").val();
+                    var endTime = $("#endTime").val();
+
                     var data = $('#subForm').serialize()
-                    
+
+                    data = data + '&' + $.param({ 'endTime': endTime, })
+
                     if (ifUseData == "1") {
                         data = data + '&' + $.param({ 'myData': myData, })
                     }

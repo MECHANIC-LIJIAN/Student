@@ -253,11 +253,7 @@ class Templates extends Model
             $info->options = $tInfo['options'];
             $info->update_time = time();
             // halt($info);
-            $res = $info->save();
-
-            $redis = new Redis();
-            $redis->del('template_' . $tInfo['tid']);
-            
+            $res = $info->save();            
         } catch (\Exception $e) {
             // return $e->getMessage();
             return "编辑失败";

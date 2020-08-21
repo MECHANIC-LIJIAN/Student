@@ -1,7 +1,9 @@
 <?php
 
 namespace app\admin\controller;
+
 use myredis\Redis;
+
 class Templates extends Base
 {
 
@@ -12,12 +14,12 @@ class Templates extends Base
      */
     function list() {
 
-        $where=[];
-        $field='id,tid,uid,ttype,tname,myData,primaryKey,create_time,status';
-        
+        $where = [];
+        $field = 'id,tid,uid,ttype,tname,myData,primaryKey,create_time,status';
+
         if (!in_array(2, $this->groupIds)) {
-            $where=['uid' => session('admin.id')];
-        }else{
+            $where = ['uid' => session('admin.id')];
+        } else {
             $this->assign('display', 'display');
         }
 
@@ -29,22 +31,19 @@ class Templates extends Base
             ->order(['status' => 'asc', 'create_time' => 'desc'])
             ->select()
             ->toArray();
-
-
+        // dump($templates);
         $templateList = [];
-        
-        
+
         foreach ($templates as $value) {
             $tmp = $value;
             $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
             $tmp['username'] = $tmp['get_user']['username'];
-            if ($value['myData']!=null||$value['myData']!=='') {
+            if ($value['myData'] != null || $value['myData'] !== '') {
                 $tmp['mydata'] = $tmp['get_my_data']['title'];
             }
             // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
             $templateList[] = $tmp;
         }
-        
 
         $this->assign('templates', $templateList);
         return view();
@@ -75,7 +74,7 @@ class Templates extends Base
             $tInfo = model('Templates')->with('datas')->field('id,tid')->find(input('post.id'));
 
             $result = $tInfo->together('datas')->delete();
-            $redisKey = 'template_'.$tInfo['tid'];
+            $redisKey = 'template_' . $tInfo['tid'];
             $redis = new Redis();
             $redis->del($redisKey);
             if ($result == 1) {
@@ -85,7 +84,6 @@ class Templates extends Base
             }
         }
     }
-
 
     /**
      * 表单编辑
@@ -101,7 +99,7 @@ class Templates extends Base
             if ((!array_key_exists('option_1', $params))) {
                 $this->error("请至少添加一个字段");
             }
-            $tInfo =[
+            $tInfo = [
                 'tid' => $params['tid'],
                 'tname' => $params['templateName'],
                 'remarks' => $params['remarks'],
@@ -119,6 +117,8 @@ class Templates extends Base
 
             $res = model('Templates')->editByHand($tInfo);
             if ($res == 1) {
+                $redis = new Redis();
+                $redis->del('template_' . $tInfo['tid']);
                 $this->success("表单编辑成功", 'admin/Templates/list');
             } else {
                 $this->error($res);
@@ -126,26 +126,24 @@ class Templates extends Base
         }
 
         $id = input('tid');
-        $tInfo=model('Templates')->where(['tid'=>$id])->find();
-        $tInfo['options']=json_decode($tInfo['options'], true);
+        $tInfo = model('Templates')->where(['tid' => $id])->find();
+        $tInfo['options'] = json_decode($tInfo['options'], true);
 
-
-        $keys=[];
-        foreach($tInfo['options'] as $k=>$v){
-            if(!isset($v['options'])&&$v['rule']!='text'){
-                $keys[$k]=$v['title'];
+        $keys = [];
+        foreach ($tInfo['options'] as $k => $v) {
+            if (!isset($v['options']) && $v['rule'] != 'text') {
+                $keys[$k] = $v['title'];
             }
         }
         #获取显示在页面的数据列表
         $this->assign([
             'optionList' => $tInfo['options'],
-            'tInfo'=>$tInfo,
-            'keys'=>$keys,
-            'formLength'=>sizeof($tInfo['options'])+1,
+            'tInfo' => $tInfo,
+            'keys' => $keys,
+            'formLength' => sizeof($tInfo['options']) + 1,
         ]);
         return view();
     }
-
 
     /**
      * 表单管理
@@ -159,7 +157,7 @@ class Templates extends Base
             $id = input('post.id');
             $opt = input('post.opt');
 
-            $tInfo = model('Templates')->find($id);
+            $tInfo = model('Templates')->field('id,tid,status')->find($id);
 
             if ($opt == "start") {
                 $tInfo->status = 1;
@@ -169,6 +167,8 @@ class Templates extends Base
 
             $result = $tInfo->save();
             if ($result !== false) {
+                $redis = new Redis();
+                $redis->del('template_' . $tInfo['tid']);
                 $this->success('操作成功!', 'admin/Templates/list');
             } else {
                 $this->error("操作失败!");

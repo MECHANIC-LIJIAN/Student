@@ -9,7 +9,7 @@
     <meta name="description" itemprop="description" content="{$tname}">
     <meta name="author" content="Li Jian">
     <link rel="shortcut icon" type="IMG/x-icon" href="/favicon.ico" />
-    <title>{$tname}</title>
+    <title>{$template.tname}</title>
     <!-- Bootstrap core CSS -->
     <link href="__CSS__/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap theme -->
@@ -26,13 +26,18 @@
             <div class="col-lg-10 form-block-background" style="padding-bottom:20px;padding-top:20px;">
                 {notpresent name="$info"}
                 <form class="form-horizontal" role="form" id="subForm" autocomplete="off">
-                    <legend style="text-align: center;font-size:24px;">{$tname}</legend>
-
-                    <div class="alert alert-info">
-                        <p style="margin:20px 0 20px 0;">
-                            {php}  echo nl2br($remarks)  {/php}
+                    <legend style="text-align: center;font-size:24px;">{$template.tname}</legend>
+                    <!-- 倒计时 -->
+                    <div class="col-lg-12 text-center" style="margin-bottom: 20px;">
+                        <div id="show" ></div>
+                    </div>
+                    {neq name="remarks" value=""}
+                    <div class="col-lg-12 alert alert-info">
+                        <p>
+                            {php} echo nl2br($remarks) {/php}
                         </p>
                     </div>
+                    {/neq}
                     {volist name="optionList" id="vo" key="k"}
                     {notpresent name="$vo.options"}
                     <!-- 输出input -->
@@ -112,7 +117,8 @@
     <script src="__JS__/jquery.validate.min.js"></script>
     <script src="__JS__/messages_zh.min.js"></script>
     <script src="__JS__/index.js"></script>
-    <script>
+
+    <script type="text/javascript">
         $("#submitOpt").click(function () {
             $("#subForm").submit();
         });
@@ -141,6 +147,36 @@
                 });
             },
         });
+
+
+
+        function TimeDown(id, endDate) {
+            if (parseInt(endDate) > 0) {
+                //当前时间
+                var nowDate = Math.round(new Date().getTime()/1000);
+                //相差的总秒数
+                var totalSeconds = parseInt(endDate - nowDate);
+                //天数
+                var days = Math.floor(totalSeconds / (60 * 60 * 24));
+                //取模（余数）
+                var modulo = totalSeconds % (60 * 60 * 24);
+                //小时数
+                var hours = Math.floor(modulo / (60 * 60));
+                modulo = modulo % (60 * 60);
+                //分钟
+                var minutes = Math.floor(modulo / 60);
+                //秒
+                var seconds = modulo % 60;
+                //输出到页面
+                document.getElementById(id).innerHTML = "还剩:" + days + "天" + hours + "小时" + minutes + "分钟" + seconds + "秒";
+                //延迟一秒执行自己
+                setTimeout(function () {
+                    TimeDown(id, endDate);
+                }, 1000)
+            }
+        }
+
+        TimeDown("show", "{$template.endTime}");
     </script>
 </body>
 

@@ -56,7 +56,7 @@ class Template extends Base
 
         unset($template['options']);
 
-        session('tInfo', $template);
+        // session('tInfo', $template);
 
         #构造分享链接
         $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
@@ -77,8 +77,6 @@ class Template extends Base
     public function del()
     {
         if (request()->isAjax()) {
-
-            $tId = session('tInfo.id');
             $ids = explode(',', input('ids'));
             sort($ids, SORT_NUMERIC);
             $result = model('TemplatesDatas')->destroy($ids);
@@ -100,70 +98,57 @@ class Template extends Base
     public function dataList()
     {
         if (request()->isAjax()) {
-            $template = session('tInfo');
-            $tId = $template['id'];
-            $primaryKey = $template['primaryKey'];
-            $offset = input('post.offset');
-            $limit = input('post.limit');
-            $order = input('post.order');
-            $ordername = input('post.ordername');
-            $search = input('post.search');
+            $params = input('post.');
+
+            $tId = $params['tid'];
+            $offset = $params['offset'];
+            $limit = $params['limit'];
+            $order = $params['order'];
+            $ordername = $params['ordername'];
+            $search = $params['search'];
 
             #默认排序字段和规则
             $fields = ['id,tid,content,create_time,update_time'];
             $orders = ['update_time' => 'desc'];
 
             #排序字段和规则
-            if ($ordername) {
-                if ($ordername == 'content.' . $primaryKey) {
-                    array_push($fields, "JSON_EXTRACT(content,'$.$primaryKey') as jsonOrder");
+            if ($ordername == 'create_time' || $ordername == "update_time") {
+                $orders = [$ordername => $order];
+            } else {
+                $tmp = explode(".", $ordername);
+                if (count($tmp) == 2) {
+                    array_push($fields, "JSON_EXTRACT(content,'$." . $tmp[1] . "') as jsonOrder");
                     $orders = ['jsonOrder' => $order];
-                } else {
-                    $orders = [$ordername => $order];
                 }
             }
 
             #默认搜索条件
             $map[] = ['tid', '=', $tId];
+
             #模糊搜索
             if ($search != "") {
                 $map[] = ["content", 'like', "%$search%"];
             }
 
-            #判断是否为导出
-            if ($limit != null) {
-                # 计算页号
-                $page = floor($offset / $limit) + 1;
-                $list = model('TemplatesDatas')
-                    ->where($map)
-                    ->json(['content'])
-                    ->field($fields)
-                    ->order($orders)
-                    ->page($page, $limit)
-                    ->withAttr([
-                        'create_time' => function ($value) {
-                            return date("Y-m-d H:i", $value);
-                        },
-                        'update_time' => function ($value) {
-                            return date("Y-m-d H:i", $value);
-                        },
-                    ])
-                    ->select();
-            } else {
-                $list = model('TemplatesDatas')
-                    ->where($map)
-                    ->json(['content'])
-                    ->field($fields)
-                    ->withAttr([
-                        'create_time' => function ($value) {
-                            return date("Y-m-d H:i", $value);
-                        },
-                        'update_time' => function ($value) {
-                            return date("Y-m-d H:i", $value);
-                        },
-                    ])
-                    ->select();
-            }
+            # 计算页号
+            $page = floor($offset / $limit) + 1;
+
+            $list = model('TemplatesDatas')
+                ->where($map)
+                ->json(['content'])
+                ->field($fields)
+                ->order($orders)
+                ->page($page, $limit)
+                ->withAttr([
+                    'create_time' => function ($value) {
+                        return date("Y-m-d H:i", $value);
+                    },
+                    'update_time' => function ($value) {
+                        return date("Y-m-d H:i", $value);
+                    },
+                ])
+                // ->fetchSql()
+                ->select();
 
             $count = model('TemplatesDatas')
                 ->where(['tid' => $tId])
@@ -193,7 +178,7 @@ class Template extends Base
         foreach ($list as $v) {
             array_push($outData, json_decode($v['content'], true));
         }
-        
+
         $template = model('Templates')
             ->where('id', '=', input('post.id'))
             ->field('id,tname,options')
@@ -262,8 +247,8 @@ class Template extends Base
 
         }
 
-        $filename=$filename . '.xlsx';
-        
+        $filename = $filename . '.xlsx';
+
         header('Content-Type:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); //xlsx
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
@@ -273,11 +258,11 @@ class Template extends Base
         $writer->save('php://output'); //这里就是乱码
         $xlsData = ob_get_contents();
         ob_end_clean(); // 清除缓冲
-        
+
         $response = array(
             'code' => 1,
             'file' => "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," . base64_encode($xlsData),
-            'filename'=>$filename,
+            'filename' => $filename,
             'msg' => '导出成功',
         );
         return $response;

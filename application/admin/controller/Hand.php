@@ -63,13 +63,14 @@ class Hand extends Base
                 'tabbr' => $pinyin->abbr($params['templateName']),
                 'primaryKey' => $params['primaryKey'],
                 'myData' => $params['myData'],
+                'endTime' => strtotime($params['endTime']),
             ];
 
-            // halt($tInfo);
             unset($params['templateName']);
             unset($params['primaryKey']);
             unset($params['myData']);
             unset($params['remarks']);
+            unset($params['endTime']);
 
             #模板名是否重复
             $validate = new \app\admin\validate\Templates();
