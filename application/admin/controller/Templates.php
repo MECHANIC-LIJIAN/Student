@@ -157,9 +157,12 @@ class Templates extends Base
             $id = input('post.id');
             $opt = input('post.opt');
 
-            $tInfo = model('Templates')->field('id,tid,status')->find($id);
+            $tInfo = model('Templates')->field('id,tid,status,endTime')->find($id);
 
             if ($opt == "start") {
+                if($tInfo['endTime']<=time()){
+                    $tInfo->endTime = 0;
+                }
                 $tInfo->status = 1;
             } else {
                 $tInfo->status = 0;

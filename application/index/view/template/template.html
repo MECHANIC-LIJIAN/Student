@@ -29,7 +29,7 @@
                     <legend style="text-align: center;font-size:24px;">{$template.tname}</legend>
                     <!-- 倒计时 -->
                     <div class="col-lg-12 text-center" style="margin-bottom: 20px;">
-                        <div id="show" ></div>
+                        <div id="show"></div>
                     </div>
                     {neq name="remarks" value=""}
                     <div class="col-lg-12 alert alert-info">
@@ -102,6 +102,8 @@
                         <input type="button" style="height: 40px;" class="btn btn-info form-control" id="submitOpt"
                             value="提交">
                     </div>
+
+                    <input type="hidden" name="tid" value="{$template.tid}">
                 </form>
                 {else /}
                 <h1>{$info}</h1>
@@ -151,11 +153,22 @@
 
 
         function TimeDown(id, endDate) {
+            var t;
             if (parseInt(endDate) > 0) {
                 //当前时间
-                var nowDate = Math.round(new Date().getTime()/1000);
+                var nowDate = Math.round(new Date().getTime() / 1000);
                 //相差的总秒数
                 var totalSeconds = parseInt(endDate - nowDate);
+                if (totalSeconds <= 0) {
+                    layer.open({
+                        content: '已经截止提交',
+                        yes: function (index, layero) {
+                            window.close;
+                            clearTimeout(timerID);
+                            layer.close(index); //如果设定了yes回调，需进行手工关闭
+                        }
+                    });
+                }
                 //天数
                 var days = Math.floor(totalSeconds / (60 * 60 * 24));
                 //取模（余数）
@@ -170,7 +183,7 @@
                 //输出到页面
                 document.getElementById(id).innerHTML = "还剩:" + days + "天" + hours + "小时" + minutes + "分钟" + seconds + "秒";
                 //延迟一秒执行自己
-                setTimeout(function () {
+                timerID = setTimeout(function () {
                     TimeDown(id, endDate);
                 }, 1000)
             }

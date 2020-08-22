@@ -5,112 +5,109 @@ namespace app\index\controller;
 use myredis\Redis;
 use think\Controller;
 use think\Db;
-use think\facade\Log;
 
 class Template extends Controller
 {
+    private $tid = "";
+    private $template = [];
+    private $redisKey = "";
+    private $redis;
 
-    public function readTemplate()
+    public function initialize()
     {
-        $id = input('id');
+        $this->tid = input('id');
 
-        $redisKey = 'template_' . $id;
-        $redis = new Redis();
+        if (request()->isAjax()) {
+            $this->tid = input('post.tid');
+        }
 
-        if (!$redis->exists($redisKey)) {
+        $this->redisKey = 'template_' . $this->tid;
+
+        $this->redis = new Redis();
+
+        if (!$this->redis->exists($this->redisKey)) {
             //缓存不存在
             //查询数据
-            $template = model("Templates")
-                ->where(['tid' => $id])
+            $this->template = model("Templates")
+                ->where(['tid' => $this->tid])
                 ->field('id,tid,tname,remarks,primaryKey,status,myData,endTime,options')
                 ->find();
 
-            #判断表单是否存在
-            if (!$template) {
-                return $this->fetch('template', ['info' => '该表单不存在']);
-            }
+            #不存在该id则置空
+            if (!$this->template) {
+                $this->redis->set($this->redisKey, null);
+            } else {
+                $this->template['options'] = json_decode($this->template['options'], true);
+                $this->template['fields'] = array_keys($this->template['options']);
 
-            $template['options'] = json_decode($template['options'], true);
-            $template['fields'] = array_keys($template['options']);
-
-            #判断是否有主键
-            if (!empty($template['primaryKey'])) {
-                $template['primaryKey'] = [
-                    'field' => $template['primaryKey'],
-                    'title' => $template['options'][$template['primaryKey']]['title'],
-                ];
+                #判断是否有主键
+                if (!empty($this->template['primaryKey'])) {
+                    $this->template['primaryKey'] = [
+                        'field' => $this->template['primaryKey'],
+                        'title' => $this->template['options'][$this->template['primaryKey']]['title'],
+                    ];
+                }
             }
 
             //转换成字符串，有利于存储
-            $redisInfo = serialize($template);
+            $redisInfo = serialize($this->template);
             //存入缓存
-            $redis->set($redisKey, $redisInfo);
+            $this->redis->set($this->redisKey, $redisInfo);
             //设置缓存周期，60*30秒
-            $redis->expire($redisKey, 60 * 30);
-            //获取缓存
-            $template = unserialize($redis->get($redisKey));
-
-            #判断表单状态
-            if ($template['status'] != 1) {
-                return $this->fetch('template', ['info' => '该表单已关闭']);
-            }
-
-        } else {
-
-            //获取缓存
-            $template = unserialize($redis->get($redisKey));
-
-            #判断表单状态
-            if ($template['status'] != 1) {
-                return $this->fetch('template', ['info' => '该表单已关闭']);
-            }
-
-            #判断截止时间
-            if ($template['endTime'] > 0 && $template['endTime'] < time()) {
-
-                Db::name('templates')->where(['id'=>$template['id']])->update(['status' => 0]);
-                
-                $redis->del($redisKey);
-
-                $template = model("Templates")
-                    ->where(['tid' => $id])
-                    ->field('id,tid,tname,remarks,primaryKey,status,myData,endTime,options')
-                    ->find();
-
-                //转换成字符串，有利于存储
-                $redisInfo = serialize($template);
-                //存入缓存
-                $redis->set($redisKey, $redisInfo);
-                //设置缓存周期，60*60秒
-                $redis->expire($redisKey, 60 * 60);
-
-                return $this->fetch('template', ['info' => '该表单已经停止提交']);
-            }
-
+            $this->redis->expire($this->redisKey, 60 * 30);
+        }
+   
+        //获取缓存
+        $this->template = unserialize($this->redis->get($this->redisKey));
+        
+        #判断表单是否存在
+        if (empty($this->template)) {
+            $this->error('该表单不存在');
         }
 
-        $optionList = $template['options'];
-        unset($template['options']);
-        // dump($template);
-        // dump($optionList);
-        cookie('template', $template);
-        cookie('ifCheck', 0);
-        cookie('content', "");
+        #判断表单状态
+        if ($this->template['status'] == "0") {
+            $this->error('该表单已关闭');
+        }
 
-        return $this->fetch('template', ['optionList' => $optionList, 'template' => $template,'remarks' => $template['remarks']]);
+        #判断截止时间
+        if ($this->template['endTime'] > 0 && $this->template['endTime'] < time()) {
+
+            Db::name('templates')->where(['id' => $this->template['id']])->update(['status' => 0]);
+
+            $this->redis->del($this->redisKey);
+            $this->error('该表单已经停止提交');
+        }
     }
 
+    /**
+     * 显示表单页
+     */
+
+    public function readTemplate()
+    {
+        $optionList = $this->template['options'];
+
+        unset($this->template['options']);
+
+        return $this->fetch('template', [
+            'optionList' => $optionList,
+            'template' => $this->template,
+            'remarks' => $this->template['remarks'],
+        ]);
+    }
+
+    /**
+     * 收集数据
+     *
+     * @return void
+     */
     public function collect()
     {
-
         if (request()->isAjax()) {
-
-            $template = json_decode(cookie('template'), true);
-            $templateField = $template['fields'];
-
-            $data['tid'] = $template['id'];
+            $data['tid'] = $this->template['id'];
             #接受页面参数
-            foreach ($templateField as $value) {
+            foreach ($this->template['fields'] as $value) {
                 $params[$value] = input("post.$value");
             }
 
@@ -119,12 +116,12 @@ class Template extends Controller
             $data['update_time'] = time();
 
             #判断是否有主键
-            if (!empty($template['primaryKey'])) {
+            if (!empty($this->template['primaryKey'])) {
                 #找出提交数据的唯一字段的值
-                $keyContent = $params[$template['primaryKey']['field']];
+                $keyContent = $params[$this->template['primaryKey']['field']];
 
                 #判断数据是否存在
-                $res = model('Templates')->ifExist($template, $keyContent);
+                $res = model('Templates')->ifExist($this->template, $keyContent);
                 if ($res == 1) {
                     #数据存在，返回确认信息
                     return json([
@@ -134,8 +131,8 @@ class Template extends Controller
                 }
 
                 #判断是否有参考数据集并且数据是否在其中
-                if (!empty($template['myData'])) {
-                    $res = model('Templates')->ifUseData($template, $keyContent);
+                if (!empty($this->template['myData'])) {
+                    $res = model('Templates')->ifUseData($this->template, $keyContent);
                     if ($res != 1) {
                         return $this->error($res);
                     }
@@ -143,10 +140,10 @@ class Template extends Controller
             }
 
             #保存新数据
-            $res = model('Templates')->saveData($template, $data);
+            $res = model('Templates')->saveData($this->template, $data);
             if ($res == 1) {
                 cookie('ifCheck', null);
-                cookie('content', '感谢您在' . $template['tname'] . '的提交');
+                cookie('content', '感谢您在' . $this->template['tname'] . '的提交');
                 $this->success('提交成功！', url('index/index/index'));
             } else {
                 $this->error($res);
@@ -156,11 +153,11 @@ class Template extends Controller
 
     public function collectUpdate()
     {
-        $template = json_decode(cookie('template'), true);
-        $templateField = $template['fields'];
-        $data['tid'] = $template['id'];
+        $this->template = json_decode(cookie('template'), true);
+        $this->templateField = $this->template['fields'];
+        $data['tid'] = $this->template['id'];
         #接受页面参数
-        foreach ($templateField as $value) {
+        foreach ($this->templateField as $value) {
             $params[$value] = input("post.$value");
         }
 
@@ -170,103 +167,11 @@ class Template extends Controller
         $res = model('TemplatesDatas')->allowField(true)->save($data, ['id' => cookie('dataid')]);
         if ($res) {
             cookie('ifCheck', null);
-            cookie('content', '感谢您在' . $template['tname'] . '的提交');
+            cookie('content', '感谢您在' . $this->template['tname'] . '的提交');
             $this->success('数据更新成功！', url('index/index/index'));
         } else {
             $this->error('数据更新失败！');
         }
-    }
-
-    public function datasToMysql()
-    {
-        $redis = new Redis();
-        $redisKey = 'datalists';
-        while (true) {
-            $datas = $redis->lRange($redisKey, 0, -1);
-            foreach ($datas as &$value) {
-                $value = unserialize($value);
-            }
-            // 启动事务
-            Db::startTrans();
-            try {
-                Db::name('TemplatesDatas')->data($datas)->limit(100)->insertAll();
-                // 提交事务
-                Db::commit();
-                $redis->del($redisKey);
-            } catch (\Exception $e) {
-                // 回滚事务
-                Db::rollback();
-                Log::write($e->getMessage(), 'error');
-            }
-            sleep(3);
-        }
-    }
-
-    public function getTestdatas()
-    {
-
-        $limit = input('limit', 1000);
-
-        debug('test');
-        $redis = new Redis();
-        $redisKey = 'datalists';
-
-        // $redis->del($redisKey);
-        $testDatas = Db::name("TemplatesDatas")
-            ->whereNull('delete_time')
-            ->limit($limit)
-            ->field('id', true)
-            ->select();
-
-        foreach ($testDatas as &$value) {
-            $value['update_time'] = time();
-            $value['create_time'] = time();
-            $nLen = $redis->lPush($redisKey, serialize($value));
-        }
-        dump($nLen . "条压入redis");
-        dump($redis->lLen($redisKey));
-        echo debug('test', 'testend');
-    }
-    public function saveTestdatas()
-    {
-
-        dump("--------------------------------------");
-        debug('begin');
-        $redis = new Redis();
-        $redisKey = 'datalists';
-        $datas = $redis->lRange($redisKey, 0, -1);
-        dump($redis->lLen($redisKey));
-        foreach ($datas as &$value) {
-            $value = unserialize($value);
-            if (empty($value['tid'])) {
-                dump($value);
-            }
-        }
-
-        debug('end');
-        dump(debug('begin', 'end') . 's');
-        dump(debug('begin', 'end', 'm') . 'kb');
-
-        dump("--------------------------------------");
-        dump("db to mysql");
-        debug('begin');
-
-        #启动事务
-        Db::startTrans();
-        try {
-            Db::name('TemplatesDatas')->limit(100)->insertAll($datas);
-            // 提交事务
-            Db::commit();
-            $redis->del($redisKey);
-        } catch (\Exception $e) {
-            // 回滚事务
-            Db::rollback();
-            dump($e->getMessage());
-            Log::write($e->getMessage(), 'error');
-        }
-        debug('end');
-        dump(debug('begin', 'end') . 's');
-        dump(debug('begin', 'end', 'm') . 'kb');
     }
 
 }
