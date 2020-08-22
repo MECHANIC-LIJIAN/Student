@@ -151,10 +151,11 @@
         });
 
 
-
+        var timerID = null;
+        var flag=1;
         function TimeDown(id, endDate) {
             var t;
-            if (parseInt(endDate) > 0) {
+            if (parseInt(endDate) > 0&&flag==1) {
                 //当前时间
                 var nowDate = Math.round(new Date().getTime() / 1000);
                 //相差的总秒数
@@ -163,8 +164,8 @@
                     layer.open({
                         content: '已经截止提交',
                         yes: function (index, layero) {
-                            window.close;
-                            clearTimeout(timerID);
+                            window.clearTimeout(timerID);
+                            window.location.href = "/"
                             layer.close(index); //如果设定了yes回调，需进行手工关闭
                         }
                     });

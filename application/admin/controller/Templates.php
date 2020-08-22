@@ -15,7 +15,7 @@ class Templates extends Base
     function list() {
 
         $where = [];
-        $field = 'id,tid,uid,ttype,tname,myData,primaryKey,create_time,status';
+        $field = 'id,tid,uid,ttype,tname,options,myData,primaryKey,create_time,status';
 
         if (!in_array(2, $this->groupIds)) {
             $where = ['uid' => session('admin.id')];
@@ -32,14 +32,18 @@ class Templates extends Base
             ->select()
             ->toArray();
         // dump($templates);
+        
         $templateList = [];
-
         foreach ($templates as $value) {
             $tmp = $value;
             $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
             $tmp['username'] = $tmp['get_user']['username'];
             if ($value['myData'] != null || $value['myData'] !== '') {
                 $tmp['mydata'] = $tmp['get_my_data']['title'];
+            }
+            if ($value['primaryKey'] != null || $value['primaryKey'] !== '') {
+                $options=json_decode($tmp['options'],true);
+                $tmp['primaryKey'] = $options[$tmp['primaryKey']]['title'];
             }
             // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
             $templateList[] = $tmp;
@@ -103,18 +107,20 @@ class Templates extends Base
                 'tid' => $params['tid'],
                 'tname' => $params['templateName'],
                 'remarks' => $params['remarks'],
-                'primaryKey' => $params['primaryKey'],
-                'myData' => $params['myData'],
+                'primaryKey' => $params['primaryKey']?$params['primaryKey']:"",
+                'myData' => $params['myData']?$params['myData']:0,
+                'endTime' => strtotime($params['endTime']),
             ];
 
+            unset($params['tid']);
             unset($params['templateName']);
+            unset($params['remarks']);
             unset($params['primaryKey']);
             unset($params['myData']);
-            unset($params['remarks']);
-            unset($params['tid']);
+            unset($params['endTime']);
 
             $tInfo['params'] = $params;
-
+            // halt($tInfo);
             $res = model('Templates')->editByHand($tInfo);
             if ($res == 1) {
                 $redis = new Redis();
@@ -126,7 +132,7 @@ class Templates extends Base
         }
 
         $id = input('tid');
-        $tInfo = model('Templates')->where(['tid' => $id])->find();
+        $tInfo = model('Templates')->where(['tid' => $id])->field('id,tid,options,tname,endTime,primaryKey,mydata,remarks')->find();
         $tInfo['options'] = json_decode($tInfo['options'], true);
 
         $keys = [];
@@ -136,6 +142,7 @@ class Templates extends Base
             }
         }
         #获取显示在页面的数据列表
+
         $this->assign([
             'optionList' => $tInfo['options'],
             'tInfo' => $tInfo,

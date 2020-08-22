@@ -61,8 +61,8 @@ class Hand extends Base
                 'tname' => $params['templateName'],
                 'remarks' => $params['remarks'],
                 'tabbr' => $pinyin->abbr($params['templateName']),
-                'primaryKey' => $params['primaryKey'],
-                'myData' => $params['myData'],
+                'primaryKey' => $params['primaryKey']?$params['primaryKey']:"",
+                'myData' => $params['myData']?$params['myData']:0,
                 'endTime' => strtotime($params['endTime']),
             ];
 

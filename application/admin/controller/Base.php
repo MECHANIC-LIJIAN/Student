@@ -19,7 +19,7 @@ class Base extends Controller
             'admin/index/login',
             'admin/home/logout',
             'admin/home/help',
-            'admin/home/edit'
+            'admin/home/edit',
         ];
         // //获取到当前访问的页面
         // $module = request()->module(); //获取当前访问的模块
@@ -50,27 +50,26 @@ class Base extends Controller
             $result = $auth->check($rule_name, $this->uid);
         }
 
-      
-
         if (!$result) {
             $this->error('您没有权限访问');
         }
-        
+
         if (request()->isGet()) {
-            $authList=Session::get('_auth_list_'.$this->uid);
-            $this->groupIds =Session::get('_auth_groups_'.$this->uid);
-            // $authList=null;
-            // if($authList===null||$authList===''){
+            if (1 === config('auth.auth')['auth_type']) {
                 $groupIds = Db::name('AuthGroupAccess')->whereUid('=', $userRow['id'])->column('group_id');
-                
+
                 $ruleIds = Db::name('AuthGroup')->whereId('in', $groupIds)->column('rules');
                 $ruleIds = explode(',', implode(',', $ruleIds));
-                $list = Db::name('AuthRule')->whereId('in', $ruleIds)->where('level','<>',3)->field(['id,name,title,pid,icon,sort'])->order('sort','asc')->select();
+                $list = Db::name('AuthRule')->whereId('in', $ruleIds)->where('level', '<>', 3)->field(['id,name,title,pid,icon,sort'])->order('sort', 'asc')->select();
                 $authList = getTree($list);
-             
-                Session::set('_auth_list_'.$this->uid,$authList);
-                Session::set('_auth_groups_'.$this->uid,$groupIds);
-            // }
+                Session::set('_auth_list_' . $this->uid, $authList);
+                Session::set('_auth_groups_' . $this->uid, $groupIds);
+            }
+
+            $authList = Session::get('_auth_list_' . $this->uid);
+            $this->groupIds = Session::get('_auth_groups_' . $this->uid);
+
+
             //    dump($authList);
             View::share(['authList' => $authList]);
         }

@@ -249,6 +249,7 @@ class Templates extends Model
             $info->tname = $tInfo['tname'];
             $info->remarks = $tInfo['remarks'];
             $info->primaryKey = $tInfo['primaryKey'];
+            $info->endTime = $tInfo['endTime'];
             $info->myData = $tInfo['myData'];
             $info->options = $tInfo['options'];
             $info->update_time = time();

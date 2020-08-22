@@ -142,9 +142,8 @@ class Template extends Controller
             #保存新数据
             $res = model('Templates')->saveData($this->template, $data);
             if ($res == 1) {
-                cookie('ifCheck', null);
-                cookie('content', '感谢您在' . $this->template['tname'] . '的提交');
-                $this->success('提交成功！', url('index/index/index'));
+                
+                $this->success('提交成功！', url('index/index/index',['msg'=>"感谢您在《".$this->template['tname']."》的提交。"]));
             } else {
                 $this->error($res);
             }
@@ -153,11 +152,9 @@ class Template extends Controller
 
     public function collectUpdate()
     {
-        $this->template = json_decode(cookie('template'), true);
-        $this->templateField = $this->template['fields'];
         $data['tid'] = $this->template['id'];
         #接受页面参数
-        foreach ($this->templateField as $value) {
+        foreach ($this->template['fields'] as $value) {
             $params[$value] = input("post.$value");
         }
 
@@ -166,9 +163,7 @@ class Template extends Controller
         #是覆盖确认，更新数据
         $res = model('TemplatesDatas')->allowField(true)->save($data, ['id' => cookie('dataid')]);
         if ($res) {
-            cookie('ifCheck', null);
-            cookie('content', '感谢您在' . $this->template['tname'] . '的提交');
-            $this->success('数据更新成功！', url('index/index/index'));
+            $this->success('数据更新成功！', url('index/index/index',['msg'=>"感谢您在《".$this->template['tname']."》的提交。"]));
         } else {
             $this->error('数据更新失败！');
         }

@@ -139,17 +139,8 @@ class Template extends Base
                 ->field($fields)
                 ->order($orders)
                 ->page($page, $limit)
-                ->withAttr([
-                    'create_time' => function ($value) {
-                        return date("Y-m-d H:i", $value);
-                    },
-                    'update_time' => function ($value) {
-                        return date("Y-m-d H:i", $value);
-                    },
-                ])
                 // ->fetchSql()
                 ->select();
-
             $count = model('TemplatesDatas')
                 ->where(['tid' => $tId])
                 ->where($map)

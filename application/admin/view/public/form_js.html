@@ -1,0 +1,91 @@
+<script src="__JS__/jquery.validate.min.js"></script>
+<script src="__JS__/messages_zh.min.js"></script>
+<script src="__LIB__/design/designForm.js"></script>
+<script src="__LIB__/laydate/laydate.js"></script>
+
+<script>
+    $(function () {
+        var dataUrl;
+
+date=new Date()
+        laydate.render({
+            elem: '#endTime' //指定元素
+            ,type: 'datetime'
+            ,min:date.toLocaleString(),
+        });
+
+        $(".key-radio").click(function () {
+            var value = $(this).val();
+            if (value === "1") {
+                $(".myKey").removeClass("hidden").addClass("show")
+                $(".mydata-box").removeClass("hidden").addClass("show")
+            } else {
+                $(".form-box")[0].reset();
+                $(".myKey").removeClass("show").addClass("hidden")
+                $(".mydata-box").removeClass("show").addClass("hidden")
+            }
+        })
+        $(".data-radio").click(function () {
+            var value = $(this).val();
+            if (value === "1") {
+                $(".myData").removeClass("hidden").addClass("show")
+            } else {
+                $(".myData").removeClass("show").addClass("hidden")
+            }
+        })
+        
+        $(".time-radio").click(function () {
+            if($(this).is(":checked")){
+                $(this).val(0);
+                $("#endTime").attr("disabled","disabled").css("background", "#e4e4e4");
+            }else{
+                $(this).val(1);
+                $("#endTime").removeAttr("disabled").css("background", "");
+            }
+        })
+        $(".initTemplate").click(function () {
+            dataUrl = $(this).attr('dataid');
+            $(".confirm").click()
+            $("#subForm").submit()
+        })
+
+        $("#subForm").validate(
+            {
+                submitHandler: function (form) {
+                    var ifUseData = $("input[name='ifUseData']:checked").val();
+                    var ifUseKey = $("input[name='ifUseKey']:checked").val();
+                    var ifUseEnd = $("input[name='ifUseEnd']").val();
+                    
+                    var myData = $("#primaryKeyData").val();
+                    var primaryKey = $("#primaryKey").val();
+                    var endTime = $("#endTime").val();
+                    var data = $('#subForm').serialize()
+
+                    if (ifUseData == "1") {
+                        data = data + '&' + $.param({ 'myData': myData, })
+                    }
+                    if (ifUseKey == "1") {
+                        data = data + '&' + $.param({ 'primaryKey': primaryKey, })
+                    }
+                    if (ifUseEnd == 0||endTime==null) {
+                        endTime=0;
+                    }
+                    data = data + '&' + $.param({ 'endTime': endTime, })
+
+                    $.ajax({
+                        url: dataUrl,
+                        type: "post",
+                        dataType: 'json',
+                        data: data,
+                        success: function (data) {
+                            if (data.code == 1) {
+                                showMsgAndHref(data)
+                            } else {
+                                showErrorMsg(data.msg)
+                            }
+                        },
+                    });
+                },
+            });
+    });
+</script>

@@ -20,6 +20,7 @@ return [
 
     // 默认跳转页面对应的模板文件
     'dispatch_error_tmpl' => env('APP_PATH')."index/view/public/error.html",
+    'dispatch_success_tmpl' => env('APP_PATH')."index/view/public/success.html",
 
     // 错误显示信息,非调试模式有效
     'error_message' => '服务器内部错误',

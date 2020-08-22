@@ -23,7 +23,9 @@
                             <tr>
                                 <th>表单名</th>
                                 {present name="$display"}<th>用户名</th>{/present}
-                                <th>使用的数据集</th>
+                                <th>数据集</th>
+                                <th>唯一列</th>
+                                <th>类型</th>
                                 <th>状态</th>
                                 <th colspan="3">操作</th>
                                 <th>创建时间</th>
@@ -32,15 +34,26 @@
                         <tbody>
                             {volist name="templates" id="vo"}
                             <tr>
-                                <td><a href="{:url('admin/Template/index',['id'=>$vo.tid,'sid'=>'2'])}"
+                                <td><a href="{:url('admin/Template/index',['id'=>$vo.tid,'sid'=>'2'])}" target="_blank"
                                         style="font-size:14px">{$vo.tname}</a> </td>
                                 {present name="$display"}<td>{$vo.get_user.username}</td>{/present}
                                 <td>
                                     {notempty name="$vo.mydata"}
                                     {$vo.mydata}
                                     {else /}
-                                    未指定数据集
+                                    未指定
                                     {/notempty}
+                                </td>
+                                <td>
+                                    {notempty name="$vo.primaryKey"}
+                                    {$vo.primaryKey}
+                                    {else /}
+                                    未指定
+                                    {/notempty}
+                                </td>
+                                <td>
+                                    <span class="tempalte-type"
+                                        status="{$vo.status}">{if $vo.ttype==1}文档{else /}普通{/if}</span>
                                 </td>
                                 {if $vo.status==1}
                                 <td>
@@ -66,7 +79,7 @@
                                 {/if}
                                 <td>
                                     <a href="{:url('admin/Template/index',['id'=>$vo.tid,'sid'=>'2'])}"
-                                        class="btn btn-xs btn-success"><span class="fa fa-table"></span>数据</a>
+                                        target="_blank" class="btn btn-xs btn-success"><span class="fa fa-table"></span>数据</a>
                                 </td>
                                 <td>
                                     <a class="copy" dataid="{$vo.shareUrl}"><span class="fa"></span>分享</a>|
@@ -74,7 +87,7 @@
                                     
                                     {if $vo.ttype==0}
                                     |
-                                    <a href="{:url('admin/Templates/edit',['tid'=>$vo.tid,'sid'=>'2'])}" class=""><span
+                                    <a href="{:url('admin/Templates/edit',['tid'=>$vo.tid,'sid'=>'2'])}" target="_blank" class=""><span
                                             class="fa"></span>编辑</a>
                                     {/if}
                                 </td>
