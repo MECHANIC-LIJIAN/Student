@@ -15,7 +15,7 @@ class Templates extends Base
     function list() {
 
         $where = [];
-        $field = 'id,tid,uid,ttype,tname,options,myData,primaryKey,create_time,status';
+        $field = 'id,tid,uid,ttype,tname,options,myData,primaryKey,endTime,shareUrl,create_time,status';
 
         if (!in_array(2, $this->groupIds)) {
             $where = ['uid' => session('admin.id')];
@@ -36,11 +36,15 @@ class Templates extends Base
         $templateList = [];
         foreach ($templates as $value) {
             $tmp = $value;
-            $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
+            // $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
             $tmp['username'] = $tmp['get_user']['username'];
+            if ($value['endTime'] != 0) {
+                $tmp['endTime']=date('Y-m-d H:i:s',$tmp['endTime']);
+            }
             if ($value['myData'] != null || $value['myData'] !== '') {
                 $tmp['mydata'] = $tmp['get_my_data']['title'];
             }
+            
             if ($value['primaryKey'] != null || $value['primaryKey'] !== '') {
                 $options=json_decode($tmp['options'],true);
                 $tmp['primaryKey'] = $options[$tmp['primaryKey']]['title'];

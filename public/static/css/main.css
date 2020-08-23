@@ -121,3 +121,8 @@ a:hover {
 .home-icon-text{
   height: 20px;
 }
+
+.btn-group>.btn:not(:first-child):not(.dropdown-toggle) {
+  border-left: 0;
+  border-right: 0;
+}

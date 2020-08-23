@@ -2,7 +2,7 @@
 
 namespace app\admin\model;
 
-use myredis\Redis;
+use app\admin\business\QrcodeServer;
 use Overtrue\Pinyin\Pinyin;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
@@ -168,58 +168,9 @@ class Templates extends Model
     {
         $params = $tInfo['params'];
         unset($tInfo['params']);
-        $tDdata = [];
 
-        foreach ($params as $key => $value) {
-            #分割字段 option_A,option_A_rule
-            $temp = explode("_", $key);
-            if (count($temp) == 2) {
-                #单选项
-                $tDdata[$key]['title'] = $value;
-                $tDdata[$key]['rule'] = $params[$key . "_rule"];
-            } elseif ($temp[2] != "rule") {
-                #多选项
-                $pId = implode("_", array_splice($temp, 0, 2));
-                $tDdata[$pId]['options'][$key] = $value;
-            }
-        }
-        // foreach ($params as $key => $value) {
-        //     #分割字段 option_A,option_A_rule
-        //     $temp = explode("_", $key);
+        $tInfo['options'] =$this->getFormFields($params);
 
-        //     if (count($temp) == 2) {
-
-        //         #输入框
-        //         $field = [];
-        //         $field['pid'] = '0';
-        //         $field['sid'] = $key;
-        //         $field['type'] = 'p';
-        //         $field['rule'] = $params[$key . "_rule"];
-
-        //         $field['tid'] = $tInfo['tid'];
-        //         $field['content'] = $value;
-        //         $field['abbr'] = $pinyin->abbr($value);
-
-        //         $tDdata[] = $field;
-        //     } elseif ($temp[2] != "rule") {
-        //         #下拉菜单
-        //         $field = [];
-        //         $pId = implode("_", array_splice($temp, 0, 2));
-        //         $field['pid'] = $pId;
-        //         $field['sid'] = $key;
-        //         $field['type'] = 'c';
-        //         $field['rule'] = $params[$pId . "_rule"];
-
-        //         $field['tid'] = $tInfo['tid'];
-        //         $field['content'] = $value;
-        //         $field['abbr'] = $pinyin->abbr($value);
-
-        //         $tDdata[] = $field;
-        //     }
-        // }
-
-        $tInfo['options'] = $tDdata;
-        // halt($tInfo);
         return $this->saveData($tInfo);
     }
 
@@ -227,22 +178,8 @@ class Templates extends Model
     {
         $params = $tInfo['params'];
         unset($tInfo['params']);
-        $tDdata = [];
-
-        foreach ($params as $key => $value) {
-            #分割字段 option_A,option_A_rule
-            $temp = explode("_", $key);
-            if (count($temp) == 2) {
-                #单选项
-                $tDdata[$key]['title'] = $value;
-                $tDdata[$key]['rule'] = $params[$key . "_rule"];
-            } elseif ($temp[2] != "rule") {
-                #多选项
-                $pId = implode("_", array_splice($temp, 0, 2));
-                $tDdata[$pId]['options'][$key] = $value;
-            }
-        }
-        $tInfo['options'] = $tDdata;
+        
+        $tInfo['options'] =$this->getFormFields($params);
 
         try {
             $info = $this->where(['tid' => $tInfo['tid']])->find();
@@ -254,7 +191,7 @@ class Templates extends Model
             $info->options = $tInfo['options'];
             $info->update_time = time();
             // halt($info);
-            $res = $info->save();            
+            $res = $info->save();
         } catch (\Exception $e) {
             // return $e->getMessage();
             return "编辑失败";
@@ -264,8 +201,21 @@ class Templates extends Model
 
     private function saveData($tInfo)
     {
+        // $config = [
+        //     'title' => true,
+        //     'title_content' => $tInfo['tname'],
+        //     'logo' => false,
+        // ];
+        // $qr_code = new QrcodeServer($config);
+        // $qr_img = $qr_code->createServer("");
+        // ob_end_clean();
+        // echo $qr_img;
+   
+        // halt($tInfo['shareUrl']);
+
         Db::startTrans();
         try {
+            $tInfo['shareUrl'] = url('index/Template/readTemplate', ['id' => $tInfo['tid'],'title'=>$tInfo['tname']], '', true);
             $tInfo['create_time'] = time();
             $tid = Db::name('templates')->strict(false)->json(['options'])->insertGetId($tInfo);
             Db::name("templates_sum")->where('id', 1)->setInc('count');
@@ -283,6 +233,7 @@ class Templates extends Model
             // return $e->getMessage();
             return "初始化失败";
         }
+
         // $redis = new Redis();
         // $redisKey = 'templatelist_' . session('admin.id');
         // $redis->del($redisKey);
@@ -290,6 +241,32 @@ class Templates extends Model
         return 1;
     }
 
+    /**
+     * 根据原始的字段信息拆分，返回二维数组
+     *
+     * @param [type] $fields
+     * @return void
+     */
+    public function getFormFields($fields)
+    {
+        $tFields = [];
+
+        foreach ($fields as $key => $value) {
+            #分割字段 option_A,option_A_rule
+            $temp = explode("_", $key);
+            if (count($temp) == 2) {
+                #单选项
+                $tFields[$key]['title'] = $value;
+                $tFields[$key]['rule'] = $fields[$key . "_rule"];
+            } elseif ($temp[2] != "rule") {
+                #多选项
+                $pId = implode("_", array_splice($temp, 0, 2));
+                $tFields[$pId]['options'][$key] = $value;
+            }
+        }
+
+        return $tFields;
+    }
     // public function getTemplates()
     // {
     //     $where = [];
