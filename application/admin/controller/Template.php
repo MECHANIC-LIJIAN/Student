@@ -4,7 +4,7 @@ namespace app\admin\controller;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-
+ini_set("memory_limit", "1024M");
 class Template extends Base
 {
 
@@ -217,7 +217,9 @@ class Template extends Base
         $rows_count = count($rows);
         $sheet->getDefaultRowDimension()->setRowHeight(18); //设置默认行高。
         $sheet->getStyle('A1:' . strtoupper(chr($count + 65 - 1)) . strval($rows_count + 1))->applyFromArray($styleArray);
-        $sheet->getStyle('A1:' . strtoupper(chr($count + 65 - 1)) . '1')->getFont()->setBold(true)->setName('Arial')->setSize(12)->applyFromArray($styleArray);
+        $sheet->getStyle('A1:' . strtoupper(chr($count + 65 - 1)) . '1')->getFont()->setBold(false)->setName('Arial')->setSize(12)->applyFromArray($styleArray);
+
+        // halt('A1:' . strtoupper(chr($count + 65 - 1)) . '1');
         //设置样式结束
 
         //写入表头信息
@@ -233,6 +235,12 @@ class Template extends Base
             for ($i = 65; $i < $count + 65; $i++) {
                 //数字转字母从65开始：
                 $sheet->setCellValue(strtoupper(chr($i)) . ($key + 2), $item[$keys[$i - 65]]);
+
+                $strLen=strlen($item[$keys[$i - 65]]);
+                if($strLen>9||$strLen<21){
+                    $sheet->setCellValueExplicit(strtoupper(chr($i)) . ($key + 2), $item[$keys[$i - 65]],\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                }
+                
                 $spreadsheet->getActiveSheet()->getColumnDimension(strtoupper(chr($i)))->setWidth(20); //固定列宽
             }
 
