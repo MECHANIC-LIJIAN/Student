@@ -97,6 +97,19 @@
     .i-radio:checked~.s-radio:before {
         display: block;
     }
+
+    .project-team-container .form-control {
+        outline-style: none;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        padding: 2px;
+        font-size: 14px;
+        font-family: "Microsoft soft";
+        font-size: inherit;
+        box-shadow: none;
+        -webkit-transition-duration: .25s;
+        transition-duration: .25s;
+    }
 </style>
 {/block}
 {block name="page-main"}
@@ -120,91 +133,50 @@
                     </li>
                 </ul>
                 <div class="form-horizontal">
-                    <table class="table">
-                        <caption>
-                            <h2>{$tname}</h2>
-                        </caption>
-                        <tbody>
-                            {volist name="optionList" id='option'}
-                                {notpresent  name="$option.options"}
-                                    <tr>
-                                        <td><label for="{$key}"
-                                                class="col-lg-10 control-label">{$option.title}</label>
-                                        </td>
-                                        <td><input type="text" class="form-control" name="{$key}"></td>
-                                    </tr>
+                    <form autocomplete="off" id="subForm">
+                        <table class="table">
+                            <caption>
+                                <h2>{$tname}</h2>
+                            </caption>
+                            <tbody>
+                                {volist name="optionList" id='option'}
+                                {notpresent name="$option.options"}
+                                <tr>
+                                    <td><label for="{$key}" class="col-lg-10 control-label">{$option.title}</label>
+                                    </td>
+                                    <td><input type="text" class="form-control" name="{$key}"></td>
+                                    <!-- <td><label for="{$key}" class="control-label">规则</label></td>
+                                    <td style="width: 25%;"><select class=" td-form-control form-control input-type"
+                                            dataid="{$key}" name="{$key}_rule">
+                                            <option value="text|required">普通文本</option>
+                                            <option value="phone|required">手机号</option>
+                                            <option value="email|required">邮箱</option>
+                                            <option value="number|required">数字</option>
+                                            <option value="text">非必填项</option>
+                                        </select>
+                                    </td> -->
+                                </tr>
                                 {else /}
-                                    <tr>
-                                        <td><label for="{$key}" class="col-lg-10 control-label">{$option.title}</label>
-                                        </td>
-                                        <td><select class="form-control">
-                                                {volist name="option.options" id="vo"}
-                                                <option name="{$key}">{$vo}</option>
-                                                {/volist}
-                                            </select></td>
-                                    </tr>
+                                <tr>
+                                    <td><label for="{$key}" class="col-lg-10 control-label">{$option.title}</label>
+                                    </td>
+                                    <td><select class="form-control">
+                                            {volist name="option.options" id="vo"}
+                                            <option name="{$key}">{$vo}</option>
+                                            {/volist}
+                                        </select></td>
+                                </tr>
                                 {/notpresent}
-                            {/volist}
-                        </tbody>
-                    </table>
+                                {/volist}
+                            </tbody>
+                        </table>
+                    </form>
                 </div>
             </div>
 
             <div class="col-lg-3">
                 <div class="project-right-sider" style="margin-top: 160px;">
-                    <form class="form-box">
-                        <div class="well">
-                            <div>
-                                <h4><font color="red"
-                                    style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>是否指定唯一标识字段</h4>
-                                <label>
-                                    <input type="radio" name="ifUseKey" class="key-radio i-radio" value="1">
-                                    <span class="s-radio"></span>指定
-                                </label>
-    
-                                <label>
-                                    <input type="radio" name="ifUseKey" class="key-radio i-radio" value="0" checked>
-                                    <span class="s-radio"></span>不指定
-                                </label>
-                            </div>
-                            <div class="hidden myKey">
-                                <h5>请选择唯一标识字段</h5>
-                                <select class="select" name="primaryKey" id="primaryKey">
-                                    {volist name="optionList" id='option'}
-                                    <option value="{$key}">{$option.title}</option>
-                                    {/volist}
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="well mydata-box hidden">
-                            <div>
-                                <h4><font color="red"
-                                    style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>是否使用自定义数据集</h4>
-                                <label>
-                                    <input type="radio" name="ifUseData" class="data-radio i-radio" value="1">
-                                    <span class="s-radio"></span>使用
-                                </label>
-    
-                                <label>
-                                    <input type="radio" name="ifUseData" class="data-radio i-radio" value="0" checked>
-                                    <span class="s-radio"></span>不使用
-                                </label>
-                            </div>
-                            <div class="hidden myData">
-                                <h5>请选择数据集</h5>
-                                {neq name="Think.session.myData|count" value="0"}
-                                <select class="select" name="primaryKeyData" id="primaryKeyData" style="margin-bottom: 10px;">
-                                    {volist name="Think.session.myData" id="vo"}
-                                    <option value="{$vo.id}">{$vo.title}</option>
-                                    {/volist}
-                                </select>
-                                {else /}
-                                <p class="alert alert-warning">您还没有数据集，请新建数据集</p>
-                                {/neq}
-                            </div>
-                        </div>
-                    </form>
+                    {include file="public/form_right" /}
                     <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
                         初始化表单</button>
                 </div>
@@ -214,7 +186,8 @@
 </div>
 {/block}
 {block name="page-js"}
-<script>
+{include file="public/form_js" /}
+<!-- <script>
 
     $(function () {
         $(".key-radio").click(function () {
@@ -236,10 +209,10 @@
                 $(".myData").removeClass("show").addClass("hidden")
             }
         })
-        
-        
 
-        $(".initTemplate").click(function () {
+
+
+        $(".excelInitTemplate").click(function () {
             var myData = $("#primaryKeyData").val();
             var ifUseData = $("input[name='ifUseData']:checked").val();
             var ifUseKey = $("input[name='ifUseKey']:checked").val();
@@ -269,5 +242,5 @@
             })
         })
     });
-</script>
+</script> -->
 {/block}

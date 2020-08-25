@@ -7,11 +7,11 @@
     $(function () {
         var dataUrl;
 
-date=new Date()
+        date = new Date()
         laydate.render({
             elem: '#endTime' //指定元素
-            ,type: 'datetime'
-            ,min:date.toLocaleString(),
+            , type: 'datetime'
+            , min: date.toLocaleString(),
         });
 
         $(".key-radio").click(function () {
@@ -33,12 +33,12 @@ date=new Date()
                 $(".myData").removeClass("show").addClass("hidden")
             }
         })
-        
+
         $(".time-radio").click(function () {
-            if($(this).is(":checked")){
+            if ($(this).is(":checked")) {
                 $(this).val(0);
-                $("#endTime").attr("disabled","disabled").css("background", "#e4e4e4");
-            }else{
+                $("#endTime").attr("disabled", "disabled").css("background", "#e4e4e4");
+            } else {
                 $(this).val(1);
                 $("#endTime").removeAttr("disabled").css("background", "");
             }
@@ -55,7 +55,7 @@ date=new Date()
                     var ifUseData = $("input[name='ifUseData']:checked").val();
                     var ifUseKey = $("input[name='ifUseKey']:checked").val();
                     var ifUseEnd = $("input[name='ifUseEnd']").val();
-                    
+
                     var myData = $("#primaryKeyData").val();
                     var primaryKey = $("#primaryKey").val();
                     var endTime = $("#endTime").val();
@@ -67,8 +67,8 @@ date=new Date()
                     if (ifUseKey == "1") {
                         data = data + '&' + $.param({ 'primaryKey': primaryKey, })
                     }
-                    if (ifUseEnd == 0||endTime==null) {
-                        endTime=0;
+                    if (ifUseEnd == 0 || endTime == null) {
+                        endTime = 0;
                     }
                     data = data + '&' + $.param({ 'endTime': endTime, })
 
@@ -87,5 +87,35 @@ date=new Date()
                     });
                 },
             });
+
+        $(".excelInitTemplate").click(function () {
+            var myData = $("#primaryKeyData").val();
+            var ifUseData = $("input[name='ifUseData']:checked").val();
+            var ifUseKey = $("input[name='ifUseKey']:checked").val();
+            var primaryKey = $("#primaryKey").val();
+            var data;
+
+            if (ifUseData == "1") {
+                data = data + '&' + $.param({ 'myData': myData, })
+            }
+
+            if (ifUseKey == "1") {
+                data = data + '&' + $.param({ 'primaryKey': primaryKey, })
+            }
+
+            $.ajax({
+                method: "post",
+                url: "{:url('admin/import/Second')}",
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == 1) {
+                        showMsgAndHref(data)
+                    } else {
+                        showErrorMsg(data.msg)
+                    }
+                }
+            })
+        })
     });
 </script>

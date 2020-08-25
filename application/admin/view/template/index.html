@@ -20,6 +20,11 @@
     .nav-tabs {
         width: auto;
     }
+
+    .btn-group>.btn:not(:first-child):not(:last-child):not(.dropdown-toggle){
+        border-right: 0;
+        border-left: 0;
+    }
 </style>
 
 {/block}
@@ -58,11 +63,11 @@
                             <button id="btn_refresh" type="button" class="btn btn-success">
                                 <span class="fa fa-refresh" aria-hidden="true"></span>刷新
                             </button>
+                            <button id="export" class="btn btn-primary" dataid="{$template.tid}">
+                                <span class="fa fa-file-excel-o"></span>导出excel
+                            </button>
                             <button id="copy" class="btn btn-info" dataid="{$template.tid}">
                                 <span class="fa fa-share"></span>分享
-                            </button>
-                            <button id="export" class="btn btn-file btn-" dataid="{$template.tid}">
-                                <span class="fa fa-file-excel-o"></span>导出excel
                             </button>
                             {if $template.ttype=="1"}
                             <a href="{:url('admin/Word/export_word',['tId' => $tId])}" target="_blank"

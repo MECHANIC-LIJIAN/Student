@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\admin\business\QrcodeServer;
 use myredis\Redis;
 
 class Templates extends Base
@@ -32,21 +33,21 @@ class Templates extends Base
             ->select()
             ->toArray();
         // dump($templates);
-        
+
         $templateList = [];
         foreach ($templates as $value) {
             $tmp = $value;
             // $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
             $tmp['username'] = $tmp['get_user']['username'];
             if ($value['endTime'] != 0) {
-                $tmp['endTime']=date('Y-m-d H:i:s',$tmp['endTime']);
+                $tmp['endTime'] = date('Y-m-d H:i:s', $tmp['endTime']);
             }
             if ($value['myData'] != null || $value['myData'] !== '') {
                 $tmp['mydata'] = $tmp['get_my_data']['title'];
             }
-            
+
             if ($value['primaryKey'] != null || $value['primaryKey'] !== '') {
-                $options=json_decode($tmp['options'],true);
+                $options = json_decode($tmp['options'], true);
                 $tmp['primaryKey'] = $options[$tmp['primaryKey']]['title'];
             }
             // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
@@ -111,8 +112,8 @@ class Templates extends Base
                 'tid' => $params['tid'],
                 'tname' => $params['templateName'],
                 'remarks' => $params['remarks'],
-                'primaryKey' => $params['primaryKey']?$params['primaryKey']:"",
-                'myData' => $params['myData']?$params['myData']:0,
+                'primaryKey' => $params['primaryKey'] ? $params['primaryKey'] : "",
+                'myData' => $params['myData'] ? $params['myData'] : 0,
                 'endTime' => strtotime($params['endTime']),
             ];
 
@@ -138,7 +139,7 @@ class Templates extends Base
         $id = input('tid');
         $tInfo = model('Templates')->where(['tid' => $id])->field('id,tid,options,tname,endTime,primaryKey,mydata,remarks')->find();
         $tInfo['options'] = json_decode($tInfo['options'], true);
-
+        
         $keys = [];
         foreach ($tInfo['options'] as $k => $v) {
             if (!isset($v['options']) && $v['rule'] != 'text') {
@@ -171,7 +172,7 @@ class Templates extends Base
             $tInfo = model('Templates')->field('id,tid,status,endTime')->find($id);
 
             if ($opt == "start") {
-                if($tInfo['endTime']<=time()){
+                if ($tInfo['endTime'] <= time()) {
                     $tInfo->endTime = 0;
                 }
                 $tInfo->status = 1;
@@ -188,5 +189,21 @@ class Templates extends Base
                 $this->error("操作失败!");
             }
         }
+    }
+
+    public function createQr()
+    {
+        $tInfo = model('Templates')->field('id,tid,shareUrl')->find(input('id'));
+
+        $config = [
+            'title' => true,
+            'title_content' => $tInfo['title'],
+            'logo' => false,
+        ];
+        $qr_code = new QrcodeServer($config);
+        $qr_img = $qr_code->createServer($tInfo['shareUrl']);
+        ob_end_clean();
+        echo $qr_img;
+
     }
 }

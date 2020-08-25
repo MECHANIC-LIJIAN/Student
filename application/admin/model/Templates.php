@@ -112,34 +112,12 @@ class Templates extends Model
             #拼接字段名
             $option = 'option_' . $col;
             $optionList[$option]['title'] = $excelData[$col][1];
-            $optionList[$option]['rule'] = 'required';
+            $optionList[$option]['rule'] = 'text|required';
             for ($row = 2; $row <= count($excelData[$col]); $row++) {
                 $optionList[$option]['options'][$option . "_" . ($row - 1)] = $excelData[$col][$row];
             }
             $tFields[$option] = $excelData[$col][1];
         }
-
-        // for ($col = 'A'; $col <= $finalKey; $col++) {
-        //     $option = 'option_' . $col;
-        //     for ($row = 1; $row <= count($excelData[$col]); $row++) {
-        //         $tmp = [];
-        //         $tmp['tid'] = $tInfo['tid'];
-        //         $tmp['content'] = $excelData[$col][$row];
-        //         $tmp['abbr'] = $pinyin->abbr($excelData[$col][1]);
-        //         if ($row == 1) {
-        //             $tmp['pid'] = '0';
-        //             $tmp['sid'] = $option;
-        //             $tmp['type'] = 'p';
-        //             $tFields[$option] = $excelData[$col][1];
-        //         } else {
-        //             $tmp['pid'] = $option;
-        //             $tmp['sid'] = $option . "_" . $row;
-        //             $tmp['type'] = 'c';
-        //         }
-        //         $optionList[] = $tmp;
-        //     }
-        // }
-
         #存储可存入数据库的数据
         session('tData', $optionList);
         return $optionList;
@@ -201,17 +179,6 @@ class Templates extends Model
 
     private function saveData($tInfo)
     {
-        // $config = [
-        //     'title' => true,
-        //     'title_content' => $tInfo['tname'],
-        //     'logo' => false,
-        // ];
-        // $qr_code = new QrcodeServer($config);
-        // $qr_img = $qr_code->createServer("");
-        // ob_end_clean();
-        // echo $qr_img;
-   
-        // halt($tInfo['shareUrl']);
 
         Db::startTrans();
         try {

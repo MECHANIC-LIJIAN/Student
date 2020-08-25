@@ -62,7 +62,16 @@ class Import extends Base
         $tInfo = session('tInfo');
         #获取显示在页面的数据列表
         $optionList = model('Templates')->getOptionList($tInfo);
+
+        $keys = [];
+        foreach ($optionList as $k => $v) {
+            if (!isset($v['options']) && $v['rule'] != 'text') {
+                $keys[$k] = $v['title'];
+            }
+        }
+        // dump($optionList);
         $this->assign([
+            'keys'=>$keys,
             'optionList' => $optionList,
             'tname' => $tInfo['tname'],
         ]);

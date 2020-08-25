@@ -11,7 +11,8 @@ Route::group(
         Route::rule('add', 'admin/Templates/add', 'GET|POST');
         Route::rule('edit/[:tid]', 'admin/Templates/edit', 'GET|POST');
         Route::rule('del', 'admin/Templates/del', 'POST');
-
+        Route::rule('qr', 'admin/Templates/createQr', 'GET|POST');
+        
         #文件创建模板
         Route::group('createByFile', function () {
             Route::rule('First', 'admin/Import/First', 'GET|POST');
@@ -28,5 +29,7 @@ Route::group(
          Route::group('createWord', function () {
             Route::rule('index', 'admin/hand/word', 'GET|POST');
         });
+
+
     }
 );
