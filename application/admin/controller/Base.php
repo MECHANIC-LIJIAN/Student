@@ -68,6 +68,9 @@ class Base extends Controller
 
                 $authList = getTree($list);
                 $this->groupIds = Session::get('_auth_groups_' . $this->uid);
+
+                Session::set('_auth_list_' . $this->uid, $authList);
+                Session::set('_auth_groups_' . $this->uid, $groupIds);
             }
 
             // dump($authList);
