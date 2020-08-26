@@ -24,6 +24,8 @@ class Templates extends Base
             $this->assign('display', 'display');
         }
 
+        dump($this->groupIds);
+
         $templates = model('Templates')
             ->where($where)
             ->field($field)

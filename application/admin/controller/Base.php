@@ -55,25 +55,18 @@ class Base extends Controller
         }
 
         if (request()->isGet()) {
-            if (1 === config('auth.auth')['auth_type']) {
-                $groupIds = Db::name('AuthGroupAccess')->whereUid('=', $userRow['id'])->column('group_id');
 
-                $ruleIds = Db::name('AuthGroup')->whereId('in', $groupIds)->column('rules');
-                $ruleIds = explode(',', implode(',', $ruleIds));
-                $list = Db::name('AuthRule')->whereId('in', $ruleIds)->where('level', '<>', 3)->field(['id,name,title,pid,icon,sort'])->order('sort', 'asc')->select();
-                $authList = getTree($list);
-    
-            } else if (2 === config('auth.auth')['auth_type'] && !Session::has('_auth_list_' . $this->uid)) {
-                $groupIds = Db::name('AuthGroupAccess')->whereUid('=', $userRow['id'])->column('group_id');
-
-                $ruleIds = Db::name('AuthGroup')->whereId('in', $groupIds)->column('rules');
-                $ruleIds = explode(',', implode(',', $ruleIds));
-                $list = Db::name('AuthRule')->whereId('in', $ruleIds)->where('level', '<>', 3)->field(['id,name,title,pid,icon,sort'])->order('sort', 'asc')->select();
-                $authList = getTree($list);
-                Session::set('_auth_list_' . $this->uid, $authList);
-                Session::set('_auth_groups_' . $this->uid, $groupIds);
-            }else{
+            if (2 === config('auth.auth')['auth_type'] && Session::has('_auth_list_' . $this->uid)) {
                 $authList = Session::get('_auth_list_' . $this->uid);
+                $this->groupIds = Session::get('_auth_groups_' . $this->uid);
+            } else {
+                $groupIds = Db::name('AuthGroupAccess')->whereUid('=', $userRow['id'])->column('group_id');
+
+                $ruleIds = Db::name('AuthGroup')->whereId('in', $groupIds)->column('rules');
+                $ruleIds = explode(',', implode(',', $ruleIds));
+                $list = Db::name('AuthRule')->whereId('in', $ruleIds)->where('level', '<>', 3)->field(['id,name,title,pid,icon,sort'])->order('sort', 'asc')->select();
+
+                $authList = getTree($list);
                 $this->groupIds = Session::get('_auth_groups_' . $this->uid);
             }
 
