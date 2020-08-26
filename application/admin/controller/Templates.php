@@ -125,7 +125,7 @@ class Templates extends Base
             unset($params['endTime']);
 
             $tInfo['params'] = $params;
-            // halt($tInfo);
+            // return($tInfo);
             $res = model('Templates')->editByHand($tInfo);
             if ($res == 1) {
                 $redis = new Redis();
@@ -149,9 +149,9 @@ class Templates extends Base
         #获取显示在页面的数据列表
 
         $this->assign([
+            'keys' => $keys,
             'optionList' => $tInfo['options'],
             'tInfo' => $tInfo,
-            'keys' => $keys,
             'formLength' => sizeof($tInfo['options']) + 1,
         ]);
         return view();

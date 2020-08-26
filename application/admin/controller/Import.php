@@ -30,7 +30,9 @@ class Import extends Base
                 return $this->error($res);
             }
         }
-
+        $this->assign([
+            'showKeys'=>'true'
+        ]);
         return view();
     }
 
@@ -43,9 +45,10 @@ class Import extends Base
         if (request()->isAjax()) {
 
             $tInfo = session('tInfo');
-            $tInfo['primaryKey'] = input('post.primaryKey');
-            $tInfo['myData'] = input('post.myData');
-
+            $tInfo['primaryKey'] = input('post.primaryKey',"");
+            $tInfo['myData'] = input('post.myData',0);
+            $tInfo['endTime'] = strtotime(input('post.endTime'));
+            // return $tInfo;
             $res = model('Templates')->createByFile($tInfo);
 
             if ($res == 1) {
@@ -69,7 +72,6 @@ class Import extends Base
                 $keys[$k] = $v['title'];
             }
         }
-        // dump($optionList);
         $this->assign([
             'keys'=>$keys,
             'optionList' => $optionList,

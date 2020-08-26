@@ -37,6 +37,7 @@
         $(".time-radio").click(function () {
             if ($(this).is(":checked")) {
                 $(this).val(0);
+                $("#endTime").val("");
                 $("#endTime").attr("disabled", "disabled").css("background", "#e4e4e4");
             } else {
                 $(this).val(1);
@@ -59,63 +60,68 @@
                     var myData = $("#primaryKeyData").val();
                     var primaryKey = $("#primaryKey").val();
                     var endTime = $("#endTime").val();
-                    var data = $('#subForm').serialize()
 
-                    if (ifUseData == "1") {
-                        data = data + '&' + $.param({ 'myData': myData, })
-                    }
-                    if (ifUseKey == "1") {
-                        data = data + '&' + $.param({ 'primaryKey': primaryKey, })
-                    }
-                    if (ifUseEnd == 0 || endTime == null) {
-                        endTime = 0;
-                    }
-                    data = data + '&' + $.param({ 'endTime': endTime, })
+                    if ($("#formType").val() == "word") {
+                        var formdata = new FormData(document.getElementById('subForm'));
+                        formdata.append("wordfile", $("#tempalteFile")[0].files[0]);
 
-                    $.ajax({
-                        url: dataUrl,
-                        type: "post",
-                        dataType: 'json',
-                        data: data,
-                        success: function (data) {
-                            if (data.code == 1) {
-                                showMsgAndHref(data)
-                            } else {
-                                showErrorMsg(data.msg)
-                            }
-                        },
-                    });
+                        if (ifUseData == "1") {
+                            formdata.append('myData', myData)
+                        }
+                        if (ifUseKey == "1") {
+                            formdata.append('primaryKey', primaryKey)
+                        }
+                        if (ifUseEnd == 0 || endTime == null) {
+                            endTime = 0;
+                        }
+                        formdata.append('endTime', endTime)
+
+                        $.ajax({
+                            url: dataUrl,
+                            type: "post",
+                            async: false,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            data: formdata,
+                            success: function (data) {
+                                if (data.code == 1) {
+                                    showMsgAndHref(data)
+                                } else {
+                                    showErrorMsg(data.msg)
+                                }
+                            },
+                        });
+                    } else {
+                        var formdata = $('#subForm').serialize()
+
+                        if (ifUseData == "1") {
+                            formdata = formdata + '&' + $.param({ 'myData': myData, })
+                        }
+                        if (ifUseKey == "1") {
+                            formdata = formdata + '&' + $.param({ 'primaryKey': primaryKey, })
+                        }
+                        if (ifUseEnd == 0 || endTime == null) {
+                            endTime = 0;
+                        }
+                        formdata = formdata + '&' + $.param({ 'endTime': endTime, })
+                        $.ajax({
+                            url: dataUrl,
+                            type: "post",
+                            dataType: 'json',
+                            data: formdata,
+                            success: function (data) {
+                                if (data.code == 1) {
+                                    showMsgAndHref(data)
+                                } else {
+                                    showErrorMsg(data.msg)
+                                }
+                            },
+                        });
+                    }
                 },
             });
 
-        $(".excelInitTemplate").click(function () {
-            var myData = $("#primaryKeyData").val();
-            var ifUseData = $("input[name='ifUseData']:checked").val();
-            var ifUseKey = $("input[name='ifUseKey']:checked").val();
-            var primaryKey = $("#primaryKey").val();
-            var data;
 
-            if (ifUseData == "1") {
-                data = data + '&' + $.param({ 'myData': myData, })
-            }
-
-            if (ifUseKey == "1") {
-                data = data + '&' + $.param({ 'primaryKey': primaryKey, })
-            }
-
-            $.ajax({
-                method: "post",
-                url: "{:url('admin/import/Second')}",
-                data: data,
-                dataType: 'json',
-                success: function (data) {
-                    if (data.code == 1) {
-                        showMsgAndHref(data)
-                    } else {
-                        showErrorMsg(data.msg)
-                    }
-                }
-            })
-        })
     });
 </script>

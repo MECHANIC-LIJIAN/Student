@@ -17,12 +17,12 @@
                 <div class="widget-body">
                     <!-- <p class="alert alert-danger">目前系统支持的最大字段数为25</p> -->
                     <div class="form-group">
-                        <a href="{:url('admin/Import/First')}" style="margin-right: 10px;">
+                        <a href="{:url('admin/Import/First',['sid'=>$Think.get.sid])}" style="margin-right: 10px;">
                             <button class="btn btn-primary btn-lg">文件导入</button>
                         </a>
-                        <a href="{:url('admin/Hand/index')}" style="margin-right: 10px;">
+                        <a href="{:url('admin/Hand/index',['sid'=>$Think.get.sid])}" style="margin-right: 10px;">
                             <button class="btn btn-primary btn-lg">手动创建</button>
-                        </a>   <a href="{:url('admin/Hand/word')}" style="margin-right: 10px;">
+                        </a>   <a href="{:url('admin/Hand/word',['sid'=>$Think.get.sid])}" style="margin-right: 10px;">
                             <button class="btn btn-primary btn-lg">手动创建word表单</button>
                         </a>
                     </div>

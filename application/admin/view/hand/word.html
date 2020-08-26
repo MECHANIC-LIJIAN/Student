@@ -3,7 +3,7 @@
 {block name="title"}创建word表单{/block}
 {block name="page-breadcrumb"}
 <li>创建表单</li>
-<li class="active">手动创建word表单</li>
+<li class="active">创建word表单</li>
 {/block}
 {block name="page-style"}
 <link href="__CSS__/main.css" rel="stylesheet">
@@ -20,11 +20,12 @@
                 <span class="widget-caption">手动创建word表单</span>
             </div>
             <div class="widget-body">
-                <div class="alert alert-warning" style="font-size:1.2em;width: 50%;">
+                <div class="alert alert-warning" style="font-size:1.2em;">
                     <ul class="fa-ul">
                         <li>
                             <i class="fa fa-exclamation-triangle fa-li fa-lg" aria-hidden="true"></i>
-                            &lt;<font style="color: red;">文件名</font>&gt;的命名规则应该是唯一的，比如学号，手机号，或其他定义的规则，应在"表单说明"里说明，且使用word模板的表单创建后无法编辑</li>
+                            &lt;<font style="color: red;">文件名</font>
+                            &gt;的命名规则应该是唯一的，比如学号，手机号，或其他定义的规则，应在"表单说明"里说明，且使用word模板的表单创建后无法编辑</li>
                     </ul>
 
                 </div>
@@ -83,56 +84,13 @@
 
                     <div class="col-lg-6 form-horizontal">
                         <div>
-                            <form class="form-box hidden">
-                                <div class="well">
-                                    <div class="myKey">
-                                        <h5>请选择唯一标识字段</h5>
-                                        <select class="select" name="primaryKey" id="primaryKey">
-                                            <option value="option_1">文件名</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="well mydata-box hidden">
-                                    <div>
-                                        <h4>
-                                            <font color="red"
-                                                style="position:relative; top:5px;font-weight:bold;font-size:16px">*
-                                            </font>
-                                            是否使用自定义数据集
-                                        </h4>
-                                        <label>
-                                            <input type="radio" name="ifUseData" class="data-radio i-radio" value="1">
-                                            <span class="s-radio"></span>使用
-                                        </label>
-
-                                        <label>
-                                            <input type="radio" name="ifUseData" class="data-radio i-radio" value="0"
-                                                checked>
-                                            <span class="s-radio"></span>不使用
-                                        </label>
-                                    </div>
-                                    <div class="hidden myData">
-                                        <h5>请选择数据集</h5>
-                                        {neq name="Think.session.myData|count" value="0"}
-                                        <select class="select" name="primaryKeyData" id="primaryKeyData"
-                                            style="margin-bottom: 10px;">
-                                            {volist name="Think.session.myData" id="vo"}
-                                            <option value="{$vo.id}">{$vo.title}</option>
-                                            {/volist}
-                                        </select>
-                                        {else /}
-                                        <p class="alert alert-warning">您还没有数据集，请新建数据集</p>
-                                        {/neq}
-                                    </div>
-                                </div>
-                            </form>
+                            {include file="public/form_right" /}
 
                             <button id="addInput" class="btn btn-info">添加文本框</button>
                             <button id="addSelect" class="btn btn-info">添加下拉菜单</button>
                             <br>
                             <br>
-                            <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
+                            <button dataid="{:url('admin/Hand/add')}" class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
                                 初始化表单</button>
                         </div>
 
@@ -147,109 +105,44 @@
 </div>
 {/block}
 {block name="page-js"}
-<script src="__JS__/jquery.validate.min.js"></script>
-<script src="__JS__/messages_zh.min.js"></script>
-<script src="__LIB__/design/designForm.js"></script>
-
+{include file="public/form_js" /}
 
 <script>
-    $(function () {
+    function copyThis(obj) {
+        var data = $(obj).val()
+        copyToClip(data)
+    }
 
-        function copyThis(obj) {
-            var data = $(obj).val()
-            copyToClip(data)
+    $("#fileBrowser").click(function () {
+        $("#tempalteFile").val("");
+        $("#tempalteFile").click();
+        $("#tempalteFile").change(function () {
+            CheckFile(this)
+            $("#fileBrowserInput").val($("#tempalteFile").val())
+        });
+    })
+    //文件上传验证.
+    function CheckFile(obj) {
+        var array = new Array('doc', 'docx'); //可以上传的文件类型 
+        if (obj.value == '') {
+            showErrorMsg("选择要上传的文件!");
+            return false;
         }
-
-        $("#fileBrowser").click(function () {
-            $("#tempalteFile").val("");
-            $("#tempalteFile").click();
-            $("#tempalteFile").change(function () {
-                CheckFile(this)
-                $("#fileBrowserInput").val($("#tempalteFile").val())
-            });
-        })
-        //文件上传验证.
-        function CheckFile(obj) {
-            var array = new Array('doc', 'docx'); //可以上传的文件类型 
-            if (obj.value == '') {
-                showErrorMsg("选择要上传的文件!");
+        else {
+            var fileContentType = obj.value.match(/^(.*)(\.)(.{1,8})$/)[3];
+            var isExists = false;
+            for (var i in array) {
+                if (fileContentType.toLowerCase() == array[i].toLowerCase()) {
+                    isExists = true;
+                    return true;
+                }
+            }
+            if (isExists == false) {
+                obj.value = null;
+                showErrorMsg("上传文件类型不正确,必须为.doc.docx!");
                 return false;
             }
-            else {
-                var fileContentType = obj.value.match(/^(.*)(\.)(.{1,8})$/)[3];
-                var isExists = false;
-                for (var i in array) {
-                    if (fileContentType.toLowerCase() == array[i].toLowerCase()) {
-                        isExists = true;
-                        return true;
-                    }
-                }
-                if (isExists == false) {
-                    obj.value = null;
-                    showErrorMsg("上传文件类型不正确,必须为.doc.docx!");
-                    return false;
-                }
-            }
         }
-
-        $(".key-radio").click(function () {
-            var value = $(this).val();
-            if (value === "1") {
-                $(".myKey").removeClass("hidden").addClass("show")
-                $(".mydata-box").removeClass("hidden").addClass("show")
-            } else {
-                $(".form-box")[0].reset();
-                $(".myKey").removeClass("show").addClass("hidden")
-                $(".mydata-box").removeClass("show").addClass("hidden")
-            }
-        })
-        $(".data-radio").click(function () {
-            var value = $(this).val();
-            if (value === "1") {
-                $(".myData").removeClass("hidden").addClass("show")
-            } else {
-                $(".myData").removeClass("show").addClass("hidden")
-            }
-        })
-        $(".initTemplate").click(function () {
-            $(".confirm").click()
-            $("#subForm").submit()
-        })
-        $("#subForm").validate({
-            submitHandler: function (form) {
-                var ifUseData = $("input[name='ifUseData']:checked").val();
-                var myData = $("#primaryKeyData").val();
-                var primaryKey = $("#primaryKey").val();
-                var formdata = new FormData(document.getElementById('subForm'));
-
-                formdata.append("wordfile", $("#tempalteFile")[0].files[0]);
-
-                formdata.append('primaryKey', primaryKey)
-
-
-                if (ifUseData == "1") {
-                    formdata.append('myData', myData)
-                }
-
-                $.ajax({
-                    url: "{:url('admin/Hand/add')}",
-                    type: "post",
-                    async: false,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    data: formdata,
-                    success: function (data) {
-                        if (data.code == 1) {
-                            showMsgAndHref(data)
-                        } else {
-                            showErrorMsg(data.msg)
-                        }
-                    },
-                });
-            },
-        });
-
-    });
+    }
 </script>
 {/block}

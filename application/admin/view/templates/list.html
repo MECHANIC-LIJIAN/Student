@@ -23,12 +23,12 @@
                             <tr>
                                 <th>表单名</th>
                                 {present name="$display"}<th>用户名</th>{/present}
+                                <th>状态</th>
+                                <th colspan="3">操作</th>
                                 <th>类型</th>
                                 <th>数据集</th>
                                 <th>唯一列</th>
                                 <th>截止时间</th>
-                                <th>状态</th>
-                                <th colspan="3">操作</th>
                                 <th>创建时间</th>
                             </tr>
                         </thead>
@@ -38,37 +38,7 @@
                                 <td><a href="{:url('admin/Template/index',['id'=>$vo.tid,'sid'=>'2'])}" target="_blank"
                                         style="font-size:14px">{$vo.tname}</a> </td>
                                 {present name="$display"}<td>{$vo.get_user.username}</td>{/present}
-                                <td>
-                                    <span class="tempalte-type" status="{$vo.status}">
-                                        {if $vo.ttype==1}
-                                        <i class="fa fa-2x fa-file-word-o" title="带有word模板"></i>
-                                        {else /}
-                                        <i class="fa fa-2x fa-table" title="普通表单"></i>
-                                        {/if}
-                                    </span>
-                                </td>
-                                <td>
-                                    {notempty name="$vo.mydata"}
-                                    {$vo.mydata}
-                                    {else /}
-                                    无
-                                    {/notempty}
-                                </td>
-                                <td>
-                                    {notempty name="$vo.primaryKey"}
-                                    {$vo.primaryKey}
-                                    {else /}
-                                    无
-                                    {/notempty}
-                                </td>
-                                <td>
-                                    {if $vo.endTime!=0}
-                                    {$vo.endTime}
-                                    {else /}
-                                    无
-                                    {/if}
-                                </td>
-
+                                
                                 {if $vo.status==1}
                                 <td>
                                     <span class="tempalte-status badge badge-pill badge-success"
@@ -105,6 +75,37 @@
                                         class=""><span class="fa"></span>编辑</a>
                                     {/if}
                                 </td>
+                                <td>
+                                    <span class="tempalte-type" status="{$vo.status}">
+                                        {if $vo.ttype==1}
+                                        <i class="fa fa-2x fa-file-word-o" title="带有word模板"></i>
+                                        {else /}
+                                        <i class="fa fa-2x fa-table" title="普通表单"></i>
+                                        {/if}
+                                    </span>
+                                </td>
+                                <td>
+                                    {notempty name="$vo.mydata"}
+                                    {$vo.mydata}
+                                    {else /}
+                                    无
+                                    {/notempty}
+                                </td>
+                                <td>
+                                    {notempty name="$vo.primaryKey"}
+                                    {$vo.primaryKey}
+                                    {else /}
+                                    无
+                                    {/notempty}
+                                </td>
+                                <td>
+                                    {if $vo.endTime!=0}
+                                    {$vo.endTime}
+                                    {else /}
+                                    无
+                                    {/if}
+                                </td>
+
                                 <td>{$vo.create_time|date='Y年m月d日 H:i'}</td>
 
                             </tr>

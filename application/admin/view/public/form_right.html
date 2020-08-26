@@ -1,15 +1,29 @@
 <div class="well">
-        <div>
-            <h4>表单截止时间</h4>
-            <div class="input-group">
-                <input name="endTime" type="text" autocomplete="off" id="endTime" class="form-control" {if $tInfo.endTime==0}disabled{else /} value="{$tInfo.endTime|date='Y-m-d H:i:s'}" {/if}>
-                
-            </div><label>
-                <input type="checkbox" name="ifUseEnd" class="time-radio i-radio"  {if $tInfo.endTime==0}value="0" checked{/if}>
-                <span class="s-radio"></span>不设置
-            </label>
+    <div>
+        <h4>表单截止时间</h4>
+        {present name="tInfo"}
+        <div class="input-group">
+            <input name="endTime" type="text" autocomplete="off" id="endTime" class="form-control" {if
+                $tInfo.endTime==0}disabled{else /} value="{$tInfo.endTime|date='Y-m-d H:i:s'}" {/if}>
         </div>
+        <label>
+            <input type="checkbox" name="ifUseEnd" class="time-radio i-radio" {if $tInfo.endTime==0}value="0"
+                checked{/if}>
+            <span class="s-radio"></span>不设置
+        </label>
+
+        {else /}
+        <div class="input-group">
+            <input name="endTime" type="text" autocomplete="off" id="endTime" class="form-control" disabled>
+        </div>
+        <label>
+            <input type="checkbox" name="ifUseEnd" class="time-radio i-radio" value="0" checked>
+            <span class="s-radio"></span>不设置
+        </label>
+        {/present}
+        
     </div>
+</div>
 <form class="form-box">
     <div class="well">
         <div>
@@ -17,21 +31,26 @@
                 <font color="red" style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
                 是否指定唯一标识字段
             </h4>
+            {if $tInfo.primaryKey==""}
+            <input type="text" name="ifShowKey" id="" class="hiiden">
+            {/if} 
             <label>
                 <input type="radio" name="ifUseKey" class="key-radio i-radio" value="1">
                 <span class="s-radio"></span>指定
             </label>
             <label>
-                <input type="radio" name="ifUseKey" class="key-radio i-radio" value="0" checked>
+                <input type="radio" name="ifUseKey" class="key-radio i-radio"value="0" checked>
                 <span class="s-radio"></span>不指定
             </label>
         </div>
         <div class="hidden myKey">
             <h5>请选择唯一标识字段</h5>
             <select class="select" name="primaryKey" id="primaryKey">
+                {present name="keys"}
                 {volist name="keys" id='option'}
-                       <option value="{$key}"> {$option}</option>
-                    {/volist}
+                <option value="{$key}"> {$option}</option>
+                {/volist}
+                {/present}
             </select>
         </div>
     </div>
@@ -66,3 +85,32 @@
         </div>
     </div>
 </form>
+
+<div id="sOrg" data-content="<div class='form-inline'>
+    <label for='option_id' class='control-label'>字段1</label>
+    <input type='text' required='true' class='form-control fieldTitle' name='option_id'>
+     <label for='option_id' class='control-label'>规则</label>
+     <select class='form-control input-type' dataid='option_id' name='option_id_rule'>
+             <option value='text|required' '=''>普通文本</option>    <option value=' phone|required'>手机号
+             </option>
+             <option value='email|required'>邮箱</option>
+             <option value='number|required'>数字</option>
+             <option value='text'>非必填项</option>
+         </select>
+     <a dataid='option_id' onclick='deleteRow(this)' class='deleteRow'>删除</a>
+</div>" />
+</div>
+<div id="sOrg-w" data-content="<div class='form-inline'>
+    <label for='option_id' class='control-label'>字段1</label>
+    <input type='text' required='true' class='form-control fieldTitle' name='option_id'>
+     <label for='option_id' class='control-label'>规则</label>
+     <select class='form-control input-type' dataid='option_id' name='option_id_rule'>
+             <option value='text|required' '=''>普通文本</option>    <option value=' phone|required'>手机号
+             </option>
+             <option value='email|required'>邮箱</option>
+             <option value='number|required'>数字</option>
+             <option value='text'>非必填项</option>
+         </select>
+     <a dataid='option_id' onclick='deleteRow(this)' class='deleteRow'>删除</a><input type='button' value='复制到word' class='btn btn-success' onclick=copyToClip('${option_id}')>
+</div>" />
+</div>

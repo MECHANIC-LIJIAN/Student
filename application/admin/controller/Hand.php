@@ -13,7 +13,7 @@ class Hand extends Base
 
     public function word()
     {
-        return view('word');
+        return view();
     }
 
     public function add()
@@ -86,7 +86,7 @@ class Hand extends Base
             }
 
             $tInfo['params'] = $params;
-
+            // return($tInfo);
             $res = model('Templates')->createByHand($tInfo);
             // return $res;
             if ($res == 1) {
