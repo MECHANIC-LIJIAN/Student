@@ -160,6 +160,23 @@ class Templates extends Model
         $tInfo['options'] = $this->getFormFields($params);
 
         try {
+            $tInfo['shareUrl'] = urldecode(url('index/Template/readTemplate', ['id' => $tInfo['tid'], 'title' => $tInfo['tname']], '', true));
+
+            // 自定义二维码配置
+            $config = [
+                'content' => $tInfo['shareUrl'],
+                'title' => true,
+                'title_content' => $tInfo['tname'],
+                'logo' => false,
+                'generate' => 'writefile',
+            ];
+
+            $qr = new QrcodeServer($config);
+            $qrRes = $qr->createServer();
+            if ($qrRes['success']) {
+                $$tInfo['shareQrCode'] = "/" . $qrRes['data']['url'];
+            }
+
             $info = $this->where(['tid' => $tInfo['tid']])->find();
             $info->tname = $tInfo['tname'];
             $info->remarks = $tInfo['remarks'];
@@ -167,6 +184,8 @@ class Templates extends Model
             $info->endTime = $tInfo['endTime'];
             $info->myData = $tInfo['myData'];
             $info->options = $tInfo['options'];
+            $info->shareUrl = $tInfo['shareUrl'];
+            $info->shareQrCode = $tInfo['shareQrCode'];
             $info->update_time = time();
             // halt($info);
             $res = $info->save();
@@ -182,21 +201,21 @@ class Templates extends Model
 
         Db::startTrans();
         try {
-            $tInfo['shareUrl'] =urldecode( url('index/Template/readTemplate', ['id' => $tInfo['tid'],'title'=>$tInfo['tname']], '', true) );
+            $tInfo['shareUrl'] = urldecode(url('index/Template/readTemplate', ['id' => $tInfo['tid'], 'title' => $tInfo['tname']], '', true));
 
             // 自定义二维码配置
             $config = [
-                'content'=>$tInfo['shareUrl'],
+                'content' => $tInfo['shareUrl'],
                 'title' => true,
                 'title_content' => $tInfo['tname'],
                 'logo' => false,
-                'generate'=>'writefile'
+                'generate' => 'writefile',
             ];
 
             $qr = new QrcodeServer($config);
-            $qrRes=$qr->createServer();
-            if($qrRes['success']){
-                $tInfo['shareQrCode']="/".$qrRes['data']['url'];
+            $qrRes = $qr->createServer();
+            if ($qrRes['success']) {
+                $tInfo['shareQrCode'] = "/" . $qrRes['data']['url'];
             }
             $tInfo['create_time'] = time();
             // halt($tInfo);
