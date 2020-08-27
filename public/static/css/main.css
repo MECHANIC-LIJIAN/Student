@@ -122,7 +122,16 @@ a:hover {
   height: 20px;
 }
 
-.btn-group>.btn:not(:first-child):not(.dropdown-toggle) {
+.btn-group>.btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
   border-left: 0;
   border-right: 0;
+}
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+    outline: none;
+    box-shadow: none;
 }

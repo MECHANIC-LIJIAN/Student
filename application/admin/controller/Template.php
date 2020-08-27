@@ -19,10 +19,10 @@ class Template extends Base
             ->find();
 
         #显示在页面的字段
-        $fields[] = [
+        $options[] = [
             'checkbox' => true,
         ];
-        $fields[] = [
+        $options[] = [
             'field' => 'id',
             'title' => '编号',
             'visible' => false, //这一列隐藏
@@ -30,6 +30,7 @@ class Template extends Base
 
         $template['options'] = json_decode($template['options'], true);
 
+        $searchFields=[];
         #查询字段
         foreach ($template['options'] as $key => $value) {
             $tmp = [];
@@ -38,33 +39,35 @@ class Template extends Base
             if (!empty($template['primaryKey']) && $key == $template['primaryKey']) {
                 $tmp['sortable'] = true;
             }
-            $fields[] = $tmp;
+            if(!isset($value['options'])){
+                $searchFields[]=$tmp;
+            }
+            $options[] = $tmp;
         }
-
-        $fields[] = [
+        $options[] = [
             'field' => 'create_time',
             'title' => '首次提交时间',
             'sortable' => true,
         ];
-        $fields[] = [
+        $options[] = [
             'field' => 'update_time',
             'title' => '最后提交时间',
             'sortable' => true,
         ];
 
-        $fields = json_encode($fields);
+        $options = json_encode($options);
 
         unset($template['options']);
 
-        // session('tInfo', $template);
 
         #构造分享链接
         $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
 
         $this->assign([
             'template' => $template,
-            'fields' => $fields,
+            'options' => $options,
             'shareUrl' => $shareUrl,
+            'searchFields'=>$searchFields,
             'tId' => $tId,
         ]);
         return view();
@@ -106,9 +109,10 @@ class Template extends Base
             $order = $params['order'];
             $ordername = $params['ordername'];
             $search = $params['search'];
+            $searchField = $params['searchField'];
 
             #默认排序字段和规则
-            $fields = ['id,tid,content,create_time,update_time'];
+            $options = ['id,tid,content,create_time,update_time'];
             $orders = ['update_time' => 'desc'];
 
             #排序字段和规则
@@ -117,7 +121,7 @@ class Template extends Base
             } else {
                 $tmp = explode(".", $ordername);
                 if (count($tmp) == 2) {
-                    array_push($fields, "JSON_EXTRACT(content,'$." . $tmp[1] . "') as jsonOrder");
+                    array_push($options, "JSON_EXTRACT(content,'$." . $tmp[1] . "') as jsonOrder");
                     $orders = ['jsonOrder' => $order];
                 }
             }
@@ -127,16 +131,20 @@ class Template extends Base
 
             #模糊搜索
             if ($search != "") {
-                $map[] = ["content", 'like', "%$search%"];
-            }
+                if($searchField=="content.all"){
+                    $map[] = ["content", 'like', "%$search%"];
+                }else{
+                    $map[] = ["content->".explode(".",$searchField)[1],'like',"%$search%"];
+                }
 
+            }
             # 计算页号
             $page = floor($offset / $limit) + 1;
 
             $list = model('TemplatesDatas')
                 ->where($map)
                 ->json(['content'])
-                ->field($fields)
+                ->field($options)
                 ->order($orders)
                 ->page($page, $limit)
                 // ->fetchSql()
@@ -154,22 +162,27 @@ class Template extends Base
         }
     }
 
+
+    /**
+     * 数据导出
+     *
+     * @return void
+     */
     public function export()
     {
         #默认搜索条件
         $map[] = ['tid', '=', input('post.id')];
-        $fields = ['id,tid,content,create_time,update_time'];
+        $options = ['id,tid,content,create_time,update_time'];
         $list = model('TemplatesDatas')
             ->where($map)
             // ->json(['content'])
-            ->field($fields)
+            ->field($options)
             ->select();
 
         $outData = [];
         foreach ($list as $v) {
             array_push($outData, json_decode($v['content'], true));
         }
-
         $template = model('Templates')
             ->where('id', '=', input('post.id'))
             ->field('id,tname,options')

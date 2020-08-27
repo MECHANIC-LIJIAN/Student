@@ -21,10 +21,11 @@
         width: auto;
     }
 
-    .btn-group>.btn:not(:first-child):not(:last-child):not(.dropdown-toggle){
+    .btn-group>.btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
         border-right: 0;
         border-left: 0;
     }
+
 </style>
 
 {/block}
@@ -55,6 +56,16 @@
 
             <div id="myTabContent" class="tab-content">
                 <div id="firstPage" class="tab-pane active">
+                    <div class="checkbox">
+                        <select name="refreshTime" id="refreshTime">
+                            <option value=5000>5秒</option>
+                            <option value=10000>10秒</option>
+                            <option value=30000>30秒</option>
+                            <option value=60000>60秒</option>
+                        </select>
+                        <label>自动刷新</label>
+                        <input type="checkbox" name="" style="position: unset;margin-left: 5px;" id="lunxun" checked>
+                    </div>
                     <div id="toolbar" class="btn-group">
                         <div class="btn-group">
                             <button id="btn_delete" type="button" class="btn btn-danger">
@@ -79,7 +90,23 @@
                         </div>
 
                     </div>
-                    <table id="table" data-search="true" class="table  table-hover text-nowrap  table-condensed">
+                    <div class="pull-right search " style="margin-top: unset; float:left;">
+                        <select name="searchField" id="searchField">
+                            <option value="content.all">全部</option>
+                            {volist name="searchFields" id="vo"}
+                            <option value="{$vo.field}">{$vo.title}</option>{$vo}
+                            {/volist}
+                        </select>
+                        <input class="btn" type="text" id="searchText" placeholder="搜索">
+                        <div class="btn-group">
+                            <button id="btn_search" type="button" class="btn btn-success">
+                                <span class="fa fa-search" aria-hidden="true"></span>查询
+                            </button>
+                            <button id="btn_reset" type="button" class="btn btn-default">重置
+                            </button>
+                        </div>
+                    </div>
+                    <table id="table" class="table  table-hover text-nowrap  table-condensed">
                     </table>
                 </div>
             </div>
@@ -111,27 +138,28 @@
             sidePagination: "server", //分页方式：client客户端分页，server服务端分页（*）
             pageNumber: 1, //初始化加载第一页，默认第一页
             pageSize: 15, //每页的记录行数（*）
-            pageList: [15,25, 50, 100], //可供选择的每页的行数（*）
+            pageList: [15, 25, 50, 100], //可供选择的每页的行数（*）
             showRefresh: false, //是否显示刷新按钮
-            showSearch: true,
+            showSearch: false,
             minimumCountColumns: 2, //最少允许的列数
             clickToSelect: true, //是否启用点击选中行
             // height: 750, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
             uniqueId: "ID", //每一行的唯一标识，一般为主键列
             detailView: false, //是否显示父子表
 
-            columns: JSON.parse('{$fields|raw}'),
+            columns: JSON.parse('{$options|raw}'),
         });
         //得到查询的参数
         function queryParams(params) {
             return {
                 //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
-                tid:"{$template.id}",
+                tid: "{$template.id}",
                 limit: params.limit, //页面大小
                 offset: params.offset,
                 order: params.order,
                 ordername: params.sort,
-                search: params.search
+                search: $("#searchText").val(),
+                searchField: $("#searchField option:selected").val()
             };
         };
 
@@ -203,6 +231,15 @@
         $('#table').bootstrapTable('refresh');
     })
 
+    $("#btn_search").click(function(){
+        $('#table').bootstrapTable('refresh');
+    })
+    $("#btn_reset").click(function(){
+        $("#searchText").val("")
+        $("#searchField").find("option:first").prop("selected",true);
+        $('#table').bootstrapTable('refresh');
+    })
+
     $("#export").click(function () {
         $.ajax({
             url: "{:url('admin/Template/export')}",
@@ -227,6 +264,42 @@
         })
     })
 
+
+    let timerId = 1 // 模拟计时器id，唯一性
+    let timerObj = {} // 计时器存储器
+    let time = 5000;
+    // 轮询
+    function start() {
+        const id = timerId++
+        timerObj[id] = true
+        let time = $("#refreshTime option:selected").val()
+        async function timerFn() {
+            if (!timerObj[id]) return
+            $('#table').bootstrapTable('refresh');
+            // console.log(timerObj)
+            // console.log(time)
+            setTimeout(timerFn, time)
+        }
+        timerFn()
+    }
+    // 暂停
+    function stop() {
+        timerObj = {}
+    }
+
+    start()
+
+    let isPlay = true
+    $("#lunxun").click(function () {
+        isPlay = $(this).is(":checked")
+        isPlay ? start() : stop()
+    })
+
+    $("#refreshTime").change(function () {
+        stop()
+        isPlay = $("#lunxun").is(":checked")
+        isPlay ? start() : stop()
+    })
 </script>
 
 {/block}
