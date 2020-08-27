@@ -164,7 +164,7 @@ class Templates extends Model
 
             // 自定义二维码配置
             $config = [
-                'content' => $tInfo['shareUrl'],
+                'content' => urldecode(url('index/Template/readTemplate', ['id' => $tInfo['tid']], '', true)),
                 'title' => true,
                 'title_content' => $tInfo['tname'],
                 'logo' => false,

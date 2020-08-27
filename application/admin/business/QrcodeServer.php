@@ -1,8 +1,8 @@
 <?php
 namespace app\admin\business;
 
-use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\LabelAlignment;
+use Endroid\QrCode\LabelMargin;
 use Endroid\QrCode\QrCode;
 
 class QrcodeServer
@@ -43,6 +43,8 @@ class QrcodeServer
      */
     public function createServer()
     {
+        $this->_title_content=mb_strlen($this->_title_content,'utf8')<20?$this->_title_content:mb_substr($this->_title_content,0,20)."\n".mb_substr($this->_title_content,20);
+        // halt($this->_title_content);
         $this->_qr = new QrCode($this->_content);
         $this->_qr->setSize($this->_size);
         $this->_qr->setWriterByName(self::WRITE_NAME);
@@ -54,7 +56,12 @@ class QrcodeServer
         $this->_qr->setBackgroundColor(self::BACKGROUND_COLOR);
         // 是否需要title
         if ($this->_title) {
-            $this->_qr->setLabel($this->_title_content, 16, null, LabelAlignment::CENTER);
+            $this->_qr->setLabel($this->_title_content, 12, null, LabelAlignment::CENTER,[
+                't' => 0,
+                'r' => 20,
+                'b' => 30,
+                'l' => 20,
+            ]);
         }
         // 是否需要logo
         if ($this->_logo) {
