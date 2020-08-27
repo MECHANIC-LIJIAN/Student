@@ -174,7 +174,7 @@ class Templates extends Model
             $qr = new QrcodeServer($config);
             $qrRes = $qr->createServer();
             if ($qrRes['success']) {
-                $$tInfo['shareQrCode'] = "/" . $qrRes['data']['url'];
+                $tInfo['shareQrCode'] = "/" . $qrRes['data']['url'];
             }
 
             $info = $this->where(['tid' => $tInfo['tid']])->find();
