@@ -36,6 +36,8 @@ class Template extends Base
             $tmp = [];
             $tmp['field'] = 'content.' . $key;
             $tmp['title'] = $value['title'];
+            #内容过长的显示格式
+            $tmp['formatter']="paramsMatter";
             if (!empty($template['primaryKey']) && $key == $template['primaryKey']) {
                 $tmp['sortable'] = true;
             }

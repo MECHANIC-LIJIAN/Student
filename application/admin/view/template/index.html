@@ -26,6 +26,17 @@
         border-left: 0;
     }
 
+    table {
+
+        table-layout: automatic;
+    }
+
+    table td {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 </style>
 
 {/block}
@@ -44,23 +55,22 @@
                         {$template.tname} 数据
                     </a>
                 </li>
-                <!-- {if $template.myData!=null}
-                    
-                    <li>
-                        <a href="#secondPage" data-toggle="tab">
-                            未填数据
-                        </a>
-                    </li>
-                    {/if} -->
+                {if $template.myData!=null}
+
+                <li>
+                    <a href="#secondPage" data-toggle="tab">
+                        未填数据
+                    </a>
+                </li>
+                {/if}
             </ul>
 
             <div id="myTabContent" class="tab-content">
                 <div id="firstPage" class="tab-pane active">
                     <div class="checkbox">
                         <select name="refreshTime" id="refreshTime">
-                            <option value=5000>5秒</option>
                             <option value=10000>10秒</option>
-                            <option value=30000>30秒</option>
+                            <option value=30000 selected>30秒</option>
                             <option value=60000>60秒</option>
                         </select>
                         <label>自动刷新</label>
@@ -91,7 +101,7 @@
 
                     </div>
                     <div class="pull-right search " style="margin-top: unset; float:left;">
-                        <select name="searchField" id="searchField">
+                        <select name="searchField" id="searchField" style="max-width: 200px;">
                             <option value="content.all">全部</option>
                             {volist name="searchFields" id="vo"}
                             <option value="{$vo.field}">{$vo.title}</option>{$vo}
@@ -106,9 +116,10 @@
                             </button>
                         </div>
                     </div>
-                    <table id="table" class="table  table-hover text-nowrap  table-condensed">
+                    <table id="table" class="table  table-hover text-nowrap table-condensed">
                     </table>
                 </div>
+                <div id="secondPage" class="tab-pane"></div>
             </div>
         </div>
     </div>
@@ -182,6 +193,20 @@
         });
     }
 
+    //内容过长显示格式
+    function paramsMatter(value, row, index, field) {
+        var span = document.createElement('span');
+        if(value!=null){
+            span.setAttribute('title', value);
+        span.innerHTML = value;
+        return span.outerHTML;
+        }
+    }
+
+
+
+
+
     var isPC = IsPC();
 
     if (isPC) {
@@ -231,12 +256,12 @@
         $('#table').bootstrapTable('refresh');
     })
 
-    $("#btn_search").click(function(){
+    $("#btn_search").click(function () {
         $('#table').bootstrapTable('refresh');
     })
-    $("#btn_reset").click(function(){
+    $("#btn_reset").click(function () {
         $("#searchText").val("")
-        $("#searchField").find("option:first").prop("selected",true);
+        $("#searchField").find("option:first").prop("selected", true);
         $('#table').bootstrapTable('refresh');
     })
 
@@ -267,7 +292,7 @@
 
     let timerId = 1 // 模拟计时器id，唯一性
     let timerObj = {} // 计时器存储器
-    let time = 5000;
+    let time = 10000;
     // 轮询
     function start() {
         const id = timerId++
