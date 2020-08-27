@@ -2,15 +2,13 @@
 
 namespace app\admin\controller;
 
-class Import extends Base
+class Import extends TemplateBase
 {
     public function First()
     {
         if (request()->isAjax()) {
             header("content-type:text/html;charset=utf-8");
-            $tInfo = [
-                'tid' => uuid(),
-                'uid' => session('admin.id'),
+            $tInfo = $this->tInfo + [
                 'tname' => input('post.tname'),
                 'remarks' => input('post.remarks',""),
                 'tFile' => input('file.tempalte'),
@@ -48,7 +46,7 @@ class Import extends Base
             $tInfo['primaryKey'] = input('post.primaryKey',"");
             $tInfo['myData'] = input('post.myData',0);
             $tInfo['endTime'] = strtotime(input('post.endTime'));
-            // return $tInfo;
+            // halt($tInfo);
             $res = model('Templates')->createByFile($tInfo);
 
             if ($res == 1) {

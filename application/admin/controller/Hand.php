@@ -4,7 +4,7 @@ namespace app\admin\controller;
 
 use Overtrue\Pinyin\Pinyin;
 
-class Hand extends Base
+class Hand extends TemplateBase
 {
     public function index()
     {
@@ -49,15 +49,13 @@ class Hand extends Base
                 $tInfo['ttype'] = 1;
             }
 
-            // halt($tInfo);
+
             if ((!array_key_exists('option_1', $params))) {
                 $this->error("请至少添加一个字段");
             }
 
             $pinyin = new Pinyin();
-            $tInfo = $tInfo + [
-                'tid' => uuid(),
-                'uid' => session('admin.id'),
+            $tInfo = $this->tInfo + [
                 'tname' => $params['templateName'],
                 'remarks' => $params['remarks'],
                 'tabbr' => $pinyin->abbr($params['templateName']),
@@ -65,7 +63,7 @@ class Hand extends Base
                 'myData' => $params['myData']?$params['myData']:0,
                 'endTime' => strtotime($params['endTime']),
             ];
-
+            // halt($tInfo);
             unset($params['templateName']);
             unset($params['primaryKey']);
             unset($params['myData']);

@@ -147,7 +147,7 @@ class Templates extends Model
         $params = $tInfo['params'];
         unset($tInfo['params']);
 
-        $tInfo['options'] =$this->getFormFields($params);
+        $tInfo['options'] = $this->getFormFields($params);
 
         return $this->saveData($tInfo);
     }
@@ -156,8 +156,8 @@ class Templates extends Model
     {
         $params = $tInfo['params'];
         unset($tInfo['params']);
-        
-        $tInfo['options'] =$this->getFormFields($params);
+
+        $tInfo['options'] = $this->getFormFields($params);
 
         try {
             $info = $this->where(['tid' => $tInfo['tid']])->find();
@@ -182,8 +182,24 @@ class Templates extends Model
 
         Db::startTrans();
         try {
-            $tInfo['shareUrl'] = url('index/Template/readTemplate', ['id' => $tInfo['tid'],'title'=>$tInfo['tname']], '', true);
+            $tInfo['shareUrl'] =urldecode( url('index/Template/readTemplate', ['id' => $tInfo['tid'],'title'=>$tInfo['tname']], '', true) );
+
+            // 自定义二维码配置
+            $config = [
+                'content'=>$tInfo['shareUrl'],
+                'title' => true,
+                'title_content' => $tInfo['tname'],
+                'logo' => false,
+                'generate'=>'writefile'
+            ];
+
+            $qr = new QrcodeServer($config);
+            $qrRes=$qr->createServer();
+            if($qrRes['success']){
+                $tInfo['shareQrCode']="/".$qrRes['data']['url'];
+            }
             $tInfo['create_time'] = time();
+            // halt($tInfo);
             $tid = Db::name('templates')->strict(false)->json(['options'])->insertGetId($tInfo);
             Db::name("templates_sum")->where('id', 1)->setInc('count');
 

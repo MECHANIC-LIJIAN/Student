@@ -8,6 +8,7 @@ use Endroid\QrCode\QrCode;
 class QrcodeServer
 {
     protected $_qr;
+    protected $_content='';
     protected $_encoding = 'UTF-8'; // 编码类型
     protected $_size = 300; // 二维码大小
     protected $_logo = false; // 是否需要带logo的二维码
@@ -16,7 +17,7 @@ class QrcodeServer
     protected $_title = false; // 是否需要二维码title
     protected $_title_content = ''; // title内容
     protected $_generate = 'display'; // display-直接显示  writefile-写入文件
-    protected $_file_name = './static/qrcode'; // 写入文件路径
+    protected $_file_name = 'uploads/qrcode'; // 写入文件路径
     const MARGIN = 30; // 二维码内容相对于整张图片的外边距
     const WRITE_NAME = 'png'; // 写入文件的后缀名
     const FOREGROUND_COLOR = ['r' => 0, 'g' => 0, 'b' => 0, 'a' => 0]; // 前景色
@@ -24,6 +25,7 @@ class QrcodeServer
 
     public function __construct($config)
     {
+        isset($config['content']) && $this->_content = $config['content'];
         isset($config['generate']) && $this->_generate = $config['generate'];
         isset($config['encoding']) && $this->_encoding = $config['encoding'];
         isset($config['size']) && $this->_size = $config['size'];
@@ -37,12 +39,11 @@ class QrcodeServer
 
     /**
      * 生成二维码
-     * @param $content //需要写入的内容
      * @return array | page input
      */
-    public function createServer($content)
+    public function createServer()
     {
-        $this->_qr = new QrCode($content);
+        $this->_qr = new QrCode($this->_content);
         $this->_qr->setSize($this->_size);
         $this->_qr->setWriterByName(self::WRITE_NAME);
         $this->_qr->setMargin(self::MARGIN);
@@ -88,7 +89,7 @@ class QrcodeServer
 
         if (!is_dir($file_name)) {
             // dump($file_name);
-            mkdir($file_name, 0700, true);
+            mkdir($file_name, 0755, true);
         }
        
         try {

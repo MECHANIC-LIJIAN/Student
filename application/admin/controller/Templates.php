@@ -16,7 +16,7 @@ class Templates extends Base
     function list() {
 
         $where = [];
-        $field = 'id,tid,uid,ttype,tname,options,myData,primaryKey,endTime,shareUrl,create_time,status';
+        $field = 'id,tid,uid,ttype,tname,options,myData,primaryKey,endTime,shareUrl,shareQrCode,create_time,status';
 
         if (!in_array(2, $this->groupIds)) {
             $where = ['uid' => session('admin.id')];
@@ -45,7 +45,6 @@ class Templates extends Base
             if ($value['myData'] != null || $value['myData'] !== '') {
                 $tmp['mydata'] = $tmp['get_my_data']['title'];
             }
-
             if ($value['primaryKey'] != null || $value['primaryKey'] !== '') {
                 $options = json_decode($tmp['options'], true);
                 $tmp['primaryKey'] = $options[$tmp['primaryKey']]['title'];

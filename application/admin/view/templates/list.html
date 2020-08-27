@@ -38,7 +38,7 @@
                                 <td><a href="{:url('admin/Template/index',['id'=>$vo.tid,'sid'=>'2'])}" target="_blank"
                                         style="font-size:14px">{$vo.tname}</a> </td>
                                 {present name="$display"}<td>{$vo.get_user.username}</td>{/present}
-                                
+
                                 {if $vo.status==1}
                                 <td>
                                     <span class="tempalte-status badge badge-pill badge-success"
@@ -66,7 +66,11 @@
                                         class="btn btn-xs btn-success"><span class="fa fa-table"></span>数据</a>
                                 </td>
                                 <td>
-                                    <a class="copy" dataid="{$vo.shareUrl}"><span class="fa"></span>分享</a>|
+                                    <a class="copy" dataid="{$vo.shareUrl}"><span class="fa"></span>分享</a>
+
+                                    <a href="#" class="shareImg" dataid="{$vo.shareQrCode}"><span
+                                            class="fa"></span>二维码</a>|
+
                                     <a href="{$vo.shareUrl}" target="_blank" class=""><span class="fa"></span>查看</a>
 
                                     {if $vo.ttype==0}
@@ -144,6 +148,22 @@
     $(".copy").click(function () {
         var data = $(this).attr('dataid')
         copyToClip(data)
+    })
+
+
+    $(".shareImg").click(function () {
+        var img = '<img src="/'+$(this).attr('dataid')+'">'
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+
+            offset: 'auto',
+            // area: ['auto'],
+            skin: 'layui-layer-nobg', //没有背景色
+            shadeClose: true,
+            content:img
+        });
     })
 </script>
 
