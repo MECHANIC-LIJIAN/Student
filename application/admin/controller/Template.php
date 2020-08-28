@@ -4,6 +4,8 @@ namespace app\admin\controller;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use think\Db;
+
 ini_set("memory_limit", "1024M");
 class Template extends Base
 {
@@ -30,19 +32,19 @@ class Template extends Base
 
         $template['options'] = json_decode($template['options'], true);
 
-        $searchFields=[];
+        $searchFields = [];
         #查询字段
         foreach ($template['options'] as $key => $value) {
             $tmp = [];
             $tmp['field'] = 'content.' . $key;
             $tmp['title'] = $value['title'];
             #内容过长的显示格式
-            $tmp['formatter']="paramsMatter";
+            $tmp['formatter'] = "paramsMatter";
             if (!empty($template['primaryKey']) && $key == $template['primaryKey']) {
                 $tmp['sortable'] = true;
             }
-            if(!isset($value['options'])){
-                $searchFields[]=$tmp;
+            if (!isset($value['options'])) {
+                $searchFields[] = $tmp;
             }
             $options[] = $tmp;
         }
@@ -61,7 +63,6 @@ class Template extends Base
 
         unset($template['options']);
 
-
         #构造分享链接
         $shareUrl = url('index/Template/readTemplate', ['id' => $tId], '', true);
 
@@ -69,7 +70,7 @@ class Template extends Base
             'template' => $template,
             'options' => $options,
             'shareUrl' => $shareUrl,
-            'searchFields'=>$searchFields,
+            'searchFields' => $searchFields,
             'tId' => $tId,
         ]);
         return view();
@@ -84,10 +85,8 @@ class Template extends Base
         if (request()->isAjax()) {
             $ids = explode(',', input('ids'));
             sort($ids, SORT_NUMERIC);
-            $result = model('TemplatesDatas')->destroy($ids);
-            // $t = model("Templates")->where('id', $tId)->field('count')->find();
-            // $t->count = $t->count - count($ids);
-            // $result = $t->save();
+            $result = Db::name('TemplatesDatas')->where('id', 'IN', $ids)->delete();
+
             if ($result) {
                 $this->success('数据删除成功');
             } else {
@@ -97,9 +96,38 @@ class Template extends Base
     }
 
     /**
+     * 获取未填写数据
+     *
+     * @return void
+     */
+    public function getNoData()
+    {
+        $tId = input('tId');
+        $template = model('Templates')
+            ->where(['id' => $tId])
+            ->field('id,primaryKey,myData')
+            ->with('getMyData')
+            ->find();
+        $noList = Db::name('MyDataOption')
+            ->where('my_data_id', $template['get_my_data']['id'])
+            ->where('content', 'NOTIN', function ($query) use ($tId, $template) {
+                $query->table('stu_templates_datas')
+                    ->where('tid', $tId)
+                    ->field("content->" . $template['primaryKey']);
+            })
+            ->column('content');
+        // ->fetchSql()
+        // halt($noList);
+        if (!empty($noList)) {
+            $this->success("请求未填写数据成功", "", $noList);
+        } else {
+            $this->success("没有未填写数据", "", []);
+        }
+    }
+
+    /**
      * 请求数据
      */
-
     public function dataList()
     {
         if (request()->isAjax()) {
@@ -133,10 +161,10 @@ class Template extends Base
 
             #模糊搜索
             if ($search != "") {
-                if($searchField=="content.all"){
+                if ($searchField == "content.all") {
                     $map[] = ["content", 'like', "%$search%"];
-                }else{
-                    $map[] = ["content->".explode(".",$searchField)[1],'like',"%$search%"];
+                } else {
+                    $map[] = ["content->" . explode(".", $searchField)[1], 'like', "%$search%"];
                 }
 
             }
@@ -164,7 +192,6 @@ class Template extends Base
         }
     }
 
-
     /**
      * 数据导出
      *
@@ -183,8 +210,12 @@ class Template extends Base
 
         $outData = [];
         foreach ($list as $v) {
-            array_push($outData, json_decode($v['content'], true));
+            $tmp=json_decode($v['content'],true);
+            $tmp['create_time']=$v['create_time'];
+            $tmp['update_time']=$v['update_time'];
+            $outData[]=$tmp;
         }
+
         $template = model('Templates')
             ->where('id', '=', input('post.id'))
             ->field('id,tname,options')
@@ -197,7 +228,10 @@ class Template extends Base
             array_push($heads, $value->title);
             array_push($keys, $key);
         }
-
+        array_push($heads, "填写时间");
+        array_push($keys, 'create_time');
+        array_push($heads, "更新时间");
+        array_push($keys, "update_time");
         $filename = $template->tname;
         return $this->outdata($filename, $outData, $heads, $keys);
 
@@ -251,11 +285,11 @@ class Template extends Base
                 //数字转字母从65开始：
                 $sheet->setCellValue(strtoupper(chr($i)) . ($key + 2), $item[$keys[$i - 65]]);
 
-                $strLen=strlen($item[$keys[$i - 65]]);
-                if($strLen>9||$strLen<21){
-                    $sheet->setCellValueExplicit(strtoupper(chr($i)) . ($key + 2), $item[$keys[$i - 65]],\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                $strLen = strlen($item[$keys[$i - 65]]);
+                if ($strLen > 9 || $strLen < 21) {
+                    $sheet->setCellValueExplicit(strtoupper(chr($i)) . ($key + 2), $item[$keys[$i - 65]], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                 }
-                
+
                 $spreadsheet->getActiveSheet()->getColumnDimension(strtoupper(chr($i)))->setWidth(20); //固定列宽
             }
 

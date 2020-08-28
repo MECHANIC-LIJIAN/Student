@@ -55,10 +55,10 @@
                         {$template.tname} 数据
                     </a>
                 </li>
-                {if $template.myData!=null}
+                {if $template.myData!=0}
 
                 <li>
-                    <a href="#secondPage" data-toggle="tab">
+                    <a href="#secondPage" id="secondTab" dataid="{$template.id}" data-toggle="tab">
                         未填数据
                     </a>
                 </li>
@@ -119,7 +119,13 @@
                     <table id="table" class="table  table-hover text-nowrap table-condensed">
                     </table>
                 </div>
-                <div id="secondPage" class="tab-pane"></div>
+                <div id="secondPage" class="tab-pane">
+                    <table id="secondTable" class="table">
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -196,15 +202,47 @@
     //内容过长显示格式
     function paramsMatter(value, row, index, field) {
         var span = document.createElement('span');
-        if(value!=null){
+        if (value != null) {
             span.setAttribute('title', value);
-        span.innerHTML = value;
-        return span.outerHTML;
+            span.innerHTML = value;
+            return span.outerHTML;
         }
     }
 
 
+    $("#secondTab").click(function () {
+        $.ajax({
+            url: "{:url('admin/Template/getNoData')}",
+            type: 'post',
+            data: {
+                tId: $(this).attr("dataid")
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.code == 1) {
+                    $("#secondTable").empty();
+                    if (data.data.length != 0) {
 
+                        var text = "<tr>";
+                        $(data.data).each(function (index, value) {
+                            index = index + 1
+                            if (index != 0 && index % 10 == 0) {
+                                text = text + "</tr><tr>"
+                            } else {
+                                text = text + "<td>" + value + "</td>"
+                            }
+                        });
+                        text = text + "</tr>"
+                        $("#secondTable").append(text);
+                    }else{
+                        $("#secondTable").append(data.msg);
+                    }
+                } else {
+                    showErrorMsg(data.msg)
+                }
+            }
+        });
+    })
 
 
     var isPC = IsPC();

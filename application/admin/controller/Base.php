@@ -20,7 +20,10 @@ class Base extends Controller
             'admin/home/logout',
             'admin/home/help',
             'admin/home/edit',
+            'admin/template/getNoData'
         ];
+
+        $exception_arth_list= array_map('strtolower', $exception_arth_list);
         // //获取到当前访问的页面
         // $module = request()->module(); //获取当前访问的模块
         // $controller = request()->controller(); //获取当前访问的控制器

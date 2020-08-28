@@ -24,6 +24,7 @@ Route::group(
         Route::group('template', function () {
             Route::rule('detail/[:id]', 'admin/Template/index', 'GET')->ext();
             Route::rule('ajax_data', 'admin/Template/dataList', 'POST')->ext('do');
+            Route::rule('ajax_no_data', 'admin/Template/getNoData', 'POST')->ext('do');
             Route::rule('ajax_del', 'admin/Template/del', 'POST')->ext('do');
             Route::rule('ajax_export', 'admin/Template/export', 'POST')->ext('do');
 
