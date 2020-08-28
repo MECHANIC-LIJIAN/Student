@@ -80,10 +80,13 @@ function getInput(option_id) {
     ' name="' +
     option_id +
     '_rule">\
-    <option value="text|required"">普通文本</option>\
+    <option value="input|required"">普通文本</option>\
     <option value="phone|required">手机号</option>\
     <option value="email|required">邮箱</option>\
     <option value="number|required">数字</option>\
+    <option value="date|required">日期</option>\
+    <option value="time|required">时间(24小时)</option>\
+    <option value="datetime|required">日期+时间</option>\
     <option value="text">非必填项</option>';
   ele = ele + "</select></td>";
 
@@ -122,7 +125,7 @@ function getSelect(option_id) {
     ele +
     '<td><input type="text" required="true" class="form-control fieldTitle" name="' +
     option_id +
-    '"><input type="text" class="hidden" value="required" name="' +
+    '"><input type="text" class="hidden" value="select|required" name="' +
     option_id +
     '_rule"></td>';
   ele =

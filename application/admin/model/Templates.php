@@ -112,12 +112,20 @@ class Templates extends Model
             #拼接字段名
             $option = 'option_' . $col;
             $optionList[$option]['title'] = $excelData[$col][1];
-            $optionList[$option]['rule'] = 'text|required';
-            for ($row = 2; $row <= count($excelData[$col]); $row++) {
-                $optionList[$option]['options'][$option . "_" . ($row - 1)] = $excelData[$col][$row];
+            if (count($excelData[$col]) > 1) {
+                $optionList[$option]['rule'] = 'select|required';
+                $optionList[$option]['type'] = 'select';
+                for ($row = 2; $row <= count($excelData[$col]); $row++) {
+                    $optionList[$option]['options'][$option . "_" . ($row - 1)] = $excelData[$col][$row];
+                }
+            } else {
+                $optionList[$option]['rule'] = 'input|required';
+                $optionList[$option]['type'] = 'input';
             }
             $tFields[$option] = $excelData[$col][1];
         }
+        // halt($optionList);
+
         #存储可存入数据库的数据
         session('tData', $optionList);
         return $optionList;
@@ -257,16 +265,17 @@ class Templates extends Model
             #分割字段 option_A,option_A_rule
             $temp = explode("_", $key);
             if (count($temp) == 2) {
-                #单选项
+                #字段名和规则
                 $tFields[$key]['title'] = $value;
                 $tFields[$key]['rule'] = $fields[$key . "_rule"];
-            } elseif ($temp[2] != "rule") {
-                #多选项
+                $tFields[$key]['type'] = explode("|",$fields[$key . "_rule"])[0];
+            } else if ($temp[2] != "rule") {
+                #多选项的候选项
                 $pId = implode("_", array_splice($temp, 0, 2));
                 $tFields[$pId]['options'][$key] = $value;
             }
         }
-
+// halt($tFields);
         return $tFields;
     }
     // public function getTemplates()

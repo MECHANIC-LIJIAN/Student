@@ -173,7 +173,10 @@ function getFieldType($rule){
         'email'=>"邮箱",
         'phone'=>"手机号",
         'number'=>"数字",
-        'text'=>"普通文本",
+        'input'=>"普通文本",
+        'date'=>"日期",
+        'time'=>"时间",
+        'datetime'=>"日期时间",
     ];
     $tmp=explode("|",$rule);
     if(count($tmp)==1){

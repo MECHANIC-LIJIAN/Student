@@ -35,7 +35,7 @@ class Admin extends Validate
       //修改场景验证
       public function sceneEdit()
       {
-          return $this->only(['username','password','email'])->remove('email', 'unique')->remove('password', 'max');
+          return $this->only(['username','password','email'])->remove('username', 'unique')->remove('email', 'unique')->remove('password', 'max');
       }
 
     //注册场景验证

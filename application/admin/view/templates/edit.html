@@ -46,26 +46,31 @@
                                                 name="{$key}" value="{$option.title}"></td>
                                         {notpresent name="$option.options"}
                                         <td><label for="{$key}" class="control-label">规则</label></td>
-                                        <td style="width: 25%;"><select class="form-control input-type" dataid="{$key}"
+                                        <td style="width: 25%;">
+                                            <select class="form-control input-type" dataid="{$key}"
                                                 name="{$key}_rule">
                                                 <option value="{$option.rule}">{$option.rule|getFieldType}</option>
-                                                <option value="text|required">普通文本</option>
+                                                <option value="input|required">普通文本</option>
                                                 <option value="phone|required">手机号</option>
                                                 <option value="email|required">邮箱</option>
                                                 <option value="number|required">数字</option>
+                                                <option value="date|required">日期</option>
+                                                <option value="time|required">时间(24小时)</option>
+                                                <option value="datetime|required">日期+时间</option>
                                                 <option value="text">非必填项</option>
                                             </select>
                                         </td>
                                         {else /}
-                                        <input type="text" class="hidden" value="required" name="{$key}_rule">
                                         <td style="width: 50px;">
+                                        <input type="text" class="hidden" value="select|required" name="{$key}_rule">
+
                                             <select class="form-control" required="true" id="{$key}_options">
                                                 {volist name="option.options" id="vo"}
                                                 <option name="{$key}">{$vo}</option>
                                                 {/volist}
                                             </select>
                                             {volist name="option.options" id="vo"}
-                                            <input type="hidden" value="{$vo}" name="{$key}" class="hidden">
+                                            <input type="text" value="{$vo}" name="{$key}" class="hidden">
                                             {/volist}
                                         </td>
                                         {/notpresent}

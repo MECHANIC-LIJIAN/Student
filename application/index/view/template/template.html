@@ -16,7 +16,7 @@
     <!-- <link href="__CSS__/bootstrap-theme.min.css" rel="stylesheet"> -->
     <!-- <link href="__CSS__/span-awesome.min.css" rel="stylesheet"> -->
     <link href="__CSS__/index.css" rel="stylesheet">
-
+    <script src="__LIB__/laydate/laydate.js"></script>
 </head>
 
 
@@ -24,7 +24,6 @@
     <div class="container" style="margin-top: 50px;margin-bottom: 50px;">
         <div class="row  col-lg-offset-1">
             <div class="col-lg-10 form-block-background" style="padding-bottom:20px;padding-top:20px;">
-                {notpresent name="$info"}
                 <form class="form-horizontal" role="form" id="subForm" autocomplete="off">
                     <legend style="text-align: center;font-size:24px;">{$template.tname}</legend>
                     <!-- 倒计时 -->
@@ -39,8 +38,6 @@
                     </div>
                     {/neq}
                     {volist name="optionList" id="vo" key="k"}
-                    {notpresent name="$vo.options"}
-                    <!-- 输出input -->
                     <div class="form-group">
                         <label for="{$key}" class="col-lg-12">
                             <span class="blod">{$k}.&nbsp;&nbsp;</span>
@@ -50,22 +47,45 @@
                             </span>
                             {/neq}
                         </label>
+                        {switch vo.type}
+                        {case date}
                         <div class="col-lg-12">
-                            <input type="text" class="form-control  {$vo.rule|split}" id="{$key}" name="{$key}">
+                            <input type="text" class="form-control" id="{$key}" name="{$key}">
                         </div>
-                    </div>
-                    {else /}
-                    <!-- 输出select -->
-                    {elt name="$vo.options|count" value="4"}
-                    <div class="form-group">
-                        <label for="{$key}" class="col-lg-12">
-                            <span class="blod">{$k}.&nbsp;&nbsp;</span>
-                            {$vo.title}
-                            {neq name="$vo.rule" value="text"}
-                            <span class="redInfo">*
-                            </span>
-                            {/neq}
-                        </label>
+                        <script>
+                            laydate.render({
+                                elem: '#' + "{$key}" //指定元素
+                                , type: 'date'
+                                ,formact:'yyyy年MM月dd日'
+                                // , min: date.toLocaleString(),
+                            });
+                        </script>
+                        {/case}
+                        {case time}
+                        <div class="col-lg-12">
+                            <input type="text" class="form-control" id="{$key}" name="{$key}">
+                        </div>
+                        <script>
+                            laydate.render({
+                                elem: '#' + "{$key}" //指定元素
+                                , type: 'time'
+                            });
+                        </script>
+                        {/case}
+                        {case datetime}
+                        <div class="col-lg-12">
+                            <input type="text" class="form-control" id="{$key}" name="{$key}">
+                        </div>
+                        <script>
+                            laydate.render({
+                                elem: '#' + "{$key}" //指定元素
+                                , type: 'datetime'
+                            });
+                        </script>
+                        {/case}
+                        {case select}
+                        <!-- 输出select -->
+                        {elt name="$vo.options|count" value="4"}
                         <div class="col-lg-10">
                             <ul class="list-group">
                                 {foreach name="vo.options" item="voo" key="kk"}
@@ -75,17 +95,7 @@
                                 {/foreach}
                             </ul>
                         </div>
-                    </div>
-                    {else /}
-                    <div class="form-group">
-                        <label for="{$key}" class="col-lg-12">
-                            <span class="blod">{$k}.&nbsp;&nbsp;</span>
-                            {$vo.title}
-                            {neq name="$vo.rule" value="text"}
-                            <span class="redInfo">*
-                            </span>
-                            {/neq}
-                        </label>
+                        {else /}
                         <div class="col-lg-10">
                             <select class="form-control" required="true" name="{$key}">
                                 <option value="">--请选择--</option>
@@ -94,9 +104,15 @@
                                 {/volist}
                             </select>
                         </div>
+                        {/elt}
+                        {/case}
+                        {default /}
+                        <!-- 默认输出input -->
+                        <div class="col-lg-12">
+                            <input type="text" class="form-control  {$vo.rule|split}" id="{$key}" name="{$key}">
+                        </div>
+                        {/switch}
                     </div>
-                    {/elt}
-                    {/notpresent}
                     {/volist}
                     <div class="form-group" style="margin-top: 50px;">
                         <input type="button" style="height: 40px;" class="btn btn-info form-control" id="submitOpt"
@@ -105,9 +121,6 @@
 
                     <input type="hidden" name="tid" value="{$template.tid}">
                 </form>
-                {else /}
-                <h1>{$info}</h1>
-                {/notpresent}
             </div>
         </div>
     </div>
@@ -124,6 +137,12 @@
         $("#submitOpt").click(function () {
             $("#subForm").submit();
         });
+
+        $.validator.addMethod("phone", function (value, element) {
+            var length = value.length;
+            var mobile = /^(13[0-9]{9})|(18[0-9]{9})|(14[0-9]{9})|(17[0-9]{9})|(15[0-9]{9})$/;
+            return this.optional(element) || (length == 11 && mobile.test(value));
+        }, "请正确填写您的手机号码");
 
         $("#subForm").validate({
             submitHandler: function (form) {
@@ -152,10 +171,10 @@
 
 
         var timerID = null;
-        var flag=1;
+        var flag = 1;
         function TimeDown(id, endDate) {
             var t;
-            if (parseInt(endDate) > 0&&flag==1) {
+            if (parseInt(endDate) > 0 && flag == 1) {
                 //当前时间
                 var nowDate = Math.round(new Date().getTime() / 1000);
                 //相差的总秒数
