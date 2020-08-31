@@ -43,9 +43,8 @@ class Template extends Base
             if (!empty($template['primaryKey']) && $key == $template['primaryKey']) {
                 $tmp['sortable'] = true;
             }
-            if (!isset($value['options'])) {
-                $searchFields[] = $tmp;
-            }
+
+            $searchFields[] = $tmp;
             $options[] = $tmp;
         }
         $options[] = [
@@ -166,8 +165,8 @@ class Template extends Base
                 } else {
                     $map[] = ["content->" . explode(".", $searchField)[1], 'like', "%$search%"];
                 }
-
             }
+
             # 计算页号
             $page = floor($offset / $limit) + 1;
 
