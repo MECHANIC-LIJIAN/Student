@@ -12,6 +12,8 @@ class Template extends Controller
     private $template = [];
     private $redisKey = "";
     private $redis;
+    private $datas;
+    private $params;
 
     public function initialize()
     {
@@ -78,6 +80,26 @@ class Template extends Controller
             $this->redis->del($this->redisKey);
             $this->error('该表单已经停止提交');
         }
+
+        if (request()->isAjax()) {
+            $data['tid'] = $this->template['id'];
+            #接受页面参数
+            foreach ($this->template['fields'] as $value) {
+                $input=input("post.$value");
+                if(empty(trim($input))){
+                    $this->error("输入内容不能为空");
+                }
+                if (!sensitive($input)) {
+                    $this->error('"'.$input.'"包含敏感词');
+                }
+                $params[$value] = $input;
+            }
+
+            $data['content'] = json_encode($params);
+            $data['update_time'] = time();
+            $this->data=$data;
+            $this->params=$params;
+        }
     }
 
     /**
@@ -105,28 +127,29 @@ class Template extends Controller
     public function collect()
     {
         if (request()->isAjax()) {
-            $data['tid'] = $this->template['id'];
-            #接受页面参数
-            foreach ($this->template['fields'] as $value) {
-                $params[$value] = input("post.$value");
-            }
+            // $data['tid'] = $this->template['id'];
+            // #接受页面参数
+            // foreach ($this->template['fields'] as $value) {
+            //     $params[$value] = input("post.$value");
+            // }
 
-            $data['content'] = json_encode($params);
-            $data['create_time'] = time();
-            $data['update_time'] = time();
-
+            // $data['content'] = json_encode($params);
+            // $data['create_time'] = time();
+            // $data['update_time'] = time();
+            $this->data['create_time']=time();
             #判断是否有主键
             if (!empty($this->template['primaryKey'])) {
                 #找出提交数据的唯一字段的值
-                $keyContent = $params[$this->template['primaryKey']['field']];
+                $keyContent = $this->params[$this->template['primaryKey']['field']];
 
                 #判断数据是否存在
                 $res = model('Templates')->ifExist($this->template, $keyContent);
-                if ($res == 1) {
+                if ($res) {
                     #数据存在，返回确认信息
                     return json([
                         'code' => 101,
                         'msg' => "该记录已存在，确认覆盖吗?",
+                        'data' =>$res
                     ]);
                 }
 
@@ -140,9 +163,8 @@ class Template extends Controller
             }
 
             #保存新数据
-            $res = model('Templates')->saveData($this->template, $data);
+            $res = model('Templates')->postData($this->data);
             if ($res == 1) {
-                
                 $this->success('提交成功！', url('index/index/index',['msg'=>"感谢您在《".$this->template['tname']."》的提交。"]));
             } else {
                 $this->error($res);
@@ -152,16 +174,18 @@ class Template extends Controller
 
     public function collectUpdate()
     {
-        $data['tid'] = $this->template['id'];
-        #接受页面参数
-        foreach ($this->template['fields'] as $value) {
-            $params[$value] = input("post.$value");
-        }
+        // $data['tid'] = $this->template['id'];
+        // #接受页面参数
+        // foreach ($this->template['fields'] as $value) {
+        //     $params[$value] = input("post.$value");
+        // }
 
-        $data['content'] = json_encode($params);
-        $data['update_time'] = time();
+        // $data['content'] = json_encode($params);
+        // $data['update_time'] = time();
         #是覆盖确认，更新数据
-        $res = model('TemplatesDatas')->allowField(true)->save($data, ['id' => cookie('dataid')]);
+        
+        $this->data['id']=input('recordid');
+        $res = model('Templates')->updatePostData($this->data);
         if ($res) {
             $this->success('数据更新成功！', url('index/index/index',['msg'=>"感谢您在《".$this->template['tname']."》的提交。"]));
         } else {

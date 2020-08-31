@@ -34,6 +34,34 @@ class DataToMysql extends Controller
         }
     }
 
+
+    public function updateDatasToMysql()
+    {
+        $redis = new Redis();
+        $redisKey = 'updatedatalists';
+        while (true) {
+            $datas = $redis->lRange($redisKey, 0, -1);
+            foreach ($datas as &$value) {
+                $value = unserialize($value);
+            }
+            // 启动事务
+            Db::startTrans();
+            try {
+                model('TemplatesDatas')->saveAll($datas);
+                // 提交事务
+                Db::commit();
+                $redis->del($redisKey);
+            } catch (\Exception $e) {
+                // 回滚事务
+                Db::rollback();
+                Log::write($e->getMessage(), 'error');
+            }
+            sleep(5);
+        }
+    }
+
+
+
     public function getTestdatas()
     {
 

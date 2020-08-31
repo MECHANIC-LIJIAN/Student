@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 
 // 应用公共文件
-
+use PHPMailer\PHPMailer\Exception;
 /**
  * @param $data array  数据
  * @param $pid  string 父级元素的名称 如 parent_id
@@ -18,20 +18,20 @@
  * @param $p_id     int    父级元素的id 实际上传递元素的主键
  * @return array
  */
-function getTree($data, $pid='pid', $id='id', $p_id = 0)
+function getTree($data, $pid = 'pid', $id = 'id', $p_id = 0)
 {
     $tmp = array();
     foreach ($data as $key => $value) {
         if ($value[$pid] === $p_id) {
             $value['child'] = getTree($data, $pid, $id, $value[$id]);
-            $tmp[]  = $value;
+            $tmp[] = $value;
         }
     }
     return $tmp;
 }
 
-use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use SensitiveFilter\SensitiveFilter;
 ini_set("error_reporting", "E_ALL & ~E_NOTICE");
 // 应用公共文件
 /**
@@ -71,6 +71,24 @@ function mailto($email, $content)
 
 function split($string)
 {
-
     return implode(' ', explode('|', $string));
+}
+
+function sensitive($content)
+{
+    // $filename = "min_word.txt";
+    // $handle = fopen($filename, "r"); //读取二进制文件时，需要将第二个参数设置成'rb'
+    // //通过filesize获得文件大小，将整个文件一下子读到一个字符串中
+    // $contents = fread($handle, filesize($filename));
+    // $words=array_merge(explode("\n",$contents),SensitiveFilter::getWord());
+    // $words=array_unique($words);
+    // fclose($handle);
+    // print_r($words);
+    // halt(SensitiveFilter::getWord());
+    if (SensitiveFilter::filter($content)) {
+        return 1;
+    } else {
+        return 0;
+    }
+
 }

@@ -25,3 +25,4 @@ Route::rule('collectUpdate', 'index/Template/collectUpdate', 'POST');
 // Route::get('ip','index/Ip/index');
 
 Route::rule('datasToMysql', 'index/DataToMysql/datasToMysql', 'GET|POST');
+Route::rule('updateDatasToMysql', 'index/DataToMysql/updateDatasToMysql', 'GET|POST');

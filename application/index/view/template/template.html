@@ -120,6 +120,7 @@
                     </div>
 
                     <input type="hidden" name="tid" value="{$template.tid}">
+                    <input type="hidden" name="recordid" id="recordid" value=>
                 </form>
             </div>
         </div>
@@ -155,6 +156,7 @@
                         if (data.code == 1) {
                             showMsgAndHref(data);
                         } else if (data.code == 101) {
+                            $("#recordid").val(data.data)
                             confirm(
                                 data.msg,
                                 "数据覆盖确认",

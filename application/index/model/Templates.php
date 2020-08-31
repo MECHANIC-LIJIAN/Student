@@ -75,9 +75,8 @@ class Templates extends Model
             ->find();
         if ($res) {
             #数据已存在
-            cookie('ifCheck', 1);
             cookie('dataid', $res['id']);
-            return 1;
+            return $res['id'];
         }
         return 0;
 
@@ -88,7 +87,7 @@ class Templates extends Model
      *
      * @return void
      */
-    public function saveData($template, $data)
+    public function postData($data)
     {
         $dataKey = 'datalists';
 
@@ -104,10 +103,42 @@ class Templates extends Model
             Db::startTrans();
             try {
                 model('TemplatesDatas')->save($data);
-                #记录数加1
-                model('templates')
-                    ->where('tid', $template['tid'])
-                    ->setInc('count');
+                
+                // 提交事务
+                Db::commit();
+            } catch (\Exception $e) {
+                // 回滚事务
+                Db::rollback();
+                // return $e->getMessage();
+                Log::error($e->getMessage());
+                return '提交失败！';
+            }
+            return 1;
+        }
+    }
+
+
+    /**
+     * 保存新数据
+     *
+     * @return void
+     */
+    public function updatePostData($data)
+    {
+        $dataKey = 'updatedatalists';
+
+        $redis = new Redis();
+
+        $nLen = $redis->lPush($dataKey, serialize($data));
+
+        if ($nLen > 0) {
+            return 1;
+        } else {
+            Log::warning("--未使用redis");
+            // 启动事务
+            Db::startTrans();
+            try {
+                model('TemplatesDatas')->allowField(true)->save($this->data, ['id' => cookie('dataid')]);
                 // 提交事务
                 Db::commit();
             } catch (\Exception $e) {
