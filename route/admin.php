@@ -3,6 +3,9 @@
 use think\facade\Route;
 
 
+// admin子域名绑定到admin模块
+Route::domain('admin', 'admin');
+
 //后台路由
 Route::group(
     'admin',

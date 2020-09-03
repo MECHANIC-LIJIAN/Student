@@ -18,7 +18,7 @@ Route::rule('qr', 'admin/QrcodeClass/create', 'GET|POST');
 
 Route::rule('/', 'index/index/index', 'GET|POST');
 
-Route::rule('fill/:id', 'index/Template/readTemplate', 'GET|POST');
+Route::rule('f/:id', 'index/Template/readTemplate', 'GET|POST');
 Route::rule('collect', 'index/Template/collect', 'GET|POST');
 Route::rule('collectUpdate', 'index/Template/collectUpdate', 'POST');
 
