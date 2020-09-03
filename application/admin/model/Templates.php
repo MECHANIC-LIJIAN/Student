@@ -168,11 +168,11 @@ class Templates extends Model
         $tInfo['options'] = $this->getFormFields($params);
 
         try {
-            $tInfo['shareUrl'] = urldecode(url('index/Template/readTemplate', ['id' => $tInfo['tid'], 'title' => $tInfo['tname']], 'html', 'kuaibiao.club'));
+            $tInfo['shareUrl'] = urldecode(url('index/Template/readTemplate', ['id' => $tInfo['tid'], 'title' => $tInfo['tname']], '', true));
 
             // 自定义二维码配置
             $config = [
-                'content' => $tInfo['shareUrl'] ,
+                'content' => urldecode(url('index/Template/readTemplate', ['id' => $tInfo['tid']], '', true)),
                 'title' => true,
                 'title_content' => $tInfo['tname'],
                 'logo' => false,
@@ -209,7 +209,7 @@ class Templates extends Model
 
         Db::startTrans();
         try {
-            $tInfo['shareUrl'] = urldecode(url('index/Template/readTemplate', ['id' => $tInfo['tid'], 'title' => $tInfo['tname']], 'html', 'kuaibiao.club'));
+            $tInfo['shareUrl'] = urldecode(url('index/Template/readTemplate', ['id' => $tInfo['tid'], 'title' => $tInfo['tname']], '', true));
 
             // 自定义二维码配置
             $config = [
@@ -278,4 +278,43 @@ class Templates extends Model
 // halt($tFields);
         return $tFields;
     }
+    // public function getTemplates()
+    // {
+    //     $where = [];
+    //     if (session('admin.id') >10) {
+    //         $where=['uid' => session('admin.id')];
+    //     }
+
+    //     $redis = new Redis();
+    //     $redisKey = 'templatelist_' . session('admin.id');
+    //     //判断是否过期
+    //     $redis_status = $redis->exists($redisKey);
+    //     if ($redis_status == false) {
+    //         //缓存失效，重新存入
+    //         //查询数据
+    //         $templates = model('Templates')
+    //             ->where($where)
+    //             ->field('id,tid,uid,tname,myData,primaryKey,create_time,status')
+    //             ->withCount('datas')
+    //             ->with('getUser,getMyData')
+    //             ->order(['status' => 'asc', 'create_time' => 'desc'])
+    //             ->select()
+    //             ->toArray();
+
+    //         foreach ($templates as $value) {
+    //             $tmp = $value;
+    //             $tmp['shareUrl'] = url('index/Template/readTemplate', ['id' => $value['tid']], '', true);
+    //             $tmp['username'] = $tmp['get_user']['username'];
+    //             $tmp['mydata'] = $tmp['get_my_data']['title'];
+    //             // $value['pcon'] = json_decode($value['options'], true)[$value['primaryKey']]['title'];
+    //             $redis->sAdd($redisKey, json_encode($tmp));
+    //         }
+
+    //         $redis->expire($redisKey,60);
+    //     }
+
+    //     $templates=$redis->sMembers($redisKey);
+
+    //     return $templates;
+    // }
 }
