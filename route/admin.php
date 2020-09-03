@@ -3,7 +3,7 @@
 use think\facade\Route;
 
 //后台路由
-Route::domain(
+Route::group(
     'admin',
     function () {
         Route::rule('/', 'admin/Home/index', 'GET|POST');
