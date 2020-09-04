@@ -86,12 +86,12 @@ class Template extends Controller
             #接受页面参数
             foreach ($this->template['fields'] as $value) {
                 $input=input("post.$value");
-                if(empty(trim($input))){
-                    $this->error("输入内容不能为空");
-                }
-                if (!sensitive($input)) {
-                    $this->error('"'.$input.'"包含敏感词');
-                }
+                // if(empty(trim($input))){
+                //     $this->error("输入内容不能为空");
+                // }
+                // if (!sensitive($input)) {
+                //     $this->error('"'.$input.'"包含敏感词');
+                // }
                 $params[$value] = $input;
             }
 
