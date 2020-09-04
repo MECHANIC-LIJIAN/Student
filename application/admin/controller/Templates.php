@@ -145,7 +145,6 @@ class Templates extends Base
             ->field('id,title')
             ->select();
         session('myData', $myData);
-        return view();
         
         $keys = [];
         foreach ($tInfo['options'] as $k => $v) {
