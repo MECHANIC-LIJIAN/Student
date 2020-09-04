@@ -103,7 +103,7 @@ class Templates extends Base
         if (request()->isAjax()) {
             $params = input('post.');
             $tInfo = [];
-
+            
             if ((!array_key_exists('option_1', $params))) {
                 $this->error("请至少添加一个字段");
             }

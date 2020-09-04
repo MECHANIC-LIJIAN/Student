@@ -1,8 +1,8 @@
 var formType = $("#formType").val();
-console.log(formType)
+console.log(formType);
 if (formType === "edit") {
   var id = $("#beginId").val();
-}else if (formType === "word") {
+} else if (formType === "word") {
   var id = 2;
 } else {
   var id = 1;
@@ -52,6 +52,29 @@ $("#addSelect").click(function () {
   });
 });
 
+function editSelect(eleId) {
+  $(eval('"#' + eleId + '_childs"'))
+    .removeClass("hidden")
+    .addClass("show");
+  $(eval('"#' + eleId + '_options option"')).each(function () {
+    $(eval('"#' + eleId + '_childs"')).append($(this).val() + "\n");
+  });
+  $("a[id=" + eleId + "_edit]").addClass("hidden");
+  $("a[id=" + eleId + "_confirm]")
+    .removeClass("hidden")
+    .addClass("show");
+}
+
+function confirmEditSelect(eleId) {
+  $("a[id=" + eleId + "_confirm]")
+    .removeClass("hidden")
+    .addClass("show");
+  $("a[id=" + eleId + "_edit]")
+    .removeClass("show")
+    .addClass("hidden");
+  addOptions(eleId);
+}
+
 //拼接一个input的内容
 function getInput(option_id) {
   var ele;
@@ -93,10 +116,10 @@ function getInput(option_id) {
   if (formType === "word") {
     ele =
       ele +
-      '<td><input type="button" value="复制到word" class="btn btn-success" onclick=copyToClip('+
-        '"${' +
-        option_id +
-        '}") /></td>'
+      '<td><input type="button" value="复制到word" class="btn btn-success" onclick=copyToClip(' +
+      '"${' +
+      option_id +
+      '}") /></td>';
   }
 
   ele =
@@ -154,10 +177,10 @@ function getSelect(option_id) {
   if (formType === "word") {
     ele =
       ele +
-      '<td><input type="button" value="复制到word" class="btn btn-success" onclick=copyToClip('+
-        '"${' +
-        option_id +
-        '}") /></td>'
+      '<td><input type="button" value="复制到word" class="btn btn-success" onclick=copyToClip(' +
+      '"${' +
+      option_id +
+      '}") /></td>';
   }
 
   ele =
