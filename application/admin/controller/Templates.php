@@ -139,6 +139,14 @@ class Templates extends Base
         $tInfo = model('Templates')->where(['tid' => $id])->field('id,tid,options,tname,endTime,primaryKey,mydata,remarks')->find();
         $tInfo['options'] = json_decode($tInfo['options'], true);
         
+
+        $myData = model("MyData")
+            ->where(['uid' => session('admin.id')])
+            ->field('id,title')
+            ->select();
+        session('myData', $myData);
+        return view();
+        
         $keys = [];
         foreach ($tInfo['options'] as $k => $v) {
             if (!isset($v['options']) && $v['rule'] != 'text') {
