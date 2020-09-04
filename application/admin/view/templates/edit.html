@@ -39,15 +39,17 @@
                                         </th>
                                     </tr>
                                     {volist name="optionList" id='option' key="k"}
+                                      {assign name="pkey" value="$key" /}
+
                                     <tr>
-                                        <td><label for="{$key}" class="control-label">字段{$k}</label>
+                                        <td><label for="{$pkey}" class="control-label">字段{$k}</label>
                                         </td>
                                         <td><input type="text" required="true" class="form-control fieldTitle"
-                                                name="{$key}" value="{$option.title}"></td>
+                                                name="{$pkey}" value="{$option.title}"></td>
                                         {notpresent name="$option.options"}
-                                        <td><label for="{$key}" class="control-label">规则</label></td>
+                                        <td><label for="{$pkey}" class="control-label">规则</label></td>
                                         <td style="width: 25%;">
-                                            <select class="form-control input-type" dataid="{$key}" name="{$key}_rule">
+                                            <select class="form-control input-type" dataid="{$pkey}" name="{$pkey}_rule">
                                                 <option value="{$option.rule}">{$option.rule|getFieldType}</option>
                                                 <option value="input|required">普通文本</option>
                                                 <option value="phone|required">手机号</option>
@@ -61,23 +63,26 @@
                                         </td>
                                         {else /}
                                         <td>
-                                            <textarea required="true" id="{$key}_childs" class="form-control hidden"
-                                                rows="4" cols="3"></textarea>
-                                            <a class="confirm hidden" id="{$key}_confirm" dataid="{$key}" onclick="confirmEditSelect('{$key}')">确认</a>
-                                            <a class="editOptions" id="{$key}_edit" dataid="{$key}" onclick="editSelect('{$key}')">修改</a>
+                                            <textarea required="true" id="{$pkey}_childs" class="form-control hidden"
+                                                rows="4" cols="3">{volist name="option.options" id="vo"}{$vo}&#10;{/volist}</textarea>
+                                            <a class="confirm hidden" id="{$pkey}_confirm" dataid="{$pkey}" onclick="">确认</a>
+                                            <a class="editOptions" id="{$pkey}_edit" dataid="{$pkey}" onclick="">修改</a>
                                         </td>
+                                        <div id="{$pkey}_data">
+                                            {volist name="option.options" id="vo"}
+                                            <input type="text" value="{$vo}" name="{$key}" class="hidden">
+                                            {/volist}
+                                        </div>
                                         <td style="width: 50px;">
                                             <input type="text" class="hidden" value="select|required"
-                                                name="{$key}_rule">
+                                                name="{$pkey}_rule">
 
-                                            <select class="form-control" required="true" id="{$key}_options">
+                                            <select class="form-control" required="true" id="{$pkey}_options">
                                                 {volist name="option.options" id="vo"}
                                                 <option name="{$key}">{$vo}</option>
                                                 {/volist}
                                             </select>
-                                            <!-- {volist name="option.options" id="vo"}
-                                            <input type="text" value="{$vo}" name="{$key}" class="hidden">
-                                            {/volist} -->
+                                            
                                         </td>
 
                                         {/notpresent}
@@ -110,5 +115,24 @@
 {/block}
 
 {block name="page-js"}
+<script>
+    $(".confirm").click(function () {
+    var eleId = $(this).attr("dataid");
+    addOptions(eleId);
+  });
+
+  $(".editOptions").click(function () {
+    var eleId = $(this).attr("dataid");
+    $("textarea[id=" + eleId + "_childs" + "]")
+      .removeClass("hidden")
+      .addClass("show");
+    $("a[id=" + eleId + "_confirm]")
+      .removeClass("hidden")
+      .addClass("show");
+    $("a[id=" + eleId + "_edit]")
+      .removeClass("show")
+      .addClass("hidden");
+  });
+</script>
 {include file="public/form_js" /}
 {/block}
