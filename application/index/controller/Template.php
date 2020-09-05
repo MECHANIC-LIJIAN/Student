@@ -185,6 +185,7 @@ class Template extends Controller
         #是覆盖确认，更新数据
         
         $this->data['id']=input('recordid');
+        $this->data['isUpdate']=1;
         $res = model('Templates')->updatePostData($this->data);
         if ($res) {
             $this->success('数据更新成功！', url('index/index/index',['msg'=>"感谢您在《".$this->template['tname']."》的提交。"]));

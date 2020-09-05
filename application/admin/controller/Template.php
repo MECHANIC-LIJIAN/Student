@@ -47,17 +47,12 @@ class Template extends Base
             $searchFields[] = $tmp;
             $options[] = $tmp;
         }
-        $options[] = [
-            'field' => 'create_time',
-            'title' => '首次提交时间',
-            'sortable' => true,
-        ];
-        $options[] = [
-            'field' => 'update_time',
-            'title' => '最后提交时间',
-            'sortable' => true,
-        ];
 
+        
+       
+        $options[] = ['field' => 'create_time','title' => '首次提交时间','sortable' => true,'width'=>150];
+        $options[] = ['field' => 'update_time','title' => '最后提交时间','sortable' => true,'width'=>150];
+        $options[] = ['field' => 'isUpdate','title' => '是否更新','sortable' => true,'width'=>30,'formatter'=>'isUpdate'];
         $options = json_encode($options);
 
         unset($template['options']);
@@ -141,7 +136,7 @@ class Template extends Base
             $searchField = $params['searchField'];
 
             #默认排序字段和规则
-            $options = ['id,tid,content,create_time,update_time'];
+            $options = ['id,tid,content,isUpdate,create_time,update_time'];
             $orders = ['update_time' => 'desc'];
 
             #排序字段和规则
@@ -200,7 +195,7 @@ class Template extends Base
     {
         #默认搜索条件
         $map[] = ['tid', '=', input('post.id')];
-        $options = ['id,tid,content,create_time,update_time'];
+        $options = ['id,tid,content,isUpdate,create_time,update_time'];
         $list = model('TemplatesDatas')
             ->where($map)
             // ->json(['content'])
@@ -210,8 +205,14 @@ class Template extends Base
         $outData = [];
         foreach ($list as $v) {
             $tmp=json_decode($v['content'],true);
+            if($tmp['isUpdate']==1){
+                $tmp['isUpdate']= "是";
+            }else{
+                $tmp['isUpdate']="否";
+            }
             $tmp['create_time']=$v['create_time'];
             $tmp['update_time']=$v['update_time'];
+
             $outData[]=$tmp;
         }
 
@@ -231,6 +232,8 @@ class Template extends Base
         array_push($keys, 'create_time');
         array_push($heads, "更新时间");
         array_push($keys, "update_time");
+        array_push($heads, "是否更新");
+        array_push($keys, "isUpdate");
         $filename = $template->tname;
         return $this->outdata($filename, $outData, $heads, $keys);
 

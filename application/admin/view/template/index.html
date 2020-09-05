@@ -209,7 +209,14 @@
         }
     }
 
-
+    //是否更新显示
+    function isUpdate(value){
+        if(value==1){
+            return "是";
+        }else{
+            return "否";
+        }
+    }
     $("#secondTab").click(function () {
         $.ajax({
             url: "{:url('admin/Template/getNoData')}",
