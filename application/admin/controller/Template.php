@@ -225,6 +225,7 @@ class Template extends Base
                 // ->json(['content'])
                 ->field($fields)
                 ->select();
+                $filename =$filename.date('Y-m-d');
         } else if ($exportDate == "today_update") {
             $map[] = ['isUpdate', '=', 1];
             $list = model('TemplatesDatas')
