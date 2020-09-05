@@ -2,8 +2,7 @@
 
 namespace app\admin\controller;
 
-
-use think\Request;
+use myredis\Redis;
 
 class MyData extends Base
 {
@@ -14,21 +13,21 @@ class MyData extends Base
      */
     public function index()
     {
-        $where=[];
-        $field='id,uid,title,count,create_time';
-        
+        $where = [];
+        $field = 'id,uid,title,count,create_time';
+
         if (!in_array(2, $this->groupIds)) {
-            $where=['uid' => session('admin.id')];
-        }else{
+            $where = ['uid' => session('admin.id')];
+        } else {
             $this->assign('display', 'display');
         }
 
         $dataSetList = model("MyData")
-        ->with('getUser')
-        ->where($where)
-        ->order(['create_time' => 'desc'])
-        ->field($field)
-        ->select();
+            ->with('getUser')
+            ->where($where)
+            ->order(['create_time' => 'desc'])
+            ->field($field)
+            ->select();
         $this->assign([
             'dataSetList' => $dataSetList,
         ]);
@@ -52,14 +51,14 @@ class MyData extends Base
      */
     public function createByFile()
     {
+
         $dataInfo = [
             'uid' => session('admin.id'),
             'title' => input('post.dataName'),
             'dataFile' => input('file.dataFile'),
             'create_time' => time(),
         ];
-
-        $result = model("MyData")->getDataByFile($dataInfo);
+        $result = model("MyData")->addDataByFile($dataInfo);
 
         if ($result == 1) {
             return $this->success("提交成功！", url('admin/MyData/index'));
@@ -82,7 +81,7 @@ class MyData extends Base
             'create_time' => time(),
         ];
 
-        $result = model("MyData")->getDataByText($dataInfo);
+        $result = model("MyData")->addDataByText($dataInfo);
 
         if ($result == 1) {
             return $this->success("提交成功！", url('admin/MyData/index'));
@@ -98,26 +97,53 @@ class MyData extends Base
     {
         $id = input('id');
         $dataInfo = model('MyData')
+            ->where(['id' => $id, 'uid' => session('admin.id')])
             ->with('getDatas')
             ->field('uid,title,id,count')
-            ->find($id);
-
+            ->find();
+        if (!$dataInfo) {
+            $this->error('页面不存在');
+        }
         $this->assign([
             'dataInfo' => $dataInfo,
         ]);
         return view();
     }
 
-    /**
-     * 保存更新的资源
-     *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function update(Request $request, $id)
+    public function append()
     {
-        //
+
+        if (request()->isAjax()) {
+            $dataInfo = model('MyData')
+                ->where(['id' => input('post.dataId'), 'uid' => session('admin.id')])
+                ->field('uid,title,id,count')
+                ->find();
+            $dataInfo['dataText'] = input('post.dataText');
+
+            $result = model("MyData")->appendDataByText($dataInfo);
+
+            if ($result == 1) {
+                $redisKey = "my_data_" . $dataInfo['id'];
+                $redis = new Redis();
+                $redis->del($redisKey);
+                return $this->success("提交成功！", url('admin/MyData/index'));
+            } else {
+                return $this->error($result);
+            }
+        }
+        $id = input('id');
+        $dataInfo = model('MyData')
+            ->where(['id' => $id, 'uid' => session('admin.id')])
+            ->field('uid,title,id,count')
+            ->find();
+        if (!$dataInfo) {
+            $this->error('页面不存在');
+        }
+        $this->assign([
+            'dataInfo' => $dataInfo,
+        ]);
+
+        return view();
     }
 
     /**
@@ -135,7 +161,7 @@ class MyData extends Base
                 ->with('delDatas')
                 ->field('id')
                 ->find();
-                
+
             $result = $dataInfo->together('delDatas')->delete();
             if ($result) {
                 $this->success('删除成功', url('admin/MyData/index'));

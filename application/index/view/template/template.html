@@ -50,27 +50,29 @@
                         {switch vo.type}
                         {case date}
                         <div class="col-lg-12">
-                            <input type="text" class="form-control" id="{$key}" name="{$key}">
-                        </div>
+                            <input type="text" class="form-control required" id="{$key}" name="{$key}">
+
                         <script>
                             laydate.render({
-                                elem: '#' + "{$key}" //指定元素
+                                elem: "#{$key}" //指定元素
                                 , type: 'date'
                                 , formact: 'yyyy年MM月dd日'
                                 // , min: date.toLocaleString(),
                             });
                         </script>
+                        </div>
                         {/case}
                         {case time}
                         <div class="col-lg-12">
-                            <input type="text" class="form-control" id="{$key}" name="{$key}">
-                        </div>
+                            <input type="text" class="form-control required" id="{$key}" name="{$key}">
+
                         <script>
                             laydate.render({
-                                elem: '#' + "{$key}" //指定元素
+                                elem: "#{$key}" //指定元素
                                 , type: 'time'
                             });
                         </script>
+                        </div>
                         {/case}
                         {case datetime}
                         <div class="col-lg-12">
@@ -146,7 +148,6 @@
     <script src="__JS__/jquery.validate.min.js"></script>
     <script src="__JS__/messages_zh.min.js"></script>
     <script src="__JS__/index.js"></script>
-
     <script type="text/javascript">
         $("#submitOpt").click(function () {
             $("#subForm").submit();

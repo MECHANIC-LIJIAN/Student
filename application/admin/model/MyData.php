@@ -19,18 +19,16 @@ class MyData extends Model
     {
         return $this->hasMany('MyDataOption')->field('content,my_data_id,id');
     }
-    
+
     public function getUser()
     {
         return $this->belongsTo('Admin', 'uid', 'id')->field('id,username');
     }
 
-
-
     public function getDataByFile($dataInfo)
     {
         header("content-type:text/html;charset=utf-8");
-        
+
         $validate = new \app\admin\validate\MyData;
         if (!$validate->scene('upload')->check($dataInfo)) {
             return $validate->getError();
@@ -39,7 +37,7 @@ class MyData extends Model
         #获取文件信息
         $fileInfo = $dataInfo['dataFile']->getInfo();
         unset($dataInfo['dataFile']);
-        
+
         //获取文件后缀
         $suffix = explode(".", $fileInfo['name'])[1];
         //判断哪种类型
@@ -67,14 +65,13 @@ class MyData extends Model
             return '不能有空字段,请重新选择文件';
         }
 
-        $dataInfo['count']=count($excelData);
-        $dataInfo['data']=$excelData;
-        
-        $res=$this->saveData($dataInfo);
-        
+        $dataInfo['count'] = count($excelData);
+        $dataInfo['data'] = $excelData;
+
+        $res = $this->saveData($dataInfo);
+
         return $res;
     }
-
 
     public function getDataByText($dataInfo)
     {
@@ -82,22 +79,23 @@ class MyData extends Model
         if (!$validate->scene('text')->check($dataInfo)) {
             return $validate->getError();
         }
-        $textData=array_filter(array_unique(explode("\n",trim($dataInfo['dataText']))));
+        $textData = array_filter(array_unique(explode("\n", trim($dataInfo['dataText']))));
 
         unset($dataInfo['dataText']);
 
-        $dataInfo['count']=count($textData);
-        $dataInfo['data']=$textData;
+        $dataInfo['count'] = count($textData);
+        $dataInfo['data'] = $textData;
 
-        $res=$this->saveData($dataInfo);
+        $res = $this->saveData($dataInfo);
 
         return $res;
     }
 
-    private function saveData($dataInfo){
+    private function saveData($dataInfo)
+    {
         Db::startTrans();
-        try {            
-            $dataid=Db::name("my_data")->strict(false)->insertGetId($dataInfo);
+        try {
+            $dataid = Db::name("my_data")->strict(false)->insertGetId($dataInfo);
             $dataSets = [];
             foreach ($dataInfo['data'] as $key => $value) {
                 $tmp = [];
@@ -106,6 +104,42 @@ class MyData extends Model
                 $tmp['create_time'] = time();
                 $dataSets[] = $tmp;
             }
+            Db::name('my_data_option')->insertAll($dataSets);
+            Db::commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            Db::rollback();
+            // return $e->getMessage();
+            return "提交失败";
+        }
+        return 1;
+    }
+
+    public function appendDataByText($dataInfo)
+    {
+        $validate = new \app\admin\validate\MyData;
+        if (!$validate->scene('text')->check($dataInfo)) {
+            return $validate->getError();
+        }
+        $textData = array_filter(array_unique(explode("\n", trim($dataInfo['dataText']))));
+
+        unset($dataInfo['dataText']);
+
+        $dataInfo['count'] = count($textData) + $dataInfo['count'];
+
+        Db::startTrans();
+        try {
+            $dataSets = [];
+            foreach ($textData as $key => $value) {
+                $tmp = [];
+                $tmp['my_data_id'] = $dataInfo['id'];
+                $tmp['content'] = $value;
+                $tmp['create_time'] = time();
+                $dataSets[] = $tmp;
+            }
+            Db::name('my_data')
+                ->where('id',$dataInfo['id'])
+                ->update(['count'=>$dataInfo['count']]);
             Db::name('my_data_option')->insertAll($dataSets);
             Db::commit();
         } catch (\Exception $e) {

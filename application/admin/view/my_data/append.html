@@ -1,0 +1,78 @@
+{extend name="public/admin_base"}
+{block name="page-title"}
+
+{/block}
+{block name="page-breadcrumb"}
+<li><i class="fa fa-server"></i>我的数据集</li>
+<li class="active">追加数据</li>
+{/block}
+
+{block name="page-main"}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="widget">
+            <div class="bg-themeprimary widget-header">
+                <i class="fa fa-arrow-left widget-icon"
+                    onClick="window.location.href='{:url(\'admin/MyData/index\')}';" /></i>
+                <span class="widget-caption">追加数据</span>
+            </div>
+            <div class="widget-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="dataName" class="col-lg-2 control-label">数据集名</label>
+                        <div class="col-lg-4">
+                            <input type="text" class="form-control" name="dataName" id="dataName" disabled
+                                value="{$dataInfo.title}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="dataName" class="col-lg-2 control-label">提交数据</label>
+                        <div class="col-lg-8 panel-info">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <div class="col-lg-8" style="margin-top: 10px;">
+                                            <textarea name="dataText" class="form-control" id="dataText" cols="10"
+                                                rows="10" placeholder="将数据粘贴到此处,一行一个"></textarea>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <button type="button" style="margin-top: 10px;float: right;"
+                                                class="btn btn-info" id="subByText">提交</button>
+                                                <input type="text" class="hidden" name="dataId" id="dataId"
+                                value="{$dataInfo.id}">
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+                </hr>
+            </div>
+        </div>
+    </div>
+    {/block}
+    {block name="page-js"}
+    <script type="application/javascript">
+        $("#subByText").click(function () {
+            var text = $("#dataText").val()
+            var dataId = $("#dataId").val()
+            $.ajax({
+                url: "{:url('admin/MyData/append')}",
+                method: "post",
+                data: {
+                    dataId: dataId,
+                    dataText: text,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == 1) {
+                        showMsgAndHref(data);
+                    } else {
+                        showErrorMsg(data.msg)
+                    }
+                }
+            })
+        })
+    </script>
+    {/block}

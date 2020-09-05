@@ -36,6 +36,7 @@ Route::group(
             Route::rule('create', 'admin/MyData/create', 'GET|POST');
             Route::rule('createByFile', 'admin/MyData/createByFile', 'POST')->ext('do');
             Route::rule('createByText', 'admin/MyData/createByText', 'POST')->ext('do');
+            Route::rule('append/[:id]', 'admin/MyData/append', 'GET|POST');
             Route::rule('dataList/[:id]', 'admin/MyData/read', 'GET|POST')->ext();
             Route::rule('del_data', 'admin/MyData/delete', 'POST')->ext('do');
         });
