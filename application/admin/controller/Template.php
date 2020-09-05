@@ -138,7 +138,7 @@ class Template extends Base
             $orders = ['update_time' => 'desc'];
 
             #排序字段和规则
-            if ($ordername == 'create_time' || $ordername == "update_time") {
+            if ( in_array($ordername,['create_time','update_time','isUpdate'])) {
                 $orders = [$ordername => $order];
             } else {
                 $tmp = explode(".", $ordername);
@@ -219,31 +219,42 @@ class Template extends Base
         array_push($keys, "isUpdate");
         $filename = $template['tname'];
 
-        if ($exportDate == "all") {
-            $list = model('TemplatesDatas')
-                ->where($map)
-                // ->json(['content'])
-                ->field($fields)
-                ->select();
-                $filename =$filename.date('Y-m-d');
-        } else if ($exportDate == "today_update") {
-            $map[] = ['isUpdate', '=', 1];
-            $list = model('TemplatesDatas')
-                ->where($map)
-                ->field($fields)
-                // ->json(['content'])
-                ->whereTime('update_time', 'today')
-                ->select();
-                $filename =$filename.date('Y-m-d')."更新";
-        } else if ($exportDate == "today_add") {
-            $list = model('TemplatesDatas')
-                ->where($map)
-                ->field($fields)
-                // ->json(['content'])
-                ->whereTime('create_time', 'today')
-                ->select();
-                $filename =$filename.date('Y-m-d')."新增";
-
+        switch ($exportDate) {
+            case 'all':
+                $list = model('TemplatesDatas')
+                    ->where($map)
+                    ->field($fields)
+                    ->select();
+                $filename = $filename . date('Y-m-d');
+                break;
+            case 'all_update':
+                $map[] = ['isUpdate', '=', 1];
+                $list = model('TemplatesDatas')
+                    ->where($map)
+                    ->field($fields)
+                    ->select();
+                $filename = $filename . date('Y-m-d') . "更新";
+                break;
+            case 'today_update':
+                $map[] = ['isUpdate', '=', 1];
+                $list = model('TemplatesDatas')
+                    ->where($map)
+                    ->field($fields)
+                    ->whereTime('update_time', 'today')
+                    ->select();
+                $filename = $filename . date('Y-m-d') . "更新";
+                break;
+            case 'today_add':
+                $list = model('TemplatesDatas')
+                    ->where($map)
+                    ->field($fields)
+                    ->whereTime('create_time', 'today')
+                    ->select();
+                $filename = $filename . date('Y-m-d') . "新增";
+                break;
+            default:
+                $this->error("参数错误");
+                break;
         }
         if (!$list) {
             $this->error("没有数据");
