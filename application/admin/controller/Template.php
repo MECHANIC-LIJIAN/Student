@@ -48,11 +48,9 @@ class Template extends Base
             $options[] = $tmp;
         }
 
-        
-       
-        $options[] = ['field' => 'create_time','title' => '首次提交时间','sortable' => true,'width'=>150];
-        $options[] = ['field' => 'update_time','title' => '最后提交时间','sortable' => true,'width'=>150];
-        $options[] = ['field' => 'isUpdate','title' => '是否更新','sortable' => true,'width'=>30,'formatter'=>'isUpdate'];
+        $options[] = ['field' => 'create_time', 'title' => '首次提交时间', 'sortable' => true, 'width' => 150];
+        $options[] = ['field' => 'update_time', 'title' => '最后提交时间', 'sortable' => true, 'width' => 150];
+        $options[] = ['field' => 'isUpdate', 'title' => '是否更新', 'sortable' => true, 'width' => 30, 'formatter' => 'isUpdate'];
         $options = json_encode($options);
 
         unset($template['options']);
@@ -193,39 +191,63 @@ class Template extends Base
      */
     public function export()
     {
-        #默认搜索条件
-        $map[] = ['tid', '=', input('post.id')];
-        $options = ['id,tid,content,isUpdate,create_time,update_time'];
-        $list = model('TemplatesDatas')
-            ->where($map)
-            // ->json(['content'])
-            ->field($options)
-            ->select();
+        $tid = input('post.id');
+        $exportDate = input('post.date', 'all');
 
+        #默认搜索条件
+        $map[] = ['tid', '=', $tid];
+
+        $options = ['id,tid,content,isUpdate,create_time,update_time'];
+
+        if ($exportDate == "all") {
+            $list = model('TemplatesDatas')
+                ->where($map)
+            // ->json(['content'])
+                ->field($options)
+                ->select();
+        } else if ($exportDate == "today_update") {
+            $map[] = ['isUpdate', '=', 1];
+            $list = model('TemplatesDatas')
+                ->where($map)
+                ->field($options)
+            // ->json(['content'])
+                ->whereTime('update_time', 'today')
+                ->select();
+        }else if($exportDate=="today_add"){
+            $list = model('TemplatesDatas')
+                ->where($map)
+                ->field($options)
+            // ->json(['content'])
+                ->whereTime('create_time', 'today')
+                ->select();
+        }
+        if(!$list){
+            $this->error("没有数据");
+        }
         $outData = [];
         foreach ($list as $v) {
-            $tmp=json_decode($v['content'],true);
-            if($tmp['isUpdate']==1){
-                $tmp['isUpdate']= "是";
-            }else{
-                $tmp['isUpdate']="否";
+            $tmp = json_decode($v['content'], true);
+            if ($v['isUpdate'] == 1) {
+                $tmp['isUpdate'] = "是";
+            } else {
+                $tmp['isUpdate'] = "否";
             }
-            $tmp['create_time']=$v['create_time'];
-            $tmp['update_time']=$v['update_time'];
+            $tmp['create_time'] = $v['create_time'];
+            $tmp['update_time'] = $v['update_time'];
 
-            $outData[]=$tmp;
+            $outData[] = $tmp;
         }
 
-        $template = model('Templates')
-            ->where('id', '=', input('post.id'))
+        $template = Db::name('Templates')
+            ->where('id', '=', $tid)
             ->field('id,tname,options')
             ->json(['options'])
             ->find();
-        $options = $template->options;
+        $options = $template['options'];
         $heads = [];
         $keys = [];
         foreach ($options as $key => $value) {
-            array_push($heads, $value->title);
+            array_push($heads, $value['title']);
             array_push($keys, $key);
         }
         array_push($heads, "填写时间");
@@ -234,7 +256,7 @@ class Template extends Base
         array_push($keys, "update_time");
         array_push($heads, "是否更新");
         array_push($keys, "isUpdate");
-        $filename = $template->tname;
+        $filename = $template['tname'];
         return $this->outdata($filename, $outData, $heads, $keys);
 
     }
@@ -296,7 +318,7 @@ class Template extends Base
             }
 
         }
-
+        
         $filename = $filename . '.xlsx';
 
         header('Content-Type:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); //xlsx

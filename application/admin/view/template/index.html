@@ -67,52 +67,61 @@
 
             <div id="myTabContent" class="tab-content">
                 <div id="firstPage" class="tab-pane active">
-                    <div class="checkbox">
-                        <select name="refreshTime" id="refreshTime">
-                            <option value=10000>10秒</option>
-                            <option value=30000 selected>30秒</option>
-                            <option value=60000>60秒</option>
-                        </select>
-                        <label>自动刷新</label>
-                        <input type="checkbox" name="" style="position: unset;margin-left: 5px;" id="lunxun" checked>
-                    </div>
-                    <div id="toolbar" class="btn-group">
-                        <div class="btn-group">
+                    <div id="toolbar" style="width: 100%;">
+                        <div class="btn-group" style="margin-right: 30px;">
                             <button id="btn_delete" type="button" class="btn btn-danger">
                                 <span class="fa fa-remove" aria-hidden="true"></span>删除
                             </button>
                             <button id="btn_refresh" type="button" class="btn btn-success">
                                 <span class="fa fa-refresh" aria-hidden="true"></span>刷新
-                            </button>
-                            <button id="export" class="btn btn-primary" dataid="{$template.tid}">
-                                <span class="fa fa-file-excel-o"></span>导出excel
-                            </button>
-                            <button id="copy" class="btn btn-info" dataid="{$template.tid}">
-                                <span class="fa fa-share"></span>分享
-                            </button>
-                            {if $template.ttype=="1"}
-                            <a href="{:url('admin/Word/export_word',['tId' => $tId])}" target="_blank"
-                                class="btn btn-default"><span class="fa fa-file-word-o"></span>导出word</a>
-                            {/if}
-                            <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
-                                    class="fa fa-eye"></span>查看表单</a>
+
+                                <button id="copy" class="btn btn-info" dataid="{$template.tid}">
+                                    <span class="fa fa-share"></span>分享
+                                </button>
+                                {if $template.ttype=="1"}
+                                <a href="{:url('admin/Word/export_word',['tId' => $tId])}" target="_blank"
+                                    class="btn btn-default"><span class="fa fa-file-word-o"></span>导出word</a>
+                                {/if}
+                                <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
+                                        class="fa fa-eye"></span>查看表单</a>
 
                         </div>
-
-                    </div>
-                    <div class="pull-right search " style="margin-top: unset; float:left;">
-                        <select name="searchField" id="searchField" style="max-width: 200px;">
-                            <option value="content.all">全部</option>
-                            {volist name="searchFields" id="vo"}
-                            <option value="{$vo.field}">{$vo.title}</option>{$vo}
-                            {/volist}
-                        </select>
-                        <input class="btn" type="text" id="searchText" placeholder="搜索">
+                       
+                        <div class="btn-group" style="margin-right: 30px;">
+                            <select name="refreshTime" class="btn" id="refreshTime" style="height: 32px;">
+                                <option value=10000>10秒</option>
+                                <option value=30000 selected>30秒</option>
+                                <option value=60000>60秒</option>
+                            </select>
+                            <label class="btn">自动刷新
+                                <input type="checkbox" name="" class="btn"
+                                    style="position: unset;margin-left: 5px;margin-top: unset;" id="lunxun"
+                                    checked></label>
+                        </div>
+                        <div class="btn-group" style="margin-right: 30px;">
+                            <select name="searchField" class="btn" id="searchField" style="max-width: 200px;height: 32px;">
+                                <option value="content.all">全部</option>
+                                {volist name="searchFields" id="vo"}
+                                <option value="{$vo.field}">{$vo.title}</option>
+                                {/volist}
+                            </select>
+                            <input class="btn" type="text" id="searchText" placeholder="搜索">
+                            <div class="btn-group">
+                                <button id="btn_search" type="button" class="btn btn-success">
+                                    <span class="fa fa-search" aria-hidden="true"></span>查询
+                                </button>
+                                <button id="btn_reset" type="button" class="btn btn-default">重置
+                                </button>
+                            </div>
+                        </div>
                         <div class="btn-group">
-                            <button id="btn_search" type="button" class="btn btn-success">
-                                <span class="fa fa-search" aria-hidden="true"></span>查询
-                            </button>
-                            <button id="btn_reset" type="button" class="btn btn-default">重置
+                            <select name="exportType" class="btn" id="exportType" style="height: 32px;">
+                                <option value="all" selected>全部</option>
+                                <option value="today_update">今日更新</option>
+                                <option value="today_add">今日新增</option>
+                            </select>
+                            <button id="export" class="btn btn-primary" dataid="{$template.tid}">
+                                <span class="fa fa-file-excel-o"></span>导出
                             </button>
                         </div>
                     </div>
@@ -210,10 +219,10 @@
     }
 
     //是否更新显示
-    function isUpdate(value){
-        if(value==1){
+    function isUpdate(value) {
+        if (value == 1) {
             return "是";
-        }else{
+        } else {
             return "否";
         }
     }
@@ -241,7 +250,7 @@
                         });
                         text = text + "</tr>"
                         $("#secondTable").append(text);
-                    }else{
+                    } else {
                         $("#secondTable").append(data.msg);
                     }
                 } else {
@@ -316,7 +325,8 @@
             type: 'post',
             data: {
                 id: "{$template.id}",
-                tid: "{$template.tid}"
+                tid: "{$template.tid}",
+                date: $("#exportType").val()
             },
             dataType: 'json',
             success: function (ret) {
@@ -333,8 +343,6 @@
             }
         })
     })
-
-
     let timerId = 1 // 模拟计时器id，唯一性
     let timerObj = {} // 计时器存储器
     let time = 10000;
