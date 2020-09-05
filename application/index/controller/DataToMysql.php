@@ -30,7 +30,7 @@ class DataToMysql extends Controller
                 Db::rollback();
                 Log::write($e->getMessage(), 'error');
             }
-            sleep(3);
+            sleep(1);
         }
     }
 
@@ -56,7 +56,7 @@ class DataToMysql extends Controller
                 Db::rollback();
                 Log::write($e->getMessage(), 'error');
             }
-            sleep(5);
+            sleep(2.1);
         }
     }
 
