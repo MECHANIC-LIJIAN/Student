@@ -251,11 +251,12 @@
                             if (index != 0 && index % 10 == 0) {
                                 text = text + "</tr><tr>"
                             } else {
-                                text = text + "<td>" + value + "</td>"
-                            }
+                                text = text + "<td>" + value + " </td>"
+                            }text2=text2+'<label class="col-lg-2 col-md-3 col-sm-5">'+value+'</label>'
                         });
+                        
                         text = text + "</tr>"
-                        $("#secondTable").append(text);
+                        $("#secondTable").append(text2);
                     } else {
                         $("#secondTable").append(data.msg);
                     }
