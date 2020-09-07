@@ -43,10 +43,6 @@ class Templates extends Model
     {
         #获取文件信息
         $fileInfo = $tInfo['tFile']->getInfo();
-        unset($tInfo['tFile']);
-
-        #存储信息，第二步使用
-        session('tInfo', $tInfo);
 
         //获取文件后缀
         $suffix = end(explode(".", $fileInfo['name']));
@@ -91,7 +87,7 @@ class Templates extends Model
         }
 
         #存储数据，第二步使用
-        session('excelData', $excelData);
+        session(session('admin.id').'excelData', $excelData);
         return 1;
     }
 
@@ -101,10 +97,10 @@ class Templates extends Model
      * @param [type] $tInfo
      * @return void
      */
-    public function getOptionList($tInfo)
+    public function getOptionList()
     {
         #读excel数据
-        $excelData = session('excelData');
+        $excelData = session(session('admin.id').'excelData');
 
         $optionList = [];
         $tFields = [];
@@ -124,30 +120,8 @@ class Templates extends Model
             }
             $tFields[$option] = $excelData[$col][1];
         }
-        // halt($optionList);
 
-        #存储可存入数据库的数据
-        session('tData', $optionList);
         return $optionList;
-    }
-
-    public function createByFile($tInfo)
-    {
-        $template = model('Templates')
-            ->where('tid', $tInfo['tid'])
-            ->field('tid,status')
-            ->find();
-
-        if ($template['status'] == '1') {
-            return "表单已经初始化，不可更改";
-        }
-        $pinyin = new Pinyin();
-        $tInfo['tabbr'] = $pinyin->abbr($tInfo['tname']);
-        $tInfo['options'] = session('tData');
-        session('tData', null);
-        $res = $this->saveData($tInfo);
-
-        return $res;
     }
 
     public function createByHand($tInfo)
@@ -268,7 +242,7 @@ class Templates extends Model
                 #字段名和规则
                 $tFields[$key]['title'] = $value;
                 $tFields[$key]['rule'] = $fields[$key . "_rule"];
-                $tFields[$key]['type'] = explode("|",$fields[$key . "_rule"])[0];
+                $tFields[$key]['type'] = explode("|", $fields[$key . "_rule"])[0];
             } else if ($temp[2] != "rule") {
                 #多选项的候选项
                 $pId = implode("_", array_splice($temp, 0, 2));

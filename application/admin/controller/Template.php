@@ -245,11 +245,13 @@ class Template extends Base
             ->where($map)
             ->field($fields)
             ->order(['update_time' => 'desc'])
-            ->select();
+            ->select()
+            ->toArray();
 
-        if (!$list) {
+        if (empty($list)) {
             $this->error("没有数据");
         }
+        
         $outData = [];
         foreach ($list as $v) {
             $tmp = json_decode($v['content'], true);

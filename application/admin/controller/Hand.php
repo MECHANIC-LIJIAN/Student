@@ -25,26 +25,20 @@ class Hand extends Base
 
             #判断表单类型
             if ($params['option_1_rule'] == 'word|required') {
-
                 if (!array_key_exists('option_2', $params)) {
                     $this->error("请至少添加一个字段");
                 }
-
                 $wordfile = request()->file('wordfile');
-
                 if ($wordfile == null) {
                     $this->error("请上传模板文件");
                 }
                 // 移动到框架应用根目录/uploads/ 目录下
                 $info = $wordfile->move('uploads/word/wordfile');
                 if ($info) {
-                    // 成功上传后 获取上传信息
                     $wordPath = "uploads/word/wordfile/" . $info->getSaveName();
                 } else {
-                    // 上传失败获取错误信息
                     $this->error("文件上传失败");
                 }
-
                 $tInfo['word_path'] = $wordPath;
                 $tInfo['ttype'] = 1;
             }
@@ -90,9 +84,7 @@ class Hand extends Base
             $res = model('Templates')->createByHand($tInfo);
             // return $res;
             if ($res == 1) {
-                session('tInfo', null);
-                session('optionList', null);
-                session('excelData', null);
+                session(session('admin.id').'excelData', null);
                 $this->success("模板初始化成功", 'admin/Templates/list');
             } else {
                 $this->error($res);

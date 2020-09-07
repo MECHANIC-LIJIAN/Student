@@ -26,18 +26,18 @@
                     <li id='second-step-li' role="tab" class="disabled" aria-disabled="true">
                         <a id="formWizard-t-1" aria-controls="formWizard-p-1"><span class="number">2</span>完善表单</a>
                     </li>
-                    <li id='third-step-li' role="tab" class="disabled last" aria-disabled="true">
+                    <!-- <li id='third-step-li' role="tab" class="disabled last" aria-disabled="true">
                         <a id="formWizard-t-2" aria-controls="formWizard-p-2"><span class="number">3</span>完成发布</a>
-                    </li>
+                    </li> -->
                 </ul>
                 <div class="project-first-step">
                     <form id="uploadForm" role="form" class="form-horizontal" enctype="multipart/form-data">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="tname" class="col-lg-2 control-label">表单名</label>
                             <div class="col-lg-8">
                                 <input type="text" class="form-control" id="tname">
                             </div>
-                        </div>
+                        </div> -->
                         <div class="form-group">
                             <label for="fileBrowserInput" class="col-lg-2 control-label">文件</label>
                             <div class="col-lg-1">
@@ -51,12 +51,7 @@
                                 <input type="file" class="hidden" id="tempalteFile">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="remarks" class="col-lg-2 control-label">表单说明</label>
-                            <div class="col-lg-8">
-                                <textarea type="text" class="form-control" id="remarks" name="remarks"></textarea>
-                            </div>
-                        </div>
+                        
                         <div class="form-group">
                             <div class="col-lg-12 text-center">
                                 <input type="button" class="btn btn-info btn-lg" value="提交" id="subFile">
@@ -73,11 +68,7 @@
                             <li class="list-group-item">2、第二行起为空时生成文本框，有待选文字时生成下拉菜单</li>
                             <li class="list-group-item">3、不能有空行和列</li>
                             <li class="list-group-item">
-                                4、所有字段都是必填项 <font color="red"
-                                    style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
-                            </li>
-                            <li class="list-group-item">
-                                <p>5、示例图片</p>
+                                <p>4、示例图片</p>
                                 <img src="__IMG__/example-1.jpg" alt="表单文件示例">
                                 <img src="__IMG__/example-2.jpg" alt="生成表单示例">
                             </li>

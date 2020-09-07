@@ -25,7 +25,7 @@ class MyData extends Model
         return $this->belongsTo('Admin', 'uid', 'id')->field('id,username');
     }
 
-    public function getDataByFile($dataInfo)
+    public function addDataByFile($dataInfo)
     {
         header("content-type:text/html;charset=utf-8");
 
@@ -73,7 +73,7 @@ class MyData extends Model
         return $res;
     }
 
-    public function getDataByText($dataInfo)
+    public function addDataByText($dataInfo)
     {
         $validate = new \app\admin\validate\MyData;
         if (!$validate->scene('text')->check($dataInfo)) {

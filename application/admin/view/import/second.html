@@ -128,43 +128,66 @@
                         <a id="formWizard-t-1" aria-controls="formWizard-p-1"><span class="current-info audible">current
                                 step: </span><span class="number">2</span> 完善表单</a>
                     </li>
-                    <li role="tab" class="disabled last" aria-disabled="true">
+                    <!-- <li role="tab" class="disabled last" aria-disabled="true">
                         <a id="formWizard-t-2" aria-controls="formWizard-p-2"><span class="number">3</span>完成发布</a>
-                    </li>
+                    </li> -->
                 </ul>
                 <div class="form-horizontal">
                     <form autocomplete="off" id="subForm">
                         <table class="table">
-                            <caption>
-                                <h2>{$tname}</h2>
-                            </caption>
                             <tbody>
+                                <tr>
+                                    <td colspan="4">
+                                        <h4>表单名</h4>
+                                        <input type="text" required="true" name="templateName" class="form-control"
+                                            style="max-width:none;" value="{$tname}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <h4>表单说明</h4>
+                                        <textarea type="text" class="form-control" id="remarks" name="remarks" cols="10"
+                                            rows="4"></textarea>
+                                    </td>
+                                </tr>
                                 {volist name="optionList" id='option'}
                                 {notpresent name="$option.options"}
+                                <input type="text" name="{$key}" value="{$option.title}" class="hidden">
                                 <tr>
                                     <td><label for="{$key}" class="col-lg-10 control-label">{$option.title}</label>
                                     </td>
-                                    <td><input type="text" class="form-control" name="{$key}"></td>
-                                    <!-- <td><label for="{$key}" class="control-label">规则</label></td>
-                                    <td style="width: 25%;"><select class=" td-form-control form-control input-type"
-                                            dataid="{$key}" name="{$key}_rule">
-                                            <option value="text|required">普通文本</option>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><label for="{$key}" class="control-label">规则</label></td>
+                                    <td style="width: 25%;">
+                                        <select class=" td-form-control form-control input-type" dataid="{$key}"
+                                            name="{$key}_rule">
+                                            <option value="input|required">普通文本</option>
                                             <option value="phone|required">手机号</option>
                                             <option value="email|required">邮箱</option>
                                             <option value="number|required">数字</option>
+                                            <option value="date|required">日期</option>
+                                            <option value="time|required">时间(24小时)</option>
+                                            <option value="datetime|required">日期+时间</option>
                                             <option value="text">非必填项</option>
                                         </select>
-                                    </td> -->
+                                    </td>
                                 </tr>
                                 {else /}
+                                <input type="text" name="{$key}" value="{$option.title}" class="hidden">
+                                <input type="text" name="{$key}_rule" value="{$option.rule}" class="hidden">
                                 <tr>
                                     <td><label for="{$key}" class="col-lg-10 control-label">{$option.title}</label>
                                     </td>
-                                    <td><select class="form-control">
+                                    <td>
+                                        {volist name="option.options" id="vo"}
+                                        <input type="text" name="{$key}" value="{$vo}" class="hidden">
+                                        {/volist}
+                                        <select class="form-control">
                                             {volist name="option.options" id="vo"}
                                             <option name="{$key}">{$vo}</option>
                                             {/volist}
-                                        </select></td>
+                                        </select>
+                                    </td>
                                 </tr>
                                 {/notpresent}
                                 {/volist}
@@ -177,7 +200,8 @@
             <div class="col-lg-3">
                 <div class="project-right-sider" style="margin-top: 160px;">
                     {include file="public/form_right" /}
-                    <button class="btn btn-success initTemplate" type="button"><span class="fa fa-table"></span>
+                    <button class="btn btn-success initTemplate" dataid="{:url('admin/Hand/add')}" type="button"><span
+                            class="fa fa-table"></span>
                         初始化表单</button>
                 </div>
             </div>

@@ -10,10 +10,9 @@ class Import extends Base
             header("content-type:text/html;charset=utf-8");
 
             $tInfo = [
-                'tid'=>my_uuid(),
+                'tid' => my_uuid(),
                 'uid' => session('admin.id'),
                 'tname' => input('post.tname'),
-                'remarks' => input('post.remarks', ""),
                 'tFile' => input('file.tempalte'),
             ];
 
@@ -43,29 +42,8 @@ class Import extends Base
      */
     public function Second()
     {
-        if (request()->isAjax()) {
-
-            $tInfo = session('tInfo');
-            $tInfo['primaryKey'] = input('post.primaryKey', "");
-            $tInfo['myData'] = input('post.myData', 0);
-            $tInfo['endTime'] = strtotime(input('post.endTime'));
-            // halt($tInfo);
-            $res = model('Templates')->createByFile($tInfo);
-
-            if ($res == 1) {
-                session('tInfo', null);
-                session('optionList', null);
-                session('excelData', null);
-                $this->success("表单初始化成功", "admin/Templates/list");
-            } else {
-                $this->error($res);
-            }
-        }
-
-        #读取模板信息
-        $tInfo = session('tInfo');
         #获取显示在页面的数据列表
-        $optionList = model('Templates')->getOptionList($tInfo);
+        $optionList = model('Templates')->getOptionList();
 
         $keys = [];
         foreach ($optionList as $k => $v) {
@@ -73,26 +51,12 @@ class Import extends Base
                 $keys[$k] = $v['title'];
             }
         }
+
         $this->assign([
             'keys' => $keys,
             'optionList' => $optionList,
-            'tname' => $tInfo['tname'],
         ]);
         return view();
 
     }
-
-    // public function Third()
-    // {
-    //     if (!session('?tInfo')) {
-    //         $this->redirect('admin/Import/First');
-    //     }
-
-    //     $shareUrl = url('index/Template/readTemplate', ['id' => session('tInfo')['tid']], '', true);
-    //     $this->assign("shareUrl", $shareUrl);
-    //     session('tInfo', null);
-    //     session('optionList', null);
-    //     session('excelData', null);
-    //     return view();
-    // }
 }
