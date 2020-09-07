@@ -2,18 +2,21 @@
 
 namespace app\admin\controller;
 
-class Import extends TemplateBase
+class Import extends Base
 {
     public function First()
     {
         if (request()->isAjax()) {
             header("content-type:text/html;charset=utf-8");
-            $tInfo = $this->tInfo + [
+
+            $tInfo = [
+                'tid'=>my_uuid(),
+                'uid' => session('admin.id'),
                 'tname' => input('post.tname'),
-                'remarks' => input('post.remarks',""),
+                'remarks' => input('post.remarks', ""),
                 'tFile' => input('file.tempalte'),
             ];
-            
+
             #验证文件类型 模板名是否重复
             $validate = new \app\admin\validate\Templates();
             if (!$validate->scene('upload')->check($tInfo)) {
@@ -29,7 +32,7 @@ class Import extends TemplateBase
             }
         }
         $this->assign([
-            'showKeys'=>'true'
+            'showKeys' => 'true',
         ]);
         return view();
     }
@@ -43,8 +46,8 @@ class Import extends TemplateBase
         if (request()->isAjax()) {
 
             $tInfo = session('tInfo');
-            $tInfo['primaryKey'] = input('post.primaryKey',"");
-            $tInfo['myData'] = input('post.myData',0);
+            $tInfo['primaryKey'] = input('post.primaryKey', "");
+            $tInfo['myData'] = input('post.myData', 0);
             $tInfo['endTime'] = strtotime(input('post.endTime'));
             // halt($tInfo);
             $res = model('Templates')->createByFile($tInfo);
@@ -71,7 +74,7 @@ class Import extends TemplateBase
             }
         }
         $this->assign([
-            'keys'=>$keys,
+            'keys' => $keys,
             'optionList' => $optionList,
             'tname' => $tInfo['tname'],
         ]);

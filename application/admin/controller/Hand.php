@@ -4,7 +4,7 @@ namespace app\admin\controller;
 
 use Overtrue\Pinyin\Pinyin;
 
-class Hand extends TemplateBase
+class Hand extends Base
 {
     public function index()
     {
@@ -39,7 +39,7 @@ class Hand extends TemplateBase
                 $info = $wordfile->move('uploads/word/wordfile');
                 if ($info) {
                     // 成功上传后 获取上传信息
-                    $wordPath =  "uploads/word/wordfile/" .$info->getSaveName();
+                    $wordPath = "uploads/word/wordfile/" . $info->getSaveName();
                 } else {
                     // 上传失败获取错误信息
                     $this->error("文件上传失败");
@@ -49,18 +49,20 @@ class Hand extends TemplateBase
                 $tInfo['ttype'] = 1;
             }
 
-
             if ((!array_key_exists('option_1', $params))) {
                 $this->error("请至少添加一个字段");
             }
 
             $pinyin = new Pinyin();
-            $tInfo = $this->tInfo + [
+
+            $tInfo = [
+                'tid' => my_uuid(),
+                'uid' => session('admin.id'),
                 'tname' => $params['templateName'],
                 'remarks' => $params['remarks'],
                 'tabbr' => $pinyin->abbr($params['templateName']),
-                'primaryKey' => $params['primaryKey']?$params['primaryKey']:"",
-                'myData' => $params['myData']?$params['myData']:0,
+                'primaryKey' => $params['primaryKey'] ? $params['primaryKey'] : "",
+                'myData' => $params['myData'] ? $params['myData'] : 0,
                 'endTime' => strtotime($params['endTime']),
             ];
             // halt($tInfo);

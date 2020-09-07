@@ -35,6 +35,9 @@ function my_uuid() {
         $d .= $s[ ( $g ^ ord( $a[ $f + 8 ] ) ) - $g & 0x1F ],
         $f++
     );
+    
+    $n = [0, 1, 2, 3, 4, 5, 6, 7];
+    $d[array_rand($n)] = strtolower($d[array_rand($n)]);
     return  $d;
 }
 
