@@ -15,52 +15,55 @@ class DataToMysql extends Controller
         $redisKey = 'datalists';
         while (true) {
             $datas = $redis->lRange($redisKey, 0, -1);
-            foreach ($datas as &$value) {
-                $value = unserialize($value);
-            }
-            // 启动事务
-            Db::startTrans();
-            try {
-                Db::name('TemplatesDatas')->data($datas)->limit(100)->insertAll();
-                // 提交事务
-                Db::commit();
-                $redis->del($redisKey);
-            } catch (\Exception $e) {
-                // 回滚事务
-                Db::rollback();
-                Log::write($e->getMessage(), 'error');
+
+            if (!empty($datas)) {
+                foreach ($datas as &$value) {
+                    $value = unserialize($value);
+                }
+                // 启动事务
+                Db::startTrans();
+                try {
+                    Db::name('TemplatesDatas')->data($datas)->limit(100)->insertAll();
+                    // 提交事务
+                    Db::commit();
+                    $redis->del($redisKey);
+                } catch (\Exception $e) {
+                    // 回滚事务
+                    Db::rollback();
+                    Log::write($e->getMessage(), 'error');
+                }
             }
             sleep(1);
         }
     }
 
-
     public function updateDatasToMysql()
     {
         $redis = new Redis();
         $redisKey = 'updatedatalists';
+
         while (true) {
             $datas = $redis->lRange($redisKey, 0, -1);
-            foreach ($datas as &$value) {
-                $value = unserialize($value);
+            if (!empty($datas)) {
+                foreach ($datas as &$value) {
+                    $value = unserialize($value);
+                }
+                // 启动事务
+                Db::startTrans();
+                try {
+                    model('TemplatesDatas')->saveAll($datas);
+                    // 提交事务
+                    Db::commit();
+                    $redis->del($redisKey);
+                } catch (\Exception $e) {
+                    // 回滚事务
+                    Db::rollback();
+                    Log::write($e->getMessage(), 'error');
+                }
             }
-            // 启动事务
-            Db::startTrans();
-            try {
-                model('TemplatesDatas')->saveAll($datas);
-                // 提交事务
-                Db::commit();
-                $redis->del($redisKey);
-            } catch (\Exception $e) {
-                // 回滚事务
-                Db::rollback();
-                Log::write($e->getMessage(), 'error');
-            }
-            sleep(2.1);
+            sleep(2);
         }
     }
-
-
 
     public function getTestdatas()
     {
