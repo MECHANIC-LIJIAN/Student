@@ -98,9 +98,9 @@ class MyData extends Base
         $id = input('id');
 
         if (!in_array(2, $this->groupIds)) {
-            $where = ['id' => $id];
-        } else {
             $where = ['id' => $id, 'uid' => session('admin.id')];
+        } else {
+            $where = ['id' => $id];
         }
 
         $dataInfo = model('MyData')
@@ -122,10 +122,11 @@ class MyData extends Base
 
         if (request()->isAjax()) {
 
+            $id=input('post.dataId');
             if (!in_array(2, $this->groupIds)) {
-                $where = ['id' => input('post.dataId')];
+                $where = ['id' => $id, 'uid' => session('admin.id')];
             } else {
-                $where = ['id' => input('post.dataId'), 'uid' => session('admin.id')];
+                $where = ['id' => $id];
             }
             $dataInfo = model('MyData')
                 ->where($where)
@@ -147,10 +148,11 @@ class MyData extends Base
         $id = input('id');
 
         if (!in_array(2, $this->groupIds)) {
-            $where = ['id' => $id];
-        } else {
             $where = ['id' => $id, 'uid' => session('admin.id')];
+        } else {
+            $where = ['id' => $id];
         }
+        
         $dataInfo = model('MyData')
             ->where($where)
             ->field('uid,title,id,count')
