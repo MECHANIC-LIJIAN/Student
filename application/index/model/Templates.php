@@ -2,13 +2,14 @@
 
 namespace app\index\model;
 
+use app\common\CommonModel;
 use myredis\Redis;
 use think\Db;
 use think\facade\Log;
 use think\Model;
 use think\model\concern\SoftDelete;
 
-class Templates extends Model
+class Templates extends CommonModel
 {
     use SoftDelete;
 

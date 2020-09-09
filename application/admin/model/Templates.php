@@ -3,6 +3,7 @@
 namespace app\admin\model;
 
 use app\admin\business\QrcodeServer;
+use app\common\CommonModel;
 use Overtrue\Pinyin\Pinyin;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
@@ -11,7 +12,7 @@ use think\Db;
 use think\Model;
 use think\model\concern\SoftDelete;
 
-class Templates extends Model
+class Templates extends CommonModel
 {
     use SoftDelete;
 

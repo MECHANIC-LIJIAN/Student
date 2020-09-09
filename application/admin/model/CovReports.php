@@ -2,10 +2,11 @@
 
 namespace app\admin\model;
 
+use app\common\CommonModel;
 use think\Model;
 use think\model\concern\SoftDelete;
 
-class CovReports extends Model
+class CovReports extends CommonModel
 {
     use SoftDelete;
     public function getProfile()

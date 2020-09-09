@@ -3,11 +3,11 @@
 namespace app\admin\model;
 
 use app\admin\business\Admin as BusinessAdmin;
+use app\common\CommonModel;
 use think\Db;
-use think\Model;
 use think\model\concern\SoftDelete;
 
-class Admin extends Model
+class Admin extends CommonModel
 {
     //软删除
     use SoftDelete;

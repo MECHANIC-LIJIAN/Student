@@ -2,11 +2,12 @@
 
 namespace app\admin\model;
 
+use app\common\CommonModel;
 use think\Db;
 use think\Model;
 use think\model\concern\SoftDelete;
 
-class MyData extends Model
+class MyData extends CommonModel
 {
     use SoftDelete;
 
