@@ -164,7 +164,6 @@ class Templates extends Base
         }
         #获取显示在页面的数据列表
 
-        dump($tInfo);
         $this->assign([
             'keys' => $keys,
             'optionList' => $tInfo['options'],
