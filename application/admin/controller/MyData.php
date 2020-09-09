@@ -96,8 +96,15 @@ class MyData extends Base
     public function read()
     {
         $id = input('id');
+
+        if (!in_array(2, $this->groupIds)) {
+            $where = ['id' => $id];
+        } else {
+            $where = ['id' => $id, 'uid' => session('admin.id')];
+        }
+
         $dataInfo = model('MyData')
-            ->where(['id' => $id, 'uid' => session('admin.id')])
+            ->where($where)
             ->with('getDatas')
             ->field('uid,title,id,count')
             ->find();
@@ -114,8 +121,14 @@ class MyData extends Base
     {
 
         if (request()->isAjax()) {
+
+            if (!in_array(2, $this->groupIds)) {
+                $where = ['id' => input('post.dataId')];
+            } else {
+                $where = ['id' => input('post.dataId'), 'uid' => session('admin.id')];
+            }
             $dataInfo = model('MyData')
-                ->where(['id' => input('post.dataId'), 'uid' => session('admin.id')])
+                ->where($where)
                 ->field('uid,title,id,count')
                 ->find();
             $dataInfo['dataText'] = input('post.dataText');
@@ -132,8 +145,14 @@ class MyData extends Base
             }
         }
         $id = input('id');
+
+        if (!in_array(2, $this->groupIds)) {
+            $where = ['id' => $id];
+        } else {
+            $where = ['id' => $id, 'uid' => session('admin.id')];
+        }
         $dataInfo = model('MyData')
-            ->where(['id' => $id, 'uid' => session('admin.id')])
+            ->where($where)
             ->field('uid,title,id,count')
             ->find();
         if (!$dataInfo) {
