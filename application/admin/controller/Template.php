@@ -265,7 +265,7 @@ class Template extends Base
 
             $outData[] = $tmp;
         }
-
+        sleep(1);
         return $this->outdata($filename, $outData, $heads, $keys);
 
     }
@@ -346,6 +346,7 @@ class Template extends Base
             'filename' => $filename,
             'msg' => '导出成功',
         );
+
         return $response;
     }
 }

@@ -337,11 +337,18 @@
             dataType: 'json',
             beforeSend: function () {
                 //显示正在加载数据
-                loadIndex = layer.msg('文件较大，请耐心等待', {
-                    icon: 16
-                    , shade: 0.01
-                    ,skin: 'layui-layer-rim', //加上边框
-                });
+                if (isPC) {
+                    loadIndex = layer.msg('文件较大，请耐心等待', {
+                        icon: 16
+                        , shade: 0.01
+                        , skin: 'layui-layer-rim', //加上边框
+                    });
+                } else {
+                    loadIndex = layer.open({
+                        type: 2,
+                        content: '文件较大，请耐心等待',
+                    });
+                }
             },
             success: function (ret) {
                 layer.close(loadIndex);
@@ -394,6 +401,10 @@
         isPlay = $("#lunxun").is(":checked")
         isPlay ? start() : stop()
     })
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms))
+    }
 </script>
 
 {/block}
