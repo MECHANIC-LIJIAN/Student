@@ -63,9 +63,15 @@ class Templates extends Base
      */
     public function add()
     {
+        $where=[];
+        if (!in_array(2, $this->groupIds)) {
+            $where = ['uid' => session('admin.id')];
+        }
+
         $myData = model("MyData")
-            ->where(['uid' => session('admin.id')])
+            ->where($where)
             ->field('id,title')
+            ->order('id','desc')
             ->select();
         session('myData', $myData);
         return view();
@@ -138,10 +144,15 @@ class Templates extends Base
         $tInfo = model('Templates')->where(['tid' => $id])->field('id,tid,options,tname,endTime,primaryKey,mydata,remarks')->find();
         $tInfo['options'] = json_decode($tInfo['options'], true);
         
+        $where=[];
+        if (!in_array(2, $this->groupIds)) {
+            $where = ['uid' => session('admin.id')];
+        }
 
         $myData = model("MyData")
-            ->where(['uid' => session('admin.id')])
+            ->where($where)
             ->field('id,title')
+            ->order('id','desc')
             ->select();
         session('myData', $myData);
         
@@ -153,6 +164,7 @@ class Templates extends Base
         }
         #获取显示在页面的数据列表
 
+        dump($tInfo);
         $this->assign([
             'keys' => $keys,
             'optionList' => $tInfo['options'],
