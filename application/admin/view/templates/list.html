@@ -20,7 +20,8 @@
                     </div> -->
                     <table class="table table-hover text-nowrap" style="padding: 2px;">
                         <thead>
-                            <tr style="border-top: 1px solid rgb(200, 200, 200);border-bottom: 1px solid rgb(200, 200, 200);">
+                            <tr
+                                style="border-top: 1px solid rgb(200, 200, 200);border-bottom: 1px solid rgb(200, 200, 200);">
                                 <th>表单名</th>
                                 {present name="$display"}<th>用户名</th>{/present}
                                 <th>状态</th>
@@ -39,7 +40,8 @@
                                 max-width: 200px;
                                 overflow: hidden;
                                 white-space: nowrap;
-                                text-overflow: ellipsis;"><a href="{:url('admin/Template/index',['id'=>$vo.tid,'sid'=>'2'])}" target="_blank"
+                                text-overflow: ellipsis;"><a
+                                        href="{:url('admin/Template/index',['id'=>$vo.tid,'sid'=>'2'])}" target="_blank"
                                         style="font-size:14px" title="{$vo.tname}">{$vo.tname}</a> </td>
                                 {present name="$display"}<td>{$vo.get_user.username}</td>{/present}
 
@@ -160,13 +162,14 @@
         layer.open({
             type: 1,
             title: false,
-            closeBtn: 0,
+            closeBtn: 1,
             offset: 'auto',
-            // area: ['auto'],
+            area: ['360px', '405px'],
             skin: 'layui-layer-nobg', //没有背景色
             shadeClose: true,
             content: img
         });
+
     })
 </script>
 
