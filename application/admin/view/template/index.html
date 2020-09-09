@@ -326,44 +326,41 @@
     })
 
     $("#export").click(function () {
-        $.ajax({
-            url: "{:url('admin/Template/export')}",
-            type: 'post',
-            data: {
-                id: "{$template.id}",
-                tid: "{$template.tid}",
-                date: $("#exportType").val()
-            },
-            dataType: 'json',
-            beforeSend: function () {
-                //显示正在加载数据
-                if (isPC) {
+        if (isPC) {
+            $.ajax({
+                url: "{:url('admin/Template/export')}",
+                type: 'post',
+                data: {
+                    id: "{$template.id}",
+                    tid: "{$template.tid}",
+                    date: $("#exportType").val()
+                },
+                dataType: 'json',
+                beforeSend: function () {
+                    //显示正在加载数据
                     loadIndex = layer.msg('文件较大，请耐心等待', {
                         icon: 16
                         , shade: 0.01
                         , skin: 'layui-layer-rim', //加上边框
                     });
-                } else {
-                    loadIndex = layer.open({
-                        type: 2,
-                        content: '文件较大，请耐心等待',
-                    });
+                },
+                success: function (ret) {
+                    layer.close(loadIndex);
+                    if (ret.code === 1) {
+                        var $a = $("<a>");
+                        $a.attr("href", ret.file);
+                        $("body").append($a);
+                        $a.attr("download", ret.filename);
+                        $a[0].click();
+                        $a.remove();
+                    } else {
+                        showErrorMsg(ret.msg)
+                    }
                 }
-            },
-            success: function (ret) {
-                layer.close(loadIndex);
-                if (ret.code === 1) {
-                    var $a = $("<a>");
-                    $a.attr("href", ret.file);
-                    $("body").append($a);
-                    $a.attr("download", ret.filename);
-                    $a[0].click();
-                    $a.remove();
-                } else {
-                    showErrorMsg(ret.msg)
-                }
-            }
-        })
+            })
+        } else {
+            showErrorMsg("暂不支持手机端导出")
+        }
     })
 
     let timerId = 1 // 模拟计时器id，唯一性
