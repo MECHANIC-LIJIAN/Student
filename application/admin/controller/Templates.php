@@ -141,9 +141,9 @@ class Templates extends Base
         }
 
         $id = input('tid');
-        $tInfo = model('Templates')->where(['tid' => $id])->field('id,tid,options,tname,endTime,primaryKey,mydata,remarks')->find();
+        $tInfo = model('Templates')->where(['tid' => $id])->field('id,tid,options,tname,endTime,primaryKey,myData,remarks,mydata')->with('getMyData')->find();
+
         $tInfo['options'] = json_decode($tInfo['options'], true);
-        
         $where=[];
         if (!in_array(2, $this->groupIds)) {
             $where = ['uid' => session('admin.id')];

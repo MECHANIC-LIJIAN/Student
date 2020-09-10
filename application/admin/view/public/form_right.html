@@ -21,7 +21,7 @@
             <span class="s-radio"></span>不设置
         </label>
         {/present}
-        
+
     </div>
 </div>
 <form class="form-box">
@@ -31,17 +31,28 @@
                 <font color="red" style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
                 是否指定唯一标识字段
             </h4>
-
+            {if (!empty($tInfo)) AND ($tInfo.primaryKey!='')}
             <label>
-                <input type="radio" name="ifUseKey" class="key-radio i-radio" value="1">
+                <input type="radio" name="ifUseKey" class="key-radio i-radio checkbox" value="1" checked>
                 <span class="s-radio"></span>指定
             </label>
             <label>
-                <input type="radio" name="ifUseKey" class="key-radio i-radio"value="0" checked>
+                <input type="radio" name="ifUseKey" class="key-radio i-radio checkbox" value="0">
                 <span class="s-radio"></span>不指定
             </label>
+            {else /}
+
+            <label>
+                <input type="radio" name="ifUseKey" class="key-radio i-radio checkbox" value="1">
+                <span class="s-radio"></span>指定
+            </label>
+            <label>
+                <input type="radio" name="ifUseKey" class="key-radio i-radio checkbox" value="0" checked>
+                <span class="s-radio"></span>不指定
+            </label>
+            {/if}
         </div>
-        <div class="hidden myKey">
+        <div class="{if (!empty($tInfo)) AND ($tInfo.primaryKey!='')}{else /}hidden{/if} myKey">
             <h5>请选择唯一标识字段</h5>
             <select class="select" name="primaryKey" id="primaryKey">
                 {present name="keys"}
@@ -53,28 +64,46 @@
         </div>
     </div>
 
-    <div class="well mydata-box hidden">
+    <div class="well mydata-box">
         <div>
             <h4>
                 <font color="red" style="position:relative; top:5px;font-weight:bold;font-size:16px">*</font>
                 是否使用自定义数据集
             </h4>
+            {if (empty($tInfo)) OR ($tInfo.mydata=='0')}
             <label>
                 <input type="radio" name="ifUseData" class="data-radio i-radio" value="1">
                 <span class="s-radio"></span>使用
             </label>
-
             <label>
                 <input type="radio" name="ifUseData" class="data-radio i-radio" value="0" checked>
                 <span class="s-radio"></span>不使用
             </label>
+
+            {else /}
+            <label>
+                <input type="radio" name="ifUseData" class="data-radio i-radio" value="1" checked>
+                <span class="s-radio"></span>使用
+            </label>
+            <label>
+                <input type="radio" name="ifUseData" class="data-radio i-radio" value="0">
+                <span class="s-radio"></span>不使用
+            </label>
+            {/if}
+
+
         </div>
-        <div class="hidden myData">
+        <div class="{if (empty($tInfo)) OR ($tInfo.mydata=='0')}hidden{/if} myData">
             <h5>请选择数据集</h5>
             {neq name="Think.session.myData|count" value="0"}
             <select class="select" name="primaryKeyData" id="primaryKeyData" style="margin-bottom: 10px;">
+                {present name="tInfo"}{if $tInfo.mydata!=0} <option value="{$tInfo.get_mydata.id}">
+                    {$tInfo.get_mydata.title}</option>{/if}
+                {/present}
                 {volist name="Think.session.myData" id="vo"}
+                {if $vo.id!=$tInfo.mydata}
                 <option value="{$vo.id}">{$vo.title}</option>
+                {/if}
                 {/volist}
             </select>
             {else /}

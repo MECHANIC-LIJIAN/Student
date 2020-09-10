@@ -3,9 +3,11 @@
 namespace app\admin\controller;
 
 use Overtrue\Pinyin\Pinyin;
+use think\facade\Request;
 
 class Hand extends Base
 {
+    
     public function index()
     {
         return view();
@@ -47,6 +49,7 @@ class Hand extends Base
                 $this->error("请至少添加一个字段");
             }
 
+            
             $pinyin = new Pinyin();
 
             $tInfo = [
@@ -55,16 +58,31 @@ class Hand extends Base
                 'tname' => $params['templateName'],
                 'remarks' => $params['remarks'],
                 'tabbr' => $pinyin->abbr($params['templateName']),
-                'primaryKey' => $params['primaryKey'] ? $params['primaryKey'] : "",
+                'primaryKey' => $params['primaryKey'] ? $params['primaryKey'] : '',
                 'myData' => $params['myData'] ? $params['myData'] : 0,
-                'endTime' => strtotime($params['endTime']),
+                'endTime' => (int)strtotime($params['endTime']?$params['endTime']:0),
             ];
-            // halt($tInfo);
+            
+            if($tInfo['endTime']!=0&&$tInfo['endTime']<time()){
+                $this->error("请设置合理的截止时间");
+            }
+
+            if($tInfo['myData']!=0&&$tInfo['primaryKey']==''){
+                $this->error("设置数据集前请先指定唯一标识字段");
+            }
+
             unset($params['templateName']);
             unset($params['primaryKey']);
             unset($params['myData']);
             unset($params['remarks']);
             unset($params['endTime']);
+
+            #判断字段值是否为空
+            foreach ($params as $key => $value) {
+                if(!$value){
+                    $this->error("请输入有效的字段值");
+                }
+            }
 
             #模板名是否重复
             $validate = new \app\admin\validate\Templates();
@@ -74,13 +92,15 @@ class Hand extends Base
 
             $template = model('templates')
                 ->where('tid', $tInfo['tid'])
+                ->field('status')
                 ->find();
+
             if ($template['status'] == '1') {
                 $this->error("模板已经初始化，不可更改");
             }
 
             $tInfo['params'] = $params;
-            // return($tInfo);
+ 
             $res = model('Templates')->createByHand($tInfo);
             // return $res;
             if ($res == 1) {

@@ -14,8 +14,11 @@
             , min: date.toLocaleString(),
         });
 
+
+
         $(".key-radio").click(function () {
             var value = $(this).val();
+            $(this).attr('checked', true)
             if (value === "1") {
                 $(".myKey").removeClass("hidden").addClass("show")
                 $(".mydata-box").removeClass("hidden").addClass("show")
@@ -27,6 +30,7 @@
         })
         $(".data-radio").click(function () {
             var value = $(this).val();
+            $(this).attr('checked', true)
             if (value === "1") {
                 $(".myData").removeClass("hidden").addClass("show")
             } else {
@@ -66,11 +70,11 @@
                         var formdata = new FormData(document.getElementById('subForm'));
                         formdata.append("wordfile", $("#tempalteFile")[0].files[0]);
 
-                        if (ifUseData == "1") {
-                            formdata.append('myData', myData)
-                        }
                         if (ifUseKey == "1") {
                             formdata.append('primaryKey', primaryKey)
+                            if (ifUseData == "1") {
+                                formdata.append('myData', myData)
+                            }
                         }
                         if (ifUseEnd == 0 || endTime == null) {
                             endTime = 0;
@@ -96,11 +100,11 @@
                     } else {
                         var formdata = $('#subForm').serialize()
 
-                        if (ifUseData == "1") {
-                            formdata = formdata + '&' + $.param({ 'myData': myData, })
-                        }
                         if (ifUseKey == "1") {
                             formdata = formdata + '&' + $.param({ 'primaryKey': primaryKey, })
+                            if (ifUseData == "1") {
+                                formdata = formdata + '&' + $.param({ 'myData': myData, })
+                            }
                         }
                         if (ifUseEnd == 0 || endTime == null) {
                             endTime = 0;
