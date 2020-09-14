@@ -101,16 +101,25 @@ class Template extends Base
             ->field('id,primaryKey,myData')
             ->with('getMyData')
             ->find();
-        $noList = Db::name('MyDataOption')
-            ->where('my_data_id', $template['get_my_data']['id'])
-            ->where('content', 'NOTIN', function ($query) use ($tId, $template) {
-                $query->table('stu_templates_datas')
-                    ->where('tid', $tId)
-                    ->field("content->" . $template['primaryKey']);
-            })
-            ->column('content');
+        
+        // $noList = Db::name('MyDataOption')
+        //     ->where('my_data_id', $template['get_my_data']['id'])
+        //     ->where('content', 'NOTIN', function ($query) use ($tId, $template) {
+        //         $query->table('stu_templates_datas')
+        //             ->where('tid', $tId)
+        //             ->field("content->" . $template['primaryKey']);
+        //     })
+        //     ->column('content');
         // ->fetchSql()
-        // halt($noList);
+        
+        $myDataList=Db::name('MyDataOption')
+        ->where('my_data_id', $template['get_my_data']['id'])
+        ->column('content');
+        $hasList=Db::name('templates_datas')
+        ->where('tid', $tId)
+        ->field("content->" . $template['primaryKey'])
+        ->select();
+        $noList=array_diff($myDataList,$hasList);
         if (!empty($noList)) {
             $this->success("请求未填写数据成功", "", $noList);
         } else {
