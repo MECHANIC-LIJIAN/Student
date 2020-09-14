@@ -26,7 +26,7 @@ Route::group(
             Route::rule('ajax_no_data', 'admin/Template/getNoData', 'POST')->ext('do');
             Route::rule('ajax_del', 'admin/Template/del', 'POST')->ext('do');
             Route::rule('ajax_export', 'admin/Template/export', 'POST')->ext('do');
-
+            Route::rule('resetStatus', 'admin/Template/resetStatus', 'POST')->ext('do');
             Route::rule('export_word','admin/Word/export_word', 'GET');
         });
 

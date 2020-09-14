@@ -128,6 +128,33 @@ class Template extends Base
         }
     }
 
+    public function resetStatus()
+    {
+        $tId = input('tId');
+        $data=Db::name('templatesDatas')
+        ->where(['tid'=>$tId,'isUpdate' => 1])
+        ->find();
+        
+        if(!$data){
+            $this->success('所有数据都未更新过');
+        }
+
+        try{
+            $res=Db::name('templatesDatas')
+            ->where(['tid'=>$tId])
+            ->data(['isUpdate' => 0])
+            ->update();
+        }catch(\Exception $e){
+            
+        }
+        if($res){
+            $this->success('重置成功');
+        }else{
+            $this->error('重置失败');
+        }
+    }
+
+
     /**
      * 请求数据
      */

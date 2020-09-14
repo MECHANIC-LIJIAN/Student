@@ -23,6 +23,7 @@
 
     .btn-group {
         margin-top: 10px;
+        margin-right: 50px;
     }
 
     .btn-group>.btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
@@ -72,12 +73,13 @@
             <div id="myTabContent" class="tab-content">
                 <div id="firstPage" class="tab-pane active">
                     <div id="toolbar" style="width: 100%;">
-                        <div class="btn-group" class="col-lg-3" style="margin-right: 30px;">
+                        <div class="btn-group" class="col-lg-3">
                             <button id="btn_delete" type="button" class="btn btn-danger">
                                 <span class="fa fa-remove" aria-hidden="true"></span>删除
                             </button>
-                            <button id="btn_refresh" type="button" class="btn btn-success">
-                                <span class="fa fa-refresh" aria-hidden="true"></span>刷新
+                            <button id="btn_reset" class="btn btn-warning" dataid="{$template.id}"
+                                title='可将此刻之前的数据重置为未更新状态,请谨慎操作'>
+                                <span class="fa"></span>重置
                             </button>
                             <button id="copy" class="btn btn-info" dataid="{$template.tid}">
                                 <span class="fa fa-share"></span>分享
@@ -89,8 +91,11 @@
                             <a href="{$shareUrl}" target="_blank" class="btn btn-default"><span
                                     class="fa fa-eye"></span>表单</a>
 
+                            <button id="btn_refresh" type="button" class="btn btn-success">
+                                <span class="fa fa-refresh" aria-hidden="true"></span>刷新
+                            </button>
                         </div>
-                        <div class="btn-group" class="col-lg-3" style="margin-right: 30px;">
+                        <div class="btn-group" class="col-lg-3">
                             <select name="refreshTime" class="btn" id="refreshTime" style="height: 32px;">
                                 <option value=10000>10秒</option>
                                 <option value=30000 selected>30秒</option>
@@ -101,9 +106,9 @@
                                     style="position: unset;margin-left: 5px;margin-top: unset;" id="lunxun"
                                     checked></label>
                         </div>
-                        <div class="btn-group" class="col-lg-3" style="margin-right: 30px;">
+                        <div class="btn-group" class="col-lg-3">
                             <select name="searchField" class="btn" id="searchField"
-                                style="max-width: 200px;height: 32px;">
+                                style="max-width: 150px;height: 32px;">
                                 <option value="content.all">全部</option>
                                 {volist name="searchFields" id="vo"}
                                 <option value="{$vo.field}">{$vo.title}</option>
@@ -113,7 +118,7 @@
                             <button id="btn_search" type="button" class="btn btn-success">
                                 <span class="fa fa-search" aria-hidden="true"></span>查询
                             </button>
-                            <button id="btn_reset" type="button" class="btn btn-default">重置
+                            <button id="btn_search_reset" type="button" class="btn btn-default">重置
                             </button>
                         </div>
                         <div class="btn-group" class="col-lg-3">
@@ -123,7 +128,8 @@
                                 <!-- <option value="today_update">今日更新</option> -->
                                 <!-- <option value="today_add">今日新增</option> -->
                             </select>
-                            <button id="export" class="btn btn-primary" dataid="{$template.tid}">
+                            <button id="export" class="btn btn-primary" dataid="{$template.tid}"
+                                title='由于数据导出为文本格式，可将日期、时间等进行"分列"操作后排序'>
                                 <span class="fa fa-file-excel-o"></span>导出
                             </button>
                         </div>
@@ -132,11 +138,7 @@
                     </table>
                 </div>
                 <div id="secondPage" class="tab-pane">
-                    <table id="secondTable" class="table">
-                        <tbody>
-
-                        </tbody>
-                    </table>
+                    <table id="secondTable" class="table"><tbody></tbody></table>
                 </div>
             </div>
         </div>
@@ -196,8 +198,8 @@
 
     });
 
-    //异步删除数据
-    function ajax_del(url, data) {
+
+    function ajax_opt(url, data) {
         $.ajax({
             url: url,
             type: 'post',
@@ -274,10 +276,10 @@
         function confirm(msg, title, url, data) {
             layer.confirm(msg, {
                 title: title,
-                icon: 3
+                icon: 3,
             }, function (index) {
                 layer.close(index);
-                ajax_del(url, data)
+                ajax_opt(url, data)
             });
         }
     } else {
@@ -289,7 +291,7 @@
                 , btn: ['确认', '取消']
                 , yes: function (index) {
                     layer.close(index);
-                    ajax_del(url, data)
+                    ajax_opt(url, data)
                 }
             });
         }
@@ -319,7 +321,13 @@
     $("#btn_search").click(function () {
         $('#table').bootstrapTable('refresh');
     })
+
     $("#btn_reset").click(function () {
+        confirm('确定重置数据的更新状态为否吗?此操作不可撤销', '更新确认', '{:url("admin/Template/resetStatus")}',{tId:$(this).attr('dataid')})
+        $('#table').bootstrapTable('refresh');
+    })
+
+    $("#btn_search_reset").click(function () {
         $("#searchText").val("")
         $("#searchField").find("option:first").prop("selected", true);
         $('#table').bootstrapTable('refresh');
