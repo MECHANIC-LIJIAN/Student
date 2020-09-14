@@ -44,13 +44,14 @@ class Template extends Base
                 $tmp['sortable'] = true;
             }
 
+            $tmp['width'] = 50;
             $searchFields[] = $tmp;
             $options[] = $tmp;
         }
-
+        $options[] = ['field' => 'isUpdate', 'title' => '是否更新', 'sortable' => true, 'width' => 30, 'formatter' => 'isUpdate'];
         $options[] = ['field' => 'create_time', 'title' => '首次提交时间', 'sortable' => true, 'width' => 150];
         $options[] = ['field' => 'update_time', 'title' => '最后提交时间', 'sortable' => true, 'width' => 150];
-        $options[] = ['field' => 'isUpdate', 'title' => '是否更新', 'sortable' => true, 'width' => 30, 'formatter' => 'isUpdate'];
+        
         $options = json_encode($options);
 
         unset($template['options']);
