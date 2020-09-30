@@ -6,6 +6,22 @@
 {block name="page-breadcrumb"}
 <li class="active">{$title}</li>
 {/block}
+{block name="page-style"}
+
+<style>
+    table {
+        table-layout: fixed;
+    }
+
+
+    td {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+    }
+</style>
+{/block}
 {block name="page-main"}
 <div class="row">
     <div class="col-xs-12">
@@ -14,12 +30,12 @@
                 <span class="widget-caption">{$title}</span>
             </div>
             <div class="widget-body">
-                <div class="table-responsive">
+                <div class="">
                     <table class="table table-hover table-bordered text-nowrap">
                         <thead>
                             <tr>
-                                <th>报告人</th>
-                                <th>截图</th>
+                                <th style="width: 10%;">报告人</th>
+                                <th style="width: 8%;">截图</th>
                                 <th>具体</th>
                                 {if $Think.get.key=="admin"}
                                 {notempty name="hasList"}
@@ -68,7 +84,8 @@
                                     </a>
                                     <!-- <img class="report_pic" src="/{$vo.report_pic_path}" alt="" srcset=""></td> -->
                                 <td>
-                                    <p>{$vo.todayCondition}</p>
+                                    <span title="{$vo.todayCondition}">{$vo.todayCondition}</span>
+
                                 </td>
 
                                 {if $Think.get.key=="admin"}
