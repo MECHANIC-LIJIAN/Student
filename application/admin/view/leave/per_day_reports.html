@@ -1,0 +1,174 @@
+{extend name="public/admin_base"}
+{block name="title"}
+{$title}
+
+{/block}
+{block name="page-breadcrumb"}
+<li class="active">{$title}</li>
+{/block}
+{block name="page-main"}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="widget">
+            <div class="widget-header">
+                <span class="widget-caption">{$title}</span>
+            </div>
+            <div class="widget-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>报告人</th>
+                                <th>截图</th>
+                                <th>具体</th>
+                                {if $Think.get.key=="admin"}
+                                {notempty name="hasList"}
+                                <th style="width: 10%;">操作</th>
+                                {/notempty}
+                                {/if}
+                            </tr>
+                        </thead>
+                        <style>
+                            .report_pic {
+                                width: 150px;
+                            }
+
+                            /*使图片在浏览器中居中显示*/
+                            .bigImg {
+                                max-height: 80%;
+                                max-width: 90%;
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                /*图片向左移动自身宽度的50%, 向上移动自身高度的50%。*/
+                                transform: translate(-50%, -50%);
+                            }
+
+                            /*遮罩层*/
+                            .opacityBottom {
+                                width: 100%;
+                                height: 100%;
+                                position: fixed;
+                                background: rgba(0, 0, 0, 0.8);
+                                z-index: 1000;
+                                top: 0;
+                                left: 0;
+                            }
+                        </style>
+                        <tbody>
+                            {volist name="hasList"" id="vo" empty="暂时没有提交数据"}
+                            <tr>
+                                <!-- <td style="width: 20px;">{$i} </td> -->
+                                <td style="width: 50px;">{$vo.username} </td>
+
+                                <td style="width: 30%;">
+
+                                    <a href="#" class="toBigPic" picPath="{$vo.picPath}">
+                                        <i class="fa fa-picture-o fa-2x" aria-hidden="true"></i>
+                                    </a>
+                                    <!-- <img class="report_pic" src="/{$vo.report_pic_path}" alt="" srcset=""></td> -->
+                                <td>
+                                    <p>{$vo.todayCondition}</p>
+                                </td>
+
+                                {if $Think.get.key=="admin"}
+                                <td>
+                                    <a href="#" class="btn btn-danger btn-xs report-del" dataid="{$vo.id}">删除</a>
+                                </td>
+                                {/if}
+                            </tr>
+                            {/volist}
+
+                            {volist name="notList"" id="vo" }
+                            <tr>
+                                <!-- <td style="width: 20px;">{$i} </td> -->
+                                <td style="width: 50px;">{$vo.username} </td>
+
+                                <td style="width: 30%;" colspan="2">
+                                    未提交
+                                </td>
+                            </tr>
+                            {/volist}
+                        </tbody>
+                    </table>
+
+                    <div class="form-group text-align-right" style="margin-top: 20px;">
+
+                        <div class="btn-group">
+                            <a
+                                href="{:url('admin/Leave/downPerDayReports',['date'=>$date,'type'=>'all','path'=>$date_pic_path])}">
+                                <button type="button" id="downReport" {empty name="hasList" } disabled {/empty}
+                                    class="btn btn-info">
+                                    下载今日全部报告
+                                </button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="page-js"}
+
+<script type="text/javascript">
+
+    $('.toBigPic').click(function () {
+        //获取图片路径
+        var imgsrc = $(this).attr("picPath");
+        var opacityBottom = '<div class="opacityBottom" style = "display:none"><img class="bigImg" src="' + imgsrc + '"></div>';
+        $(document.body).append(opacityBottom);
+        toBigImg();//变大函数
+    });
+    $('img').click(function () {
+        //获取图片路径
+        var imgsrc = $(this).attr("src");
+        var opacityBottom = '<div class="opacityBottom" style = "display:none"><img class="bigImg" src="' + imgsrc + '"></div>';
+        $(document.body).append(opacityBottom);
+        toBigImg();//变大函数
+    });
+
+    function toBigImg() {
+        $(".opacityBottom").addClass("opacityBottom");//添加遮罩层
+        $(".opacityBottom").show();
+        $("html,body").addClass("none-scroll");//下层不可滑动
+        $(".bigImg").addClass("bigImg");//添加图片样式
+        $(".opacityBottom").click(function () {
+            //点击关闭
+            $("html,body").removeClass("none-scroll");
+            $(".opacityBottom").remove();
+        });
+    }
+
+
+    $('.report-del').click(function () {
+
+        var id = $(this).attr('dataid');
+        layer.confirm('确定删除该记录吗？', {
+            title: '删除确认',
+            icon: 3
+        }, function (index) {
+            layer.close(index);
+            $.ajax({
+                url: "{:url('admin/Leave/delOneReport')}",
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == 1) {
+                        showMsgAndHref(data)
+                    } else {
+                        showErrorMsg(data.msg)
+                    }
+                }
+            });
+
+        });
+        return false;
+    });
+</script>
+
+{/block}

@@ -19,9 +19,9 @@ class Cov extends Base
     {
         parent::initialize();
 
-        $resdis = new Redis();
+        $redis = new Redis();
         $redisKey = strtotime(date('Y-m-d')) . "_record";
-        if (!$resdis->exists($redisKey)) {
+        if (!$redis->exists($redisKey)) {
             $this->newReport();
         }
     }
@@ -57,10 +57,10 @@ class Cov extends Base
         $cov = new ModelCov();
         $res = $cov->field('id')->getByDate($data['date']);
         if ($res) {
-            $resdis = new Redis();
+            $redis = new Redis();
             $redisKey = strtotime(date('Y-m-d')) . "_record";
-            $resdis->set($redisKey, $redisKey);
-            $resdis->expire($redisKey, 60 * 60 * 16);
+            $redis->set($redisKey, $redisKey);
+            $redis->expire($redisKey, 60 * 60 * 16);
             return [
                 'code' => 1,
                 'msg' => "今日报告已创建",

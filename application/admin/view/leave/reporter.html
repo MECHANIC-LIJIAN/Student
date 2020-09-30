@@ -1,0 +1,147 @@
+{extend name="public/admin_base"}
+{block name="title"}
+{$title}
+
+{/block}
+{block name="page-breadcrumb"}
+<li class="active">{$title}</li>
+{/block}
+{block name="page-main"}
+<div class="row">
+    <div class="col-lg-6 col-md-10 col-sm-12">
+        <div class="widget">
+            <div class="bg-themeprimary widget-header">
+                <span class="widget-caption">{$title}</span>
+            </div>
+            <div class="widget-body">
+                <!-- <div class="alert alert-warning" style="font-size:1.2em">
+                    为了保证成功上传，请在情况单上传之后再上传截图；
+                    <br>有多张截图时，务必全都选择完，再进行上传；
+                </div> -->
+                <div>
+                    <h3>接龙截图</h3>
+                    <form enctype="multipart/form-data">
+
+                        <input id="picPath" name="picPath" type="hidden">
+                        <input id="date" name="date" type="hidden" value="{$date}">
+                        <div class="file-loading">
+                            <input id="single-upload" name="single_file_pic" type="file" class="file">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="name"><h3>情况说明</h3></label>
+                            <textarea class="form-control" name="todayCondition" rows="3"></textarea>
+                          </div>
+                        
+                    </form>
+                </div>
+                <!-- <div>
+                    <legend>上传打电话截图</legend>
+                    <form enctype="multipart/form-data">
+                        <div class="file-loading">
+                            <input id="phone-upload" name="file_pic[]" type="file" class="file" multiple>
+                        </div>
+                    </form>
+                </div> -->
+
+                <div style="text-align:center;margin-top: 20px;">
+                    <button id="report" disabled="true" style="cursor :pointer;" class="btn btn-lg btn-success">提交报告</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="page-js"}
+
+<link rel="stylesheet" href="__LIB__/bootstrap-fileinput/css/fileinput.min.css">
+<link href="__LIB__/bootstrap-fileinput/themes/explorer-fa/theme.css" media="all" rel="stylesheet" type="text/css" />
+
+<script src="__JS__/c2b.js"></script>
+<script src="__LIB__/bootstrap-fileinput/js/fileinput.min.js"></script>
+<script src="__LIB__/bootstrap-fileinput/js/locales/zh.js"></script>
+<script src="__LIB__/bootstrap-fileinput/themes/explorer-fa/theme.js" type="text/javascript"></script>
+<script>
+    var count=1;
+    function checkCount(){
+        if(count===2){
+            $("#report").attr("disabled", false); 
+        }
+    }
+    $("#single-upload").fileinput({
+        uploadAsync: false,//采用同步上传
+        // uploadAsync: true,
+        dropZoneEnabled: false,//是否显示拖拽区域
+        language: 'zh', //设置语言
+        uploadUrl: '{:url("admin/leave/ajaxUpload")}', //上传的地址
+        allowedFileExtensions: ['jpg','jpeg', 'gif', 'png','tif'],//接收的文件后缀
+        browseClass: "btn btn-primary", //按钮样式
+        removeFromPreviewOnError: true,//是否移除校验文件失败的文件
+        overwriteInitial: false,  // 覆盖初始预览内容和标题设置
+        showCancel: false, // 显示取消按钮
+        showZoom: false,     // 显示预览按钮
+        autoReplace: true,
+        minImageWidth: 50, //图片的最小宽度
+        minImageHeight: 50,//图片的最小高度
+        maxImageWidth: 2000,//图片的最大宽度
+        maxImageHeight: 2000,//图片的最大高度
+        maxFileSize: 8000,//单位为kb，如果为0表示不限制文件大小
+        showPreview:true,
+        resizeImage:true,
+        resizePreference:'height',
+        resizeImageQuality:0.9,
+        maxFileCount: 1, //表示允许同时上传的最大文件个数
+        previewFileIcon: "<i class='fa fa-king'></i>",
+        msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+        uploadExtraData: {
+            "_t": '{$token}',
+            'type': 's'
+        },
+        fileActionSettings: {                               // 在预览窗口中为新选择的文件缩略图设置文件操作的对象配置
+            showRemove: false,                                   // 显示删除按钮
+            showUpload: false,                                   // 显示上传按钮
+            showDownload: false,                            // 显示下载按钮
+            showZoom: false,                                    // 显示预览按钮
+            showDrag: false,                                        // 显示拖拽
+        },
+    }).on('fileerror', function (event, data, msg) {
+        // 清除当前的预览图 ，并隐藏 【移除】 按钮
+        $(event.target)
+            .fileinput('clear')
+            .fileinput('unlock')
+        $(event.target)
+            .parent()
+            .siblings('.fileinput-remove')
+            .hide()
+            
+    }).on("filebatchuploadsuccess", function (event, data, previewId, index) {
+        var res = data.response
+        if (res.code === 1) {
+            showMsg(res.msg)
+            count++
+            checkCount()
+            $("#picPath").val(res.data)
+        } else {
+            showErrorMsg(res.msg)
+        }
+    });
+
+    $("#report").click(function () {
+        $.ajax({
+            url: '{:url("admin/leave/reporter")}',
+            method: 'post',
+            dataType: 'json',
+            data: $('form').serialize(),
+            success: function (data) {
+                if (data.code === 1) {
+                    showMsgAndHref(data)
+                } else {
+                    showErrorMsg(data.msg)
+                }
+            }
+        })
+    })
+
+</script>
+{/block}

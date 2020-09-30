@@ -1,0 +1,102 @@
+{extend name="public/admin_base"}
+{block name="title"}
+报告列表
+{/block}
+{block name="page-breadcrumb"}
+<li class="active">报告列表</li>
+{/block}
+{block name="page-main"}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="widget">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+                <li class="active">
+                    <a href="#index" data-toggle="tab">报告列表</a>
+                </li>
+            </ul>
+            <div class="widget-body tab-content">
+                <div id="index" class="table-responsive tab-pane fade in active">
+                    <table class="table table-hover table-bordered text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>标题</th>
+                                <!-- <th>状态</th> -->
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {volist name="datas" id="vo"}
+                            <tr>
+                                <td>{$vo.title} </td>
+                                <!-- <td>{if $vo.status==1}正常{else /}<p style="color:red;">禁用</p>{/if}</td> -->
+                                <td>
+                                    <a href="{:url('admin/Leave/perDayReports',['date'=>$vo.date,'sid'=>15])}"
+                                        class="btn btn-success btn-xs">查看</a>
+                                    <!-- <a href="#" class="btn btn-danger btn-xs report-del" dataid="{$vo.id}">删除</a> -->
+                                </td>
+                            </tr>
+                            {/volist}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-group text-align-right" style="margin-top: 20px;">
+                    <button type="button" id="newReport" class="btn btn-info">
+                        添加今日报告
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="page-js"}
+<script>
+    $('.report-del').click(function () {
+
+        var id = $(this).attr('dataid');
+        layer.confirm('确定删除该记录吗？', {
+            title: '删除确认',
+            icon: 3
+        }, function (index) {
+            layer.close(index);
+            $.ajax({
+                url: "{:url('admin/Cov/del')}",
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == 1) {
+                        showMsgAndHref(data)
+                    } else {
+                        showErrorMsg(data.msg)
+                    }
+                }
+            });
+
+        });
+        return false;
+    });
+
+    $("#newReport").click(function () {
+        $.ajax({
+            url: "{:url('admin/Leave/newReport')}",
+            type: 'post',
+            data: {
+                "{$token}":''
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.code == 1) {
+                    showMsgAndHref(data)
+                } else {
+                    showErrorMsg(data.msg)
+                }
+            }
+        });
+    })
+</script>
+{/block}

@@ -15,7 +15,7 @@ class DataToMysql extends Controller
         $redisKey = 'datalists';
         while (true) {
             $datas = $redis->lRange($redisKey, 0, -1);
-
+            Db::name('TemplatesDatas')->field('id')->find(1);
             if (!empty($datas)) {
                 foreach ($datas as &$value) {
                     $value = unserialize($value);
@@ -44,6 +44,8 @@ class DataToMysql extends Controller
 
         while (true) {
             $datas = $redis->lRange($redisKey, 0, -1);
+
+            Db::name('TemplatesDatas')->field('id')->find(1);
             if (!empty($datas)) {
                 foreach ($datas as &$value) {
                     $value = unserialize($value);

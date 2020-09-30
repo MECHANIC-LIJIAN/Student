@@ -20,7 +20,8 @@ class Base extends Controller
             'admin/home/logout',
             'admin/home/help',
             'admin/home/edit',
-            'admin/template/getNoData'
+            'admin/template/getNoData',
+            'admin/leave/delOneReport'
         ];
 
         $exception_arth_list= array_map('strtolower', $exception_arth_list);
