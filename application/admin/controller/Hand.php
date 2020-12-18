@@ -62,8 +62,6 @@ class Hand extends Base
                 'myData' => $params['myData'] ? $params['myData'] : 0,
                 'endTime' => (int)strtotime($params['endTime']?$params['endTime']:0),
             ];
-            
-            return $tInfo;
             if($tInfo['endTime']!=0&&$tInfo['endTime']<time()){
                 $this->error("请设置合理的截止时间");
             }
