@@ -4,19 +4,20 @@
 <script src="__LIB__/laydate/laydate.js"></script>
 
 <script>
-    $(function () {
+    $(function() {
         var dataUrl;
 
         date = new Date()
         laydate.render({
             elem: '#endTime' //指定元素
-            , type: 'datetime'
-            , min: date.toLocaleString(),
+                ,
+            type: 'datetime',
+            min: date.toLocaleString(),
         });
 
 
 
-        $(".key-radio").click(function () {
+        $(".key-radio").click(function() {
             var value = $(this).val();
             $(this).attr('checked', true)
             if (value === "1") {
@@ -28,7 +29,7 @@
                 $(".mydata-box").removeClass("show").addClass("hidden")
             }
         })
-        $(".data-radio").click(function () {
+        $(".data-radio").click(function() {
             var value = $(this).val();
             $(this).attr('checked', true)
             if (value === "1") {
@@ -38,7 +39,7 @@
             }
         })
 
-        $(".time-radio").click(function () {
+        $(".time-radio").click(function() {
             if ($(this).is(":checked")) {
                 $(this).val(0);
                 $("#endTime").val("");
@@ -48,84 +49,89 @@
                 $("#endTime").removeAttr("disabled").css("background", "");
             }
         })
-        $(".initTemplate").click(function () {
+        $(".initTemplate").click(function() {
             dataUrl = $(this).attr('dataid');
-            console.log(dataUrl)
             $(".confirm").click()
             $("#subForm").submit()
         })
 
-        $("#subForm").validate(
-            {
-                submitHandler: function (form) {
-                    var ifUseData = $("input[name='ifUseData']:checked").val();
-                    var ifUseKey = $("input[name='ifUseKey']:checked").val();
-                    var ifUseEnd = $("input[name='ifUseEnd']").val();
+        $("#subForm").validate({
+            submitHandler: function(form) {
+                var ifUseData = $("input[name='ifUseData']:checked").val();
+                var ifUseKey = $("input[name='ifUseKey']:checked").val();
+                var ifUseEnd = $("input[name='ifUseEnd']").val();
 
-                    var myData = $("#primaryKeyData").val();
-                    var primaryKey = $("#primaryKey").val();
-                    var endTime = $("#endTime").val();
+                var myData = $("#primaryKeyData").val();
+                var primaryKey = $("#primaryKey").val();
+                var endTime = $("#endTime").val();
 
-                    if ($("#formType").val() == "word") {
-                        var formdata = new FormData(document.getElementById('subForm'));
-                        formdata.append("wordfile", $("#tempalteFile")[0].files[0]);
+                console.log($("formtype").val);
+                if ($("#formType").val() == "word") {
+                    var formdata = new FormData(document.getElementById('subForm'));
+                    formdata.append("wordfile", $("#tempalteFile")[0].files[0]);
 
-                        if (ifUseKey == "1") {
-                            formdata.append('primaryKey', primaryKey)
-                            if (ifUseData == "1") {
-                                formdata.append('myData', myData)
-                            }
+                    if (ifUseKey == "1") {
+                        formdata.append('primaryKey', primaryKey)
+                        if (ifUseData == "1") {
+                            formdata.append('myData', myData)
                         }
-                        if (ifUseEnd == 0 || endTime == null) {
-                            endTime = 0;
-                        }
-                        formdata.append('endTime', endTime)
-
-                        $.ajax({
-                            url: dataUrl,
-                            type: "post",
-                            async: false,
-                            cache: false,
-                            contentType: false,
-                            processData: false,
-                            data: formdata,
-                            success: function (data) {
-                                if (data.code == 1) {
-                                    showMsgAndHref(data)
-                                } else {
-                                    showErrorMsg(data.msg)
-                                }
-                            },
-                        });
-                    } else {
-                        var formdata = $('#subForm').serialize()
-
-                        if (ifUseKey == "1") {
-                            formdata = formdata + '&' + $.param({ 'primaryKey': primaryKey, })
-                            if (ifUseData == "1") {
-                                formdata = formdata + '&' + $.param({ 'myData': myData, })
-                            }
-                        }
-                        if (ifUseEnd == 0 || endTime == null) {
-                            endTime = 0;
-                        }
-                        formdata = formdata + '&' + $.param({ 'endTime': endTime, })
-                        $.ajax({
-                            url: dataUrl,
-                            type: "post",
-                            dataType: 'json',
-                            data: formdata,
-                            success: function (data) {
-                                if (data.code == 1) {
-                                    showMsgAndHref(data)
-                                } else {
-                                    showErrorMsg(data.msg)
-                                }
-                            },
-                        });
                     }
-                },
-            });
+                    if (ifUseEnd == 0 || endTime == null) {
+                        endTime = 0;
+                    }
+                    formdata.append('endTime', endTime)
+
+                    $.ajax({
+                        url: dataUrl,
+                        type: "post",
+                        async: false,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        data: formdata,
+                        success: function(data) {
+                            if (data.code == 1) {
+                                showMsgAndHref(data)
+                            } else {
+                                showErrorMsg(data.msg)
+                            }
+                        },
+                    });
+                } else {
+                    var formdata = $('#subForm').serialize()
+
+                    if (ifUseKey == "1") {
+                        formdata = formdata + '&' + $.param({
+                            'primaryKey': primaryKey,
+                        })
+                        if (ifUseData == "1") {
+                            formdata = formdata + '&' + $.param({
+                                'myData': myData,
+                            })
+                        }
+                    }
+                    if (ifUseEnd == 0 || endTime == null) {
+                        endTime = 0;
+                    }
+                    formdata = formdata + '&' + $.param({
+                        'endTime': endTime,
+                    })
+                    $.ajax({
+                        url: dataUrl,
+                        type: "post",
+                        dataType: 'json',
+                        data: formdata,
+                        success: function(data) {
+                            if (data.code == 1) {
+                                showMsgAndHref(data)
+                            } else {
+                                showErrorMsg(data.msg)
+                            }
+                        },
+                    });
+                }
+            },
+        });
 
 
     });

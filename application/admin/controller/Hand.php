@@ -49,10 +49,10 @@ class Hand extends Base
                 $this->error("请至少添加一个字段");
             }
 
-            
+        
             $pinyin = new Pinyin();
 
-            $tInfo = [
+            $tInfo = $tInfo+[
                 'tid' => my_uuid(),
                 'uid' => session('admin.id'),
                 'tname' => $params['templateName'],
@@ -63,6 +63,7 @@ class Hand extends Base
                 'endTime' => (int)strtotime($params['endTime']?$params['endTime']:0),
             ];
             
+            return $tInfo;
             if($tInfo['endTime']!=0&&$tInfo['endTime']<time()){
                 $this->error("请设置合理的截止时间");
             }

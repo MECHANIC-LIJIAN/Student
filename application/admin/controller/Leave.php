@@ -357,7 +357,7 @@ class Leave extends Base
         // halt($hasList);
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
 
-        $objWriter->save($picPath . "" . '/情况汇总.docx');
+        $objWriter->save($picPath  . '/'.input('date').'生物信息学院本科生出行情况排查报告.docx');
 
         $zip = new ZipArchive();
         $overwrite = false;
