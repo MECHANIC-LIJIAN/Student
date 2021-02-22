@@ -13,9 +13,16 @@ class DataToMysql extends Controller
     {
         $redis = new Redis();
         $redisKey = 'datalists';
+
+        $mainQueueKey = 'datalists';
+        $subQueueKey = 'subdatalist';
+
         while (true) {
+            #加锁
+            $redis->set("LOCK_insert", 1);
             $datas = $redis->lRange($redisKey, 0, -1);
             Db::name('TemplatesDatas')->field('id')->find(1);
+
             if (!empty($datas)) {
                 foreach ($datas as &$value) {
                     $value = unserialize($value);
@@ -33,6 +40,16 @@ class DataToMysql extends Controller
                     Log::write($e->getMessage(), 'error');
                 }
             }
+            #释放锁
+            $redis->set("LOCK_insert", 0);
+
+            #转移子队列数据
+            $subDatas=$redis->lRange($subQueueKey, 0, -1);
+            foreach ($subDatas as $value) {
+                $redis->rPush($mainQueueKey, $value);
+            }
+            $redis->del($subQueueKey);
+
             sleep(1);
         }
     }
@@ -69,7 +86,6 @@ class DataToMysql extends Controller
 
     public function getTestdatas()
     {
-
         $limit = input('limit', 1000);
 
         debug('test');
@@ -94,7 +110,6 @@ class DataToMysql extends Controller
     }
     public function saveTestdatas()
     {
-
         dump("--------------------------------------");
         debug('begin');
         $redis = new Redis();
@@ -133,5 +148,4 @@ class DataToMysql extends Controller
         dump(debug('begin', 'end') . 's');
         dump(debug('begin', 'end', 'm') . 'kb');
     }
-
 }

@@ -14,3 +14,4 @@ redis_to_mysql.sh
 go_redis_to_mysql.sh
 dump.rdb
 nohup.out
+nohup.out

@@ -53,7 +53,6 @@ class Templates extends CommonModel
             return "系统中未匹配到:" . $template['primaryKey']['title'] . "=" . $keyContent;
         }
         return 1;
-
     }
 
     /**
@@ -80,7 +79,6 @@ class Templates extends CommonModel
             return $res['id'];
         }
         return 0;
-
     }
 
     /**
@@ -90,11 +88,19 @@ class Templates extends CommonModel
      */
     public function postData($data)
     {
-        $dataKey = 'datalists';
+        $mainQueueKey = 'datalists';
+        $subQueueKey = 'subdatalist';
 
         $redis = new Redis();
 
-        $nLen = $redis->lPush($dataKey, serialize($data));
+        $lock=$redis->get("LOCK_insert");
+        
+        #获取锁
+        if ($lock==0) {
+            $nLen = $redis->lPush($mainQueueKey, serialize($data));
+        } else {
+            $nLen = $redis->lPush($subQueueKey, serialize($data));
+        }
 
         if ($nLen > 0) {
             return 1;
