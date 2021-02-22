@@ -43,9 +43,8 @@
                             <span class="redInfo">* </span>
                             {/neq}
                         </label> {switch vo.type} {case date}
-                        <div class="col-lg-12">
+                        <div class="col-lg-6 col-md-8 col-sm-12">
                             <input type="text" class="form-control required" id="{$key}" name="{$key}" />
-
                             <script>
                                 laydate.render({
                                     elem: "#{$key}", //指定元素
@@ -57,7 +56,9 @@
                             </script>
                         </div>
                         {/case} {case time}
-                        <div class="col-lg-12">
+
+                        <span class="tips">(Tips:滑动选择时请先任意点一个数字)</span>
+                        <div class="col-lg-6 col-md-8 col-sm-12">
                             <input type="text" class="form-control required" id="{$key}" name="{$key}" />
 
                             <script>
@@ -67,9 +68,8 @@
                                     trigger: "click", //自动弹出控件的事件，采用click弹出
                                 });
                             </script>
-                        </div>
-                        {/case} {case datetime}
-                        <div class="col-lg-12">
+                        </div> {/case} {case datetime}
+                        <div class="col-lg-6 col-md-8 col-sm-12">
                             <input type="text" class="form-control" id="{$key}" name="{$key}" />
                         </div>
                         <script>
@@ -123,6 +123,11 @@
             height: 20px;
             margin-top: 50px;
             text-align: center;
+        }
+        
+        .tips {
+            font-size: 10px;
+            color: gray;
         }
     </style>
     <div class="footer">

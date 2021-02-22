@@ -24,7 +24,8 @@
             <div class="col-lg-10 form-block-background text-center" style="padding-bottom:20px;padding-top:20px;">
                 {empty name="$Request.param.msg"}<span class='emoji emoji26a1'></span>
                 <h1>欢迎访问</h1>
-                {else /}<h1>{$Request.param.msg}</h1>
+                {else /}
+                <h3>{$Request.param.msg}</h3>
 
                 {/empty}
             </div>
@@ -38,12 +39,12 @@
             height: 20px;
             clear: both;
         }
-
+        
         .icp-p {
             position: relative;
             z-index: 100;
         }
-
+        
         .icp {
             text-align: center;
             height: 20px;
@@ -52,8 +53,7 @@
     <div class="footer">
         <div class="icp-p">
             <div class="icp" style="font-size:12px;">
-                <span>备案号:</span><a style="color:#444;" rel="nofollow noopener" target="_blank"
-                    href="http://beian.miit.gov.cn">豫ICP备2020026352号</a>
+                <span>备案号:</span><a style="color:#444;" rel="nofollow noopener" target="_blank" href="http://beian.miit.gov.cn">豫ICP备2020026352号</a>
             </div>
         </div>
     </div>
