@@ -26,3 +26,5 @@ Route::rule('collectUpdate', 'index/Template/collectUpdate', 'POST');
 
 Route::rule('datasToMysql', 'index/DataToMysql/datasToMysql', 'GET|POST');
 Route::rule('updateDatasToMysql', 'index/DataToMysql/updateDatasToMysql', 'GET|POST');
+
+Route::rule('dataControl', 'admin/DataControl/index', 'GET|POST');

@@ -1,0 +1,30 @@
+{extend name="public/admin_base"} {block name="page-style"}
+<style>
+    a {
+        color: rgba(0, 0, 0, 0.6);
+    }
+</style>
+{/block} {block name="page-main"}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="well with-header with-footer">
+            <div class="header bg-themeprimary">
+                信息
+            </div>
+            {volist name="output" id="vo"}
+            <div class="row">
+                <div class="col-lg-12">
+                    <legend style="font-size: 14px;">{$vo}</legend>
+                </div>
+            </div> {/volist}
+            <div class="footer"></div>
+        </div>
+    </div>
+</div>
+{/block} {block name="page-js"}
+<script language="javascript">
+</script>
+
+
+{/block}
