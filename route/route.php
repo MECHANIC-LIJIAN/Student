@@ -22,6 +22,9 @@ Route::rule('f/:id', 'index/Template/readTemplate', 'GET|POST');
 Route::rule('collect', 'index/Template/collect', 'GET|POST');
 Route::rule('collectUpdate', 'index/Template/collectUpdate', 'POST');
 
+Route::rule('q/:id', 'index/Template/query', 'GET|POST');
+Route::rule('dataQuery', 'index/Template/dataQuery', 'GET|POST');
+
 // Route::get('ip','index/Ip/index');
 
 Route::rule('datasToMysql', 'index/DataToMysql/datasToMysql', 'GET|POST');

@@ -5,6 +5,7 @@ namespace app\index\controller;
 use myredis\Redis;
 use think\Controller;
 use think\Db;
+use think\facade\Log;
 
 class Template extends Controller
 {
@@ -58,7 +59,7 @@ class Template extends Controller
             //设置缓存周期，60*30秒
             $this->redis->expire($this->redisKey, 60 * 30);
         }
-   
+
         //获取缓存
         $this->template = unserialize($this->redis->get($this->redisKey));
         
@@ -74,7 +75,7 @@ class Template extends Controller
 
         #判断截止时间
         if ($this->template['endTime'] > 0 && $this->template['endTime'] < time()) {
-
+            
             Db::name('templates')->where(['id' => $this->template['id']])->update(['status' => 0]);
 
             $this->redis->del($this->redisKey);
@@ -165,7 +166,7 @@ class Template extends Controller
             #保存新数据
             $res = model('Templates')->postData($this->data);
             if ($res == 1) {
-                $this->success('提交成功！', url('index/index/index',['msg'=>"感谢您在《".$this->template['tname']."》的提交。"]));
+                $this->success('提交成功！', url('index/index/index', ['msg'=>"感谢您在《".$this->template['tname']."》的提交。"]));
             } else {
                 $this->error($res);
             }
@@ -188,10 +189,40 @@ class Template extends Controller
         $this->data['isUpdate']=1;
         $res = model('Templates')->updatePostData($this->data);
         if ($res) {
-            $this->success('数据更新成功！', url('index/index/index',['msg'=>"感谢您在《".$this->template['tname']."》的提交。"]));
+            $this->success('数据更新成功！', url('index/index/index', ['msg'=>"感谢您在《".$this->template['tname']."》的提交。"]));
         } else {
             $this->error('数据更新失败！');
         }
     }
 
+
+    public function query()
+    {
+        return $this->fetch('query', [
+            'optionList' =>  $this->template['options'],
+            'template' => $this->template,
+            'remarks' => $this->template['remarks'],
+        ]);
+    }
+
+    public function dataQuery()
+    {
+        $params=input('post.');
+        $search = $params['queryData'];
+        $searchField = $params['queryField'];
+
+        $options = ['content,create_time,update_time'];
+  
+        $result=model('TemplatesDatas')
+                ->where('tid', '=', $this->template['id'])
+                ->where("content->" . $searchField, "$search")
+                ->json(['content'])
+                ->field($options)
+        ->find();
+        if($result){
+            $this->success("","",$result);
+        }else{
+            $this->error();
+        }
+    }
 }
