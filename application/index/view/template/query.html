@@ -32,9 +32,11 @@
                         <div id="show"></div>
                     </div>
                     <div class="form-group col-lg-12">
-                        <label for="queryData" class="col-lg-2 col-md-2 col-sm-12 query_label">
+                        <div class="col-lg-2 col-md-2 col-sm-12 text-center">
+                            <label for="queryData" class="query_label">
                             {$template.primaryKey.title}
                         </label>
+                        </div>
                         <div class="col-lg-10 col-md-10 col-sm-12">
                             <input type="text" class="form-control required" id="queryData" name="queryData" />
                         </div>
@@ -46,16 +48,18 @@
                     <input type="hidden" name="tid" value="{$template.tid}" />
                     <input type="hidden" name="queryField" value=" {$template.primaryKey.field}" />
 
-                    <div class="col-lg-12 text-center" id="queryRes" hidden>
+                    <div class="col-lg-8 col-lg-push-2" id="queryRes" hidden>
                         {volist name="optionList" id="vo" key="k"}
                         <div class="form-group">
-                            <label for="{$key}" class="col-lg-3 query_label">
-                                {$vo.title}:
-                        </label>
+                            <div class="col-lg-3">
+                                <label for="{$key}" class="query_res_label">
+                                {$k}.&nbsp;&nbsp; {$vo.title}:
+                        </label></div>
                             <div class="col-lg-9">
-                                <p id="{$key}" style="text-align: left;padding: 6px 12px;"></p>
+                                <p id="{$key}" style="text-align: left;padding: 6px 12px;font-size: 14px;"></p>
                             </div>
                         </div>
+                        <div class="divider" style="width: 100%;"></div>
                         {/volist}
                     </div>
                 </form>
@@ -74,10 +78,15 @@
             color: gray;
         }
         
-        .query_label {
+        .query_label,
+        .query_res_label {
             text-align: right;
-            font-size: 16px;
+            font-size: 14px;
             padding: 6px 12px;
+        }
+        
+        .query_res_label {
+            color: gray;
         }
     </style>
     <div class="footer">
@@ -120,7 +129,7 @@
                             })
                             $("#queryRes").show()
                         } else {
-                            showErrorMsg("未查到");
+                            showErrorMsg("未查到记录");
                         }
                     },
                 });
