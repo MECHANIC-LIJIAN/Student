@@ -58,8 +58,8 @@
                             <div class="col-lg-9">
                                 <p id="{$key}" style="text-align: left;padding: 6px 12px;font-size: 14px;"></p>
                             </div>
+                            <hr class="style-one">
                         </div>
-                        <div class="divider" style="width: 100%;"></div>
                         {/volist}
                     </div>
                 </form>
@@ -87,6 +87,34 @@
         
         .query_res_label {
             color: gray;
+        }
+        
+        hr.style-one {
+            width: 80%;
+            margin: 0 auto;
+            border: 0;
+            height: 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        /*透明渐变水平线*/
+        
+        hr.style-two {
+            width: 80%;
+            margin: 0 auto;
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+        }
+        /*渐变*/
+        
+        hr.style-three {
+            width: 80%;
+            margin: 0 auto;
+            border: 0;
+            height: 1px;
+            background: #333;
+            background-image: linear-gradient(to right, #ccc, #333, #ccc);
         }
     </style>
     <div class="footer">
