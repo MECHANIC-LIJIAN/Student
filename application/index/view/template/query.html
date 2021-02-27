@@ -46,7 +46,7 @@
                     <input type="hidden" name="tid" value="{$template.tid}" />
                     <input type="hidden" name="queryField" value=" {$template.primaryKey.field}" />
                     <div class="form-group">
-                        <button type="button" style="height: 40px;font-size: 18px;min-width: 40%; max-width: 60%;" onkeydown="off" class="btn btn-info center-block" id="submitOpt">查询</button>
+                        <button type="button" style="height: 40px;font-size: 18px;min-width: 40%; max-width: 60%;" onclick="staytime(this)" class="btn btn-info center-block" id="submitOpt">查询</button>
                     </div>
 
                     <div class="col-lg-8 col-lg-push-2" id="queryRes" hidden>
@@ -116,15 +116,15 @@
     <script src="__JS__/index.js"></script>
     <script type="text/javascript">
         var wait = 60;
-        var btn = document.getElementById("submitOpt")
 
+            
         function staytime(btn) {      
             if (wait == 0) {        
                 btn.removeAttribute("disabled");        
-                btn.value = "查询";        
+                btn.innerHTML = "查询";        
                 wait = 60;      
             } else {        
-                btn.setAttribute("disabled", true);
+                btn.setAttribute("disabled", true);        
                 btn.innerHTML = wait + "秒后重新查询";        
                 wait--;        
                 setTimeout(function() {          
@@ -162,12 +162,8 @@
                                 $("#" + i).text(item)
                             })
                             $("#queryRes").show()
-
-                            staytime(btn)
                         } else {
                             showErrorMsg("未查到记录");
-                            wait = 0
-                            staytime(btn)
                         }
                     },
                 });
