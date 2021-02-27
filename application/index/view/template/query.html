@@ -46,7 +46,7 @@
                     <input type="hidden" name="tid" value="{$template.tid}" />
                     <input type="hidden" name="queryField" value=" {$template.primaryKey.field}" />
                     <div class="form-group">
-                        <button type="button" style="height: 40px;font-size: 18px;min-width: 40%; max-width: 60%;" onclick="staytime(this)" class="btn btn-info center-block" id="submitOpt">查询</button>
+                        <button type="button" style="height: 40px;font-size: 18px;min-width: 40%; max-width: 60%;" onclick="staytime(this,30)" class="btn btn-info center-block" id="submitOpt">查询</button>
                     </div>
 
                     <div class="col-lg-8 col-lg-push-2" id="queryRes" hidden>
@@ -115,22 +115,18 @@
     <script src="__JS__/messages_zh.min.js"></script>
     <script src="__JS__/index.js"></script>
     <script type="text/javascript">
-        var wait = 60;
-
-            
-        function staytime(btn) {      
+        function staytime(btn, wait) {      
             if (wait == 0) {        
-                btn.removeAttribute("disabled");        
-                btn.innerHTML = "查询";        
-                wait = 60;      
+                btn.removeAttribute("disabled");
+                btn.innerHTML = "查询";
             } else {        
                 btn.setAttribute("disabled", true);        
                 btn.innerHTML = wait + "秒后重新查询";        
-                wait--;        
-                setTimeout(function() {          
-                    staytime(btn);        
-                },         1000)      
-            }    
+                wait--;           
+                setTimeout(function() {
+                    staytime(btn, wait);
+                }, 1000)     
+            }  
         }
 
 
