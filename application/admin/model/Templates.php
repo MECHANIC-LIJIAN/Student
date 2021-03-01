@@ -25,7 +25,7 @@ class Templates extends CommonModel
     #关联自定义数据集
     public function getMyData()
     {
-        return $this->hasOne('MyData', 'id', 'myData')->field('id,title');
+        return $this->hasOne('MyData', 'id', 'myData')->field('id,title,count');
     }
 
     #关联用户信息

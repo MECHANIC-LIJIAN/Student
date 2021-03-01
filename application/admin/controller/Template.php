@@ -9,7 +9,6 @@ use think\Db;
 ini_set("memory_limit", "1024M");
 class Template extends Base
 {
-
     public function index()
     {
         $tId = input('id');
@@ -102,6 +101,10 @@ class Template extends Base
             ->with('getMyData')
             ->find();
         
+        $existDataLen=Db::name('templates_datas')->where(['tid'=>$tId])->count();
+        if ($template->get_my_data->count-$existDataLen>500) {
+            $this->error("目前未填写数据教多,不便展示");
+        }
         $noList = Db::name('MyDataOption')
             ->where('my_data_id', $template['get_my_data']['id'])
             ->where('content', 'NOTIN', function ($query) use ($tId, $template) {
@@ -135,21 +138,20 @@ class Template extends Base
         ->where(['tid'=>$tId,'isUpdate' => 1])
         ->find();
         
-        if(!$data){
+        if (!$data) {
             $this->success('所有数据都未更新过');
         }
 
-        try{
+        try {
             $res=Db::name('templatesDatas')
             ->where(['tid'=>$tId])
             ->data(['isUpdate' => 0])
             ->update();
-        }catch(\Exception $e){
-            
+        } catch (\Exception $e) {
         }
-        if($res){
+        if ($res) {
             $this->success('重置成功');
-        }else{
+        } else {
             $this->error('重置失败');
         }
     }
@@ -305,16 +307,15 @@ class Template extends Base
         }
         sleep(1);
         return $this->outdata($filename, $outData, $heads, $keys);
-
     }
 
-/**
- * 通用导出方法。传入参数即可
- * @param unknown $filename 导出的excel文件名称，不包括后缀
- * @param unknown $rows 要导出的数据，数组
- * @param unknown $head 要导出数据的表头，数组
- * @param unknown $keys 要导出数据的键值对对应
- */
+    /**
+     * 通用导出方法。传入参数即可
+     * @param unknown $filename 导出的excel文件名称，不包括后缀
+     * @param unknown $rows 要导出的数据，数组
+     * @param unknown $head 要导出数据的表头，数组
+     * @param unknown $keys 要导出数据的键值对对应
+     */
     public function outdata($filename, $rows = [], $head = [], $keys = [])
     {
         $count = count($head); //计算表头数量
@@ -363,7 +364,6 @@ class Template extends Base
 
                 $spreadsheet->getActiveSheet()->getColumnDimension(strtoupper(chr($i)))->setWidth(20); //固定列宽
             }
-
         }
 
         $filename = $filename . '.xlsx';
