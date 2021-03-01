@@ -106,12 +106,12 @@ class Template extends Base
         if ($template->get_my_data->count-$existDataLen>500) {
             $this->error("目前未填写数据教多,不便展示");
         }
-        
-        $existData=Db::name('templates_datas')->where(['tid'=>$tId])->field("content->" . $template['primaryKey'])->select();
+
+        $existData= model('TemplatesDatas')->where('tid', '=', $tId)->column("content->" . $template['primaryKey']);
         $myDataList=Db::name('MyDataOption')->where('my_data_id', $template['get_my_data']['id'])->column('content');
-
+        $existData=array_map('trimS',$existData);
         $noList=array_diff($myDataList, $existData);
-
+        
         // $noList = Db::name('MyDataOption')
         //     ->where('my_data_id', $template['get_my_data']['id'])
         //     ->where('content', 'NOTIN', function ($query) use ($tId, $template) {

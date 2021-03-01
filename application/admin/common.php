@@ -188,3 +188,8 @@ function getFieldType($rule){
         return $ruleAndText[$tmp[0]];
     }
 }
+
+
+function trimS($str){
+    return trim($str,'"');
+}
