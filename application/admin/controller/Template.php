@@ -102,16 +102,16 @@ class Template extends Base
             ->find();
         
 
-        $existDataLen=Db::name('templates_datas')->where(['tid'=>$tId])->count();
-        if ($template->get_my_data->count-$existDataLen>500) {
-            $this->error("目前未填写数据教多,不便展示");
-        }
+        // $existDataLen=Db::name('templates_datas')->where(['tid'=>$tId])->count();
+        // if ($template->get_my_data->count-$existDataLen>500) {
+        //     $this->error("目前未填写数据教多,不便展示");
+        // }
 
         $existData= model('TemplatesDatas')->where('tid', '=', $tId)->column("content->" . $template['primaryKey']);
         $myDataList=Db::name('MyDataOption')->where('my_data_id', $template['get_my_data']['id'])->column('content');
         $existData=array_map('trimS',$existData);
-        $noList=array_diff($myDataList, $existData);
-        
+        $noList=array_values(array_diff($myDataList, $existData));
+
         // $noList = Db::name('MyDataOption')
         //     ->where('my_data_id', $template['get_my_data']['id'])
         //     ->where('content', 'NOTIN', function ($query) use ($tId, $template) {
